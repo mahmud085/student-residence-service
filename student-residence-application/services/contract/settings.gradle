@@ -1,0 +1,5 @@
+rootProject.name = 'contract-service'
+include 'web'
+include 'data-access'
+include 'service'
+
