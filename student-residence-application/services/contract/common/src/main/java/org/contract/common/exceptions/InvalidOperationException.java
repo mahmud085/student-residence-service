@@ -1,4 +1,4 @@
-package org.contract.service.exceptions;
+package org.contract.common.exceptions;
 
 public class InvalidOperationException extends Exception {
     public InvalidOperationException(String message) {

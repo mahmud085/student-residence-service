@@ -1,6 +1,6 @@
 package org.contract.web.models;
 
-import org.contract.dataaccess.adapters.LocalDateAdapter;
+import org.contract.common.adapters.LocalDateAdapter;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;

@@ -1,6 +1,6 @@
-package org.contract.service.helpers;
+package org.contract.common.helpers;
 
-import org.contract.service.exceptions.ValidationException;
+import org.contract.common.exceptions.ValidationException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;

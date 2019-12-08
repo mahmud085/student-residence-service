@@ -1,6 +1,6 @@
-package org.contract.dataaccess.helpers;
+package org.contract.common.helpers;
 
-import org.contract.dataaccess.DataConstants;
+import org.contract.common.Constants;
 
 public class PaginationHelper {
     private int pageNum;
@@ -14,12 +14,12 @@ public class PaginationHelper {
     }
 
     public int getStartIndex() {
-        return (((pageNum - 1) * pageSize) + 1) - DataConstants.INDEX_OFFSET;
+        return (((pageNum - 1) * pageSize) + 1) - Constants.INDEX_OFFSET;
     }
 
     public int getEndIndex() {
-        int actualEndIndex = dataCount - DataConstants.INDEX_OFFSET;
-        int endIndex = (pageNum * pageSize) - DataConstants.INDEX_OFFSET;
+        int actualEndIndex = dataCount - Constants.INDEX_OFFSET;
+        int endIndex = (pageNum * pageSize) - Constants.INDEX_OFFSET;
 
         return Math.min(endIndex, actualEndIndex);
     }

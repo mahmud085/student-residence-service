@@ -1,6 +1,6 @@
 package org.contract.service.models;
 
-import org.contract.dataaccess.adapters.LocalDateAdapter;
+import org.contract.common.adapters.LocalDateAdapter;
 import org.contract.dataaccess.models.ContractStatus;
 
 import javax.validation.constraints.Email;

@@ -1,6 +1,6 @@
-package org.contract.service.helpers;
+package org.contract.common.helpers;
 
-import org.contract.service.ServiceConstants;
+import org.contract.common.Constants;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -8,7 +8,7 @@ import java.util.Date;
 public class DateHelper {
     public static LocalDate getCurrentDate() {
         return (new Date()).toInstant()
-                .atZone(ServiceConstants.DEFAULT_TIME_ZONE_ID)
+                .atZone(Constants.DEFAULT_TIME_ZONE_ID)
                 .toLocalDate();
     }
 }

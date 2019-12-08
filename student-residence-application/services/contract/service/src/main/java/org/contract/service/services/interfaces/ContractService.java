@@ -2,10 +2,10 @@ package org.contract.service.services.interfaces;
 
 import javassist.tools.rmi.ObjectNotFoundException;
 import org.contract.dataaccess.data.models.Contract;
-import org.contract.dataaccess.exceptions.PaginationRangeOutOfBoundException;
+import org.contract.common.exceptions.PaginationRangeOutOfBoundException;
 import org.contract.dataaccess.models.PaginatedDataList;
-import org.contract.service.exceptions.InvalidOperationException;
-import org.contract.service.exceptions.ValidationException;
+import org.contract.common.exceptions.InvalidOperationException;
+import org.contract.common.exceptions.ValidationException;
 import org.contract.service.models.NewContract;
 
 import java.time.LocalDate;

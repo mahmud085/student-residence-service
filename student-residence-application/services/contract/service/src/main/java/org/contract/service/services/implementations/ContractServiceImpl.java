@@ -2,15 +2,15 @@ package org.contract.service.services.implementations;
 
 import com.google.inject.Inject;
 import javassist.tools.rmi.ObjectNotFoundException;
-import org.contract.dataaccess.exceptions.PaginationRangeOutOfBoundException;
+import org.contract.common.exceptions.PaginationRangeOutOfBoundException;
 import org.contract.dataaccess.data.models.Contract;
 import org.contract.dataaccess.models.ContractStatus;
 import org.contract.dataaccess.models.PaginatedDataList;
 import org.contract.dataaccess.respositories.interfaces.ContractRepository;
-import org.contract.service.exceptions.InvalidOperationException;
-import org.contract.service.exceptions.ValidationException;
-import org.contract.service.helpers.DateHelper;
-import org.contract.service.helpers.ValidationHelper;
+import org.contract.common.exceptions.InvalidOperationException;
+import org.contract.common.exceptions.ValidationException;
+import org.contract.common.helpers.DateHelper;
+import org.contract.common.helpers.ValidationHelper;
 import org.contract.service.models.NewContract;
 import org.contract.service.services.interfaces.ContractService;
 

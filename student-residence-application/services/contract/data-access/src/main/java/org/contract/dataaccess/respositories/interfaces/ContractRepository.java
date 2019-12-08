@@ -1,6 +1,6 @@
 package org.contract.dataaccess.respositories.interfaces;
 
-import org.contract.dataaccess.exceptions.PaginationRangeOutOfBoundException;
+import org.contract.common.exceptions.PaginationRangeOutOfBoundException;
 import org.contract.dataaccess.data.models.Contract;
 import org.contract.dataaccess.models.PaginatedDataList;
 

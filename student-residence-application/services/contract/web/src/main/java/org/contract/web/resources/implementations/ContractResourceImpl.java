@@ -3,14 +3,14 @@ package org.contract.web.resources.implementations;
 import com.google.inject.Inject;
 import javassist.tools.rmi.ObjectNotFoundException;
 import org.contract.dataaccess.data.models.Contract;
-import org.contract.dataaccess.exceptions.PaginationRangeOutOfBoundException;
+import org.contract.common.exceptions.PaginationRangeOutOfBoundException;
 import org.contract.dataaccess.models.PaginatedDataList;
-import org.contract.service.exceptions.InvalidOperationException;
-import org.contract.service.exceptions.ValidationException;
+import org.contract.common.exceptions.InvalidOperationException;
+import org.contract.common.exceptions.ValidationException;
 import org.contract.service.models.NewContract;
 import org.contract.service.services.interfaces.ContractService;
-import org.contract.web.WebConstants;
-import org.contract.web.exceptions.PaginationAttributeException;
+import org.contract.web.Constants;
+import org.contract.common.exceptions.PaginationAttributeException;
 import org.contract.web.helpers.PaginationMetadataHelper;
 import org.contract.web.models.*;
 import org.contract.web.resources.interfaces.ContractResource;
@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
-@Path(WebConstants.RESOURCE_PATH_CONTRACT)
+@Path(Constants.RESOURCE_PATH_CONTRACT)
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class ContractResourceImpl implements ContractResource {
@@ -34,7 +34,7 @@ public class ContractResourceImpl implements ContractResource {
     private UriInfo uriInfo;
 
     @Override
-    @POST @RolesAllowed({WebConstants.ROLE_ADMINISTRATOR})
+    @POST @RolesAllowed({Constants.ROLE_ADMINISTRATOR})
     public Response createContract(NewContract newContract) {
         try {
             Contract createdContract = contractService.createContract(newContract);
@@ -54,7 +54,7 @@ public class ContractResourceImpl implements ContractResource {
     }
 
     @Override
-    @GET @RolesAllowed({WebConstants.ROLE_ADMINISTRATOR, WebConstants.ROLE_Resident})
+    @GET @RolesAllowed({Constants.ROLE_ADMINISTRATOR, Constants.ROLE_Resident})
     @Path("{contract-id}")
     public Response getContract(@PathParam("contract-id") String contractId) {
         try {
@@ -77,15 +77,15 @@ public class ContractResourceImpl implements ContractResource {
     }
 
     @Override
-    @GET @RolesAllowed({WebConstants.ROLE_ADMINISTRATOR, WebConstants.ROLE_Resident})
+    @GET @RolesAllowed({Constants.ROLE_ADMINISTRATOR, Constants.ROLE_Resident})
     public Response getContracts(@QueryParam("contractorsName") String contractorsName, @QueryParam("pageNum") int pageNum, @QueryParam("pageSize") int pageSize) {
         boolean isContractorsNameFilterPresent = isValuePresent(contractorsName);
         boolean isPaginationRequested = isPaginationRequested(pageNum, pageSize);
-        String endpointPath = String.format("%s%s", uriInfo.getBaseUri(), WebConstants.RESOURCE_PATH_CONTRACT);
+        String endpointPath = String.format("%s%s", uriInfo.getBaseUri(), Constants.RESOURCE_PATH_CONTRACT);
 
         if (isPaginationRequested) {
-            pageNum = pageNum == 0 ? WebConstants.DEFAULT_PAGE_NUM : pageNum;
-            pageSize = pageSize == 0 ? WebConstants.DEFAULT_PAGE_SIZE : pageSize;
+            pageNum = pageNum == 0 ? Constants.DEFAULT_PAGE_NUM : pageNum;
+            pageSize = pageSize == 0 ? Constants.DEFAULT_PAGE_SIZE : pageSize;
 
             try {
                 validatePaginationAttributes(pageNum, pageSize);
@@ -141,7 +141,7 @@ public class ContractResourceImpl implements ContractResource {
     }
 
     @Override
-    @PUT @RolesAllowed({WebConstants.ROLE_Resident})
+    @PUT @RolesAllowed({Constants.ROLE_Resident})
     @Path("{contract-id}")
     public Response updateContract(@PathParam("contract-id") String contractId, ContractUpdateRequest contractUpdateRequest) {
         ContractUpdateOperation requestedOperation = contractUpdateRequest.getOperation();
@@ -204,8 +204,8 @@ public class ContractResourceImpl implements ContractResource {
             throw new PaginationAttributeException("Invalid 'pageSize' value.");
         }
 
-        if (pageSize > WebConstants.MAX_PAGE_SIZE) {
-            throw new PaginationAttributeException("Max page size is " + WebConstants.MAX_PAGE_SIZE +".");
+        if (pageSize > Constants.MAX_PAGE_SIZE) {
+            throw new PaginationAttributeException("Max page size is " + Constants.MAX_PAGE_SIZE +".");
         }
     }
 

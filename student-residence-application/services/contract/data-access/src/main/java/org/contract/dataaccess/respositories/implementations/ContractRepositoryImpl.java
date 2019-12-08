@@ -1,8 +1,8 @@
 package org.contract.dataaccess.respositories.implementations;
 
 import javassist.tools.rmi.ObjectNotFoundException;
-import org.contract.dataaccess.exceptions.PaginationRangeOutOfBoundException;
-import org.contract.dataaccess.helpers.PaginationHelper;
+import org.contract.common.exceptions.PaginationRangeOutOfBoundException;
+import org.contract.common.helpers.PaginationHelper;
 import org.contract.dataaccess.data.models.Contract;
 import org.contract.dataaccess.models.PaginatedDataList;
 import org.contract.dataaccess.respositories.interfaces.ContractRepository;
