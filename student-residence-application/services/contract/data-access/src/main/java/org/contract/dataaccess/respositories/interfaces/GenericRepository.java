@@ -1,6 +1,6 @@
 package org.contract.dataaccess.respositories.interfaces;
 
-import javassist.tools.rmi.ObjectNotFoundException;
+import org.contract.common.exceptions.ObjectNotFoundException;
 import org.contract.dataaccess.data.models.Entity;
 
 import java.util.List;

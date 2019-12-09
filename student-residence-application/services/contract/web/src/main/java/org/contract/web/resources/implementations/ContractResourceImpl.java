@@ -1,16 +1,13 @@
 package org.contract.web.resources.implementations;
 
 import com.google.inject.Inject;
-import javassist.tools.rmi.ObjectNotFoundException;
+import org.contract.common.Messages;
+import org.contract.common.exceptions.*;
 import org.contract.dataaccess.data.models.Contract;
-import org.contract.common.exceptions.PaginationRangeOutOfBoundException;
 import org.contract.dataaccess.models.PaginatedDataList;
-import org.contract.common.exceptions.InvalidOperationException;
-import org.contract.common.exceptions.ValidationException;
 import org.contract.service.models.NewContract;
 import org.contract.service.services.interfaces.ContractService;
 import org.contract.web.Constants;
-import org.contract.common.exceptions.PaginationAttributeException;
 import org.contract.web.helpers.PaginationMetadataHelper;
 import org.contract.web.models.*;
 import org.contract.web.resources.interfaces.ContractResource;
@@ -39,17 +36,11 @@ public class ContractResourceImpl implements ContractResource {
         try {
             Contract createdContract = contractService.createContract(newContract);
 
-            return Response.status(Response.Status.CREATED)
-                    .entity(createdContract)
-                    .build();
+            return buildResponseObject(Response.Status.CREATED, createdContract);
         } catch (ValidationException ex) {
-            return  Response.status(Response.Status.BAD_REQUEST)
-                    .entity(buildErrorResponse(ex.getMessage()))
-                    .build();
+            return  buildResponseObject(Response.Status.BAD_REQUEST, buildErrorResponseObject(ex.getMessage()));
         } catch (Exception ex) {
-            return  Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(buildErrorResponse("An internal error occurred."))
-                    .build();
+            return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, Messages.INTERNAL_ERROR);
         }
     }
 
@@ -60,19 +51,12 @@ public class ContractResourceImpl implements ContractResource {
         try {
             Contract contract = contractService.getContract(contractId);
 
-            if (contract == null) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity(buildErrorResponse("No contract found with the specified contract ID."))
-                        .build();
-            }
-
-            return Response.status(Response.Status.OK)
-                    .entity(contract)
-                    .build();
-        } catch (Exception ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(buildErrorResponse("An internal error occurred."))
-                    .build();
+            return buildResponseObject(Response.Status.OK, contract);
+        } catch (ObjectNotFoundException ex) {
+            return buildResponseObject(Response.Status.NOT_FOUND, buildErrorResponseObject(ex.getMessage()));
+        }
+        catch (Exception ex) {
+            return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, Messages.INTERNAL_ERROR);
         }
     }
 
@@ -90,9 +74,7 @@ public class ContractResourceImpl implements ContractResource {
             try {
                 validatePaginationAttributes(pageNum, pageSize);
             } catch (PaginationAttributeException ex) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(buildErrorResponse(ex.getMessage()))
-                        .build();
+                return buildResponseObject(Response.Status.BAD_REQUEST, buildErrorResponseObject(ex.getMessage()));
             }
         }
 
@@ -126,17 +108,11 @@ public class ContractResourceImpl implements ContractResource {
                 }
             };
 
-            return Response.status(Response.Status.OK)
-                    .entity(contractListResponse)
-                    .build();
+            return buildResponseObject(Response.Status.OK, contractListResponse);
         } catch (PaginationRangeOutOfBoundException ex) {
-            return Response.status(Response.Status.NO_CONTENT)
-                    .entity(buildErrorResponse(ex.getMessage()))
-                    .build();
+            return buildResponseObject(Response.Status.NO_CONTENT, ex.getMessage());
         } catch (Exception ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(buildErrorResponse("An internal error occurred."))
-                    .build();
+            return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, Messages.INTERNAL_ERROR);
         }
     }
 
@@ -147,40 +123,36 @@ public class ContractResourceImpl implements ContractResource {
         ContractUpdateOperation requestedOperation = contractUpdateRequest.getOperation();
 
         if (requestedOperation == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(buildErrorResponse("Invalid operation request."))
-                    .build();
+            return buildResponseObject(Response.Status.BAD_REQUEST, buildErrorResponseObject(Messages.REQUIRED_OPERATION));
         }
 
         String successMsg = null;
         try {
             if (requestedOperation == ContractUpdateOperation.Confirm) {
                 contractService.confirmContract(contractId);
-                successMsg = "Contract successfully confirmed.";
-            } else if (contractUpdateRequest.getOperation() == ContractUpdateOperation.Extend) {
-                contractService.extendContract(contractId, contractUpdateRequest.getEndDate());
-                successMsg = "Contract successfully extended.";
-            } else if (contractUpdateRequest.getOperation() == ContractUpdateOperation.Terminate) {
-                contractService.terminateContract(contractId, contractUpdateRequest.getEndDate());
-                successMsg = "Contract successfully terminated.";
+                successMsg = Messages.SUCCESSFUL_CONFIRMATION;
+            } else {
+                if (contractUpdateRequest.getEndDate() == null) {
+                    return buildResponseObject(Response.Status.BAD_REQUEST, buildErrorResponseObject(Messages.REQUIRED_END_DATE));
+                }
+
+                if (contractUpdateRequest.getOperation() == ContractUpdateOperation.Extend) {
+                    contractService.extendContract(contractId, contractUpdateRequest.getEndDate());
+                    successMsg = Messages.SUCCESSFUL_EXTENSION;
+                } else if (contractUpdateRequest.getOperation() == ContractUpdateOperation.Terminate) {
+                    contractService.terminateContract(contractId, contractUpdateRequest.getEndDate());
+                    successMsg = Messages.SUCCESSFUL_TERMINATION;
+                }
             }
         } catch (ObjectNotFoundException ex) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity(buildErrorResponse(ex.getMessage()))
-                    .build();
+            return buildResponseObject(Response.Status.NOT_FOUND, buildErrorResponseObject(ex.getMessage()));
         } catch (InvalidOperationException | ValidationException ex) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(buildErrorResponse(ex.getMessage()))
-                    .build();
+            return buildResponseObject(Response.Status.BAD_REQUEST, buildErrorResponseObject(ex.getMessage()));
         } catch (Exception ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(buildErrorResponse("An internal error occurred."))
-                    .build();
+            return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, buildErrorResponseObject(Messages.INTERNAL_ERROR));
         }
 
-        return Response.status(Response.Status.NO_CONTENT)
-                .entity(buildSuccessResponse(successMsg))
-                .build();
+        return buildResponseObject(Response.Status.NO_CONTENT, buildSuccessResponseObject(successMsg));
     }
 
     private boolean isPaginationRequested(int pageNum, int pageSize) {
@@ -197,11 +169,11 @@ public class ContractResourceImpl implements ContractResource {
 
     private void validatePaginationAttributes(int pageNum, int pageSize) throws PaginationAttributeException {
         if (pageNum < 1) {
-            throw new PaginationAttributeException("Invalid 'pageNum' value.");
+            throw new PaginationAttributeException(Messages.INVALID_PAGE_NUM);
         }
 
         if (pageSize < 1) {
-            throw new PaginationAttributeException("Invalid 'pageSize' value.");
+            throw new PaginationAttributeException(Messages.INVALID_PAGE_SIZE);
         }
 
         if (pageSize > Constants.MAX_PAGE_SIZE) {
@@ -209,7 +181,7 @@ public class ContractResourceImpl implements ContractResource {
         }
     }
 
-    private ErrorResponse buildErrorResponse(String errorMessage) {
+    private ErrorResponse buildErrorResponseObject(String errorMessage) {
         return new ErrorResponse() {
             {
                 setErrorMessage(errorMessage);
@@ -217,11 +189,17 @@ public class ContractResourceImpl implements ContractResource {
         };
     }
 
-    private SuccessResponse buildSuccessResponse(String msg) {
+    private SuccessResponse buildSuccessResponseObject(String msg) {
         return new SuccessResponse() {
             {
                 setMessage(msg);
             }
         };
+    }
+
+    private <T> Response buildResponseObject(Response.Status status, T entity) {
+        return Response.status(status)
+                .entity(entity)
+                .build();
     }
 }

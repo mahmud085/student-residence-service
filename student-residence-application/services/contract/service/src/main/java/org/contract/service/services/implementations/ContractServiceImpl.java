@@ -1,7 +1,8 @@
 package org.contract.service.services.implementations;
 
 import com.google.inject.Inject;
-import javassist.tools.rmi.ObjectNotFoundException;
+import org.contract.common.Messages;
+import org.contract.common.exceptions.ObjectNotFoundException;
 import org.contract.common.exceptions.PaginationRangeOutOfBoundException;
 import org.contract.dataaccess.data.models.Contract;
 import org.contract.dataaccess.models.ContractStatus;
@@ -25,11 +26,11 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public Contract createContract(NewContract newContract) throws ValidationException {
-        ValidationHelper<NewContract> validationHelper = new ValidationHelper();
+        ValidationHelper<NewContract> validationHelper = new ValidationHelper<>();
         validationHelper.validate(newContract);
 
         if (newContract.getEndDate() != null && newContract.getEndDate().isBefore(newContract.getStartDate())) {
-            throw new ValidationException("End Date is not valid.");
+            throw new ValidationException(Messages.INVALID_END_DATE);
         }
 
         Contract contract = new Contract() {
@@ -50,8 +51,14 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public Contract getContract(String contractId) {
-        return contractRepository.get(contractId);
+    public Contract getContract(String contractId)throws ObjectNotFoundException {
+        Contract contract = contractRepository.get(contractId);
+
+        if (contract == null) {
+            throw new ObjectNotFoundException(Messages.CONTRACT_NOT_FOUND_WITH_ID);
+        }
+
+        return contract;
     }
 
     @Override
@@ -79,7 +86,7 @@ public class ContractServiceImpl implements ContractService {
         Contract contract = contractRepository.get(contractId);
 
         if (contract == null) {
-            throw new ObjectNotFoundException("No Contract found for specified Contract ID.");
+            throw new ObjectNotFoundException(Messages.CONTRACT_NOT_FOUND_WITH_ID);
         }
 
         LocalDate currentDate = DateHelper.getCurrentDate();
@@ -87,8 +94,7 @@ public class ContractServiceImpl implements ContractService {
         // Business logic
         LocalDate dateTwoWeeksAfterCreation = contract.getCreatedOn().plusWeeks(2);
         if (currentDate.isAfter(dateTwoWeeksAfterCreation)) {
-            // invalid confirmation
-            throw new InvalidOperationException("");
+            throw new InvalidOperationException("A contract can only be confirmed within the 2 weeks of it's creation.");
         }
 
         contract.setStatus(ContractStatus.Confirmed);
@@ -100,27 +106,25 @@ public class ContractServiceImpl implements ContractService {
         Contract contract = contractRepository.get(contractId);
 
         if (contract == null) {
-            throw new ObjectNotFoundException("No Contract found for specified Contract ID.");
+            throw new ObjectNotFoundException(Messages.CONTRACT_NOT_FOUND_WITH_ID);
         }
 
         LocalDate currentDate = DateHelper.getCurrentDate();
         LocalDate currentEndDate = contract.getEndDate();
 
-        if (newEndDate == null || newEndDate.isBefore(currentDate) || newEndDate.isEqual(currentEndDate) || newEndDate.isBefore(currentEndDate)) {
-            throw new ValidationException("Invalid End Date");
+        if (newEndDate == null || isDateBeforeOrEqualToday(newEndDate) || newEndDate.isBefore(currentEndDate)) {
+            throw new ValidationException(Messages.INVALID_END_DATE);
         }
 
         // Business logic
-        LocalDate dateSixMonthsAfterCurrentEndDate = currentEndDate.plusMonths(6);
-        if (newEndDate.isAfter(dateSixMonthsAfterCurrentEndDate)) {
-            // invalid extension
-            throw new InvalidOperationException("");
-        }
-
         LocalDate dateThreeMonthsBeforeCurrentEndDate = currentEndDate.plusMonths(-3);
         if (currentDate.isAfter(dateThreeMonthsBeforeCurrentEndDate)) {
-            // invalid extension operation
-            throw new InvalidOperationException("");
+            throw new InvalidOperationException(Messages.CONTRACT_EXTENSION_INVALID_OPERATION_DATE);
+        }
+
+        LocalDate dateSixMonthsAfterCurrentEndDate = currentEndDate.plusMonths(6);
+        if (newEndDate.isAfter(dateSixMonthsAfterCurrentEndDate)) {
+            throw new InvalidOperationException(Messages.CONTRACT_EXTENSION_INVALID_EXTENSION_PERIOD);
         }
 
         contract.setEndDate(newEndDate);
@@ -132,24 +136,29 @@ public class ContractServiceImpl implements ContractService {
         Contract contract = contractRepository.get(contractId);
 
         if (contract == null) {
-            throw new ObjectNotFoundException("No Contract found for specified Contract ID.");
+            throw new ObjectNotFoundException(Messages.CONTRACT_NOT_FOUND_WITH_ID);
         }
 
         LocalDate currentDate = DateHelper.getCurrentDate();
         LocalDate currentEndDate = contract.getEndDate();
 
-        if (newEndDate == null || newEndDate.isBefore(currentDate) || newEndDate.isEqual(currentEndDate) || newEndDate.isAfter(currentEndDate)) {
-            throw new ValidationException("Invalid End Date");
+        if (newEndDate == null || isDateBeforeOrEqualToday(newEndDate) || newEndDate.isAfter(currentEndDate)) {
+            throw new ValidationException(Messages.INVALID_END_DATE);
         }
 
         // Business logic
         LocalDate dateThreeMonthsBeforeNewEndDate = newEndDate.plusMonths(-3);
         if (currentDate.isAfter(dateThreeMonthsBeforeNewEndDate)) {
-            // invalid extension operation
-            throw new InvalidOperationException("");
+            throw new InvalidOperationException(Messages.CONTRACT_TERMINATION_INVALID_OPERATION_DATE);
         }
 
         contract.setEndDate(newEndDate);
         contractRepository.update(contract);
+    }
+
+    private boolean isDateBeforeOrEqualToday(LocalDate date) {
+        LocalDate currentDate = DateHelper.getCurrentDate();
+
+        return  currentDate.isBefore(date) || currentDate.isEqual(date);
     }
 }

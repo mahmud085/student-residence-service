@@ -1,6 +1,7 @@
 package org.contract.dataaccess.respositories.implementations;
 
-import javassist.tools.rmi.ObjectNotFoundException;
+import org.contract.common.Messages;
+import org.contract.common.exceptions.ObjectNotFoundException;
 import org.contract.common.exceptions.PaginationRangeOutOfBoundException;
 import org.contract.common.helpers.PaginationHelper;
 import org.contract.dataaccess.data.models.Contract;
@@ -51,7 +52,7 @@ public class ContractRepositoryImpl implements ContractRepository {
                 .orElse(null);
 
         if (contractToUpdate == null) {
-            throw new ObjectNotFoundException("No Contract found for specified Contract ID.");
+            throw new ObjectNotFoundException(Messages.CONTRACT_NOT_FOUND_WITH_ID);
         }
 
         contractToUpdate.setContractorsName(contract.getContractorsName());

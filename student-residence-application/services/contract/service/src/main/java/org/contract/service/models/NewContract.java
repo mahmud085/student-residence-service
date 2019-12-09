@@ -1,30 +1,34 @@
 package org.contract.service.models;
 
+import org.contract.common.Constants;
+import org.contract.common.Messages;
 import org.contract.common.adapters.LocalDateAdapter;
 import org.contract.dataaccess.models.ContractStatus;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
 
 @XmlRootElement(name = "contract")
 public class NewContract {
-    @NotNull(message = "Contractors Name is required.")
+    @NotNull(message = Messages.REQUIRED_CONTRACTORS_NAME)
     private String contractorsName;
-    @NotNull(message = "Contractors Email is required.")
-    @Email(message = "Valid email is required.")
+    @NotNull(message = Messages.REQUIRED_CONTRACTORS_EMAIL)
+    @Email(message = Messages.INVALID_EMAIL)
     private String contractorsEmail;
-    @NotNull(message = "Contractors Phone is required.")
+    @NotNull(message = Messages.REQUIRED_CONTRACTORS_PHONE)
+    @Pattern(regexp = Constants.REGEX_VALID_PHONE, message = Messages.INVALID_PHONE)
     private String contractorsPhone;
-    @NotNull(message = "Room Number is required.")
+    @NotNull(message = Messages.REQUIRED_ROOM_NUMBER)
     private String roomNumber;
-    @NotNull(message = "Start Date is required.")
+    @NotNull(message = Messages.REQUIRED_START_DATE)
     private LocalDate startDate;
-    @NotNull(message = "End Date is required.")
+    @NotNull(message = Messages.REQUIRED_END_DATE)
     private LocalDate endDate;
-    @NotNull(message = "Status is required.")
+    @NotNull(message = Messages.REQUIRED_STATUS)
     private ContractStatus status;
 
     public String getContractorsName() {
