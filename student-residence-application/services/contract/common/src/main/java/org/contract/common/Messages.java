@@ -9,12 +9,10 @@ public class Messages {
     public static final String SUCCESSFUL_TERMINATION = "Contract successfully terminated.";
 
     public static final String REQUIRED_CONTRACTORS_NAME = "Contractor's Name is required.";
-    public static final String REQUIRED_CONTRACTORS_EMAIL = "Contractor's Email is required.";
-    public static final String REQUIRED_CONTRACTORS_PHONE = "Contractor's Phone is required.";
     public static final String REQUIRED_ROOM_NUMBER = "Room Number is required.";
     public static final String REQUIRED_END_DATE = "Start Date is required.";
     public static final String REQUIRED_START_DATE = "End Date is required.";
-    public static final String REQUIRED_STATUS = "Status is required.";
+    public static final String REQUIRED_STATUS = "Valid Status is required.";
     public static final String REQUIRED_OPERATION = "Operation is required.";
 
     public static final String INVALID_PAGE_NUM = "Invalid 'pageNum' value.";
@@ -22,7 +20,6 @@ public class Messages {
     public static final String INVALID_EMAIL = "Valid Email is required.";
     public static final String INVALID_PHONE = "Valid Phone Number is required.";
     public static final String INVALID_END_DATE = "End Date is not valid.";
-    public static final String INVALID_STATUS = "Status is not valid.";
 
     public static final String CONTRACT_CONFIRMATION_ALREADY_CONFIRMED = "The contract has already been confirmed.";
     public static final String CONTRACT_CONFIRMATION_WINDOW_EXPIRED = "A contract can only be confirmed within the 2 weeks of it's creation.";

@@ -4,6 +4,8 @@ import org.contract.common.Constants;
 import org.contract.common.Messages;
 import org.contract.common.adapters.LocalDateAdapter;
 import org.contract.common.validation.annotations.HasValue;
+import org.contract.dataaccess.data.enums.ContractStatus;
+import org.contract.service.adapters.ContractStatusAdapter;
 
 import javax.validation.constraints.*;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -30,8 +32,8 @@ public class NewContract {
     @NotNull(message = Messages.REQUIRED_END_DATE)
     private LocalDate endDate;
 
-    @HasValue(message = Messages.REQUIRED_STATUS)
-    private String status;
+    @NotNull(message = Messages.REQUIRED_STATUS)
+    private ContractStatus status;
 
     public String getContractorsName() {
         return contractorsName;
@@ -83,11 +85,12 @@ public class NewContract {
         this.endDate = endDate;
     }
 
-    public String getStatus() {
+    @XmlJavaTypeAdapter(ContractStatusAdapter.class)
+    public ContractStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(ContractStatus status) {
         this.status = status;
     }
 }

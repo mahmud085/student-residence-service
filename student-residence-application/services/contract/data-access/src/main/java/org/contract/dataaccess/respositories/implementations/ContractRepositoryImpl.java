@@ -61,7 +61,7 @@ public class ContractRepositoryImpl implements ContractRepository {
         contractToUpdate.setRoomNumber(contract.getRoomNumber());
         contractToUpdate.setStartDate(contract.getStartDate());
         contractToUpdate.setEndDate(contract.getEndDate());
-        contractToUpdate.setContractStatusId(contract.getContractStatusId());
+        contractToUpdate.setContractStatus(contract.getContractStatus());
     }
 
     @Override

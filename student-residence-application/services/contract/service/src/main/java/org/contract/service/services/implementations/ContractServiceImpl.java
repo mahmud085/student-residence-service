@@ -4,15 +4,14 @@ import com.google.inject.Inject;
 import org.contract.common.Messages;
 import org.contract.common.exceptions.ObjectNotFoundException;
 import org.contract.common.exceptions.PaginationRangeOutOfBoundException;
+import org.contract.dataaccess.data.enums.ContractStatus;
 import org.contract.dataaccess.data.models.Contract;
-import org.contract.dataaccess.data.models.ContractStatus;
 import org.contract.dataaccess.models.PaginatedDataList;
 import org.contract.dataaccess.respositories.interfaces.ContractRepository;
 import org.contract.common.exceptions.InvalidOperationException;
 import org.contract.common.exceptions.ValidationException;
 import org.contract.common.helpers.DateHelper;
 import org.contract.common.helpers.ValidationHelper;
-import org.contract.dataaccess.respositories.interfaces.ContractStatusRepository;
 import org.contract.service.models.NewContract;
 import org.contract.service.services.interfaces.ContractService;
 
@@ -25,9 +24,6 @@ public class ContractServiceImpl implements ContractService {
     @Inject
     private ContractRepository contractRepository;
 
-    @Inject
-    private ContractStatusRepository contractStatusRepository;
-
     @Override
     public Contract createContract(NewContract newContract) throws ValidationException {
         ValidationHelper<NewContract> validationHelper = new ValidationHelper<>();
@@ -35,11 +31,6 @@ public class ContractServiceImpl implements ContractService {
 
         if (newContract.getEndDate() != null && newContract.getEndDate().isBefore(newContract.getStartDate())) {
             throw new ValidationException(Messages.INVALID_END_DATE);
-        }
-
-        ContractStatus contractStatus = contractStatusRepository.get(newContract.getStatus().trim());
-        if (contractStatus == null) {
-            throw new ValidationException(Messages.INVALID_STATUS);
         }
 
         Contract contract = new Contract() {
@@ -51,7 +42,7 @@ public class ContractServiceImpl implements ContractService {
                 setRoomNumber(newContract.getRoomNumber().trim());
                 setStartDate(newContract.getStartDate());
                 setEndDate(newContract.getEndDate());
-                setContractStatusId(contractStatus.getContractStatusId());
+                setContractStatus(newContract.getStatus());
                 setCreatedOn(DateHelper.getCurrentDate());
             }
         };
@@ -93,13 +84,12 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public void confirmContract(String contractId) throws ObjectNotFoundException, InvalidOperationException {
         Contract contract = contractRepository.get(contractId);
-        ContractStatus confirmedContractStatus = contractStatusRepository.get("Confirmed");
 
         if (contract == null) {
             throw new ObjectNotFoundException(Messages.CONTRACT_NOT_FOUND_WITH_ID);
         }
 
-        if (contract.getContractStatusId() == confirmedContractStatus.getContractStatusId()) {
+        if (contract.getContractStatus() == ContractStatus.Confirmed) {
             throw new InvalidOperationException(Messages.CONTRACT_CONFIRMATION_ALREADY_CONFIRMED);
         }
 
@@ -111,7 +101,7 @@ public class ContractServiceImpl implements ContractService {
             throw new InvalidOperationException(Messages.CONTRACT_CONFIRMATION_WINDOW_EXPIRED);
         }
 
-        contract.setContractStatusId(confirmedContractStatus.getContractStatusId());
+        contract.setContractStatus(ContractStatus.Confirmed);
         contractRepository.update(contract);
     }
 

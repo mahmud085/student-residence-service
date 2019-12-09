@@ -1,9 +1,8 @@
 package org.contract.dataaccess.data.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.contract.common.adapters.LocalDateAdapter;
+import org.contract.dataaccess.data.enums.ContractStatus;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
@@ -19,9 +18,7 @@ public class Contract extends Entity implements Cloneable  {
     private LocalDate startDate;
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate endDate;
-    @JsonProperty("status")
-    @XmlElement(name = "status")
-    private String contractStatusId;
+    private ContractStatus contractStatus;
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate createdOn;
 
@@ -81,12 +78,12 @@ public class Contract extends Entity implements Cloneable  {
         this.endDate = endDate;
     }
 
-    public String getContractStatusId() {
-        return contractStatusId;
+    public ContractStatus getContractStatus() {
+        return contractStatus;
     }
 
-    public void setContractStatusId(String contractStatusId) {
-        this.contractStatusId = contractStatusId;
+    public void setContractStatus(ContractStatus contractStatus) {
+        this.contractStatus = contractStatus;
     }
 
     public LocalDate getCreatedOn() {
