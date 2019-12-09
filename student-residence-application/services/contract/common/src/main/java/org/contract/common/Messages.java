@@ -2,6 +2,7 @@ package org.contract.common;
 
 public class Messages {
     public static final String INTERNAL_ERROR = "An internal error occurred.";
+    public static final String REQUEST_BODY_REQUIRED = "Request body is required.";
     public static final String CONTRACT_NOT_FOUND_WITH_ID = "No contract found with the specified contract ID.";
 
     public static final String SUCCESSFUL_CONFIRMATION = "Contract successfully confirmed.";

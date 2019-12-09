@@ -12,6 +12,6 @@ public class HasValueValidator implements ConstraintValidator<HasValue, String> 
 
     @Override
     public boolean isValid(String object, ConstraintValidatorContext constraintContext) {
-        return !object.trim().isEmpty();
+        return object != null && !object.trim().isEmpty();
     }
 }

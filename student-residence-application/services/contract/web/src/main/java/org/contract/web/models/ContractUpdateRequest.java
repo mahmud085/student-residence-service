@@ -1,6 +1,7 @@
 package org.contract.web.models;
 
 import org.contract.common.adapters.LocalDateAdapter;
+import org.contract.web.adapters.ContractUpdateOperationAdapter;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -11,6 +12,7 @@ public class ContractUpdateRequest {
     private ContractUpdateOperation operation;
     private LocalDate endDate;
 
+    @XmlJavaTypeAdapter(ContractUpdateOperationAdapter.class)
     public ContractUpdateOperation getOperation() {
         return operation;
     }

@@ -33,12 +33,16 @@ public class ContractResourceImpl implements ContractResource {
     @Override
     @POST @RolesAllowed({Constants.ROLE_ADMINISTRATOR})
     public Response createContract(NewContract newContract) {
+        if (newContract == null) {
+            return  buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUEST_BODY_REQUIRED);
+        }
+
         try {
             Contract createdContract = contractService.createContract(newContract);
 
             return buildResponseObject(Response.Status.CREATED, createdContract);
         } catch (ValidationException ex) {
-            return  buildResponseObject(Response.Status.BAD_REQUEST, buildErrorResponseObject(ex.getMessage()));
+            return  buildResponseObject(Response.Status.BAD_REQUEST, ex.getMessage());
         } catch (Exception ex) {
             return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, Messages.INTERNAL_ERROR);
         }
@@ -53,7 +57,7 @@ public class ContractResourceImpl implements ContractResource {
 
             return buildResponseObject(Response.Status.OK, contract);
         } catch (ObjectNotFoundException ex) {
-            return buildResponseObject(Response.Status.NOT_FOUND, buildErrorResponseObject(ex.getMessage()));
+            return buildResponseObject(Response.Status.NOT_FOUND, ex.getMessage());
         }
         catch (Exception ex) {
             return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, Messages.INTERNAL_ERROR);
@@ -74,7 +78,7 @@ public class ContractResourceImpl implements ContractResource {
             try {
                 validatePaginationAttributes(pageNum, pageSize);
             } catch (PaginationAttributeException ex) {
-                return buildResponseObject(Response.Status.BAD_REQUEST, buildErrorResponseObject(ex.getMessage()));
+                return buildResponseObject(Response.Status.BAD_REQUEST, ex.getMessage());
             }
         }
 
@@ -110,7 +114,7 @@ public class ContractResourceImpl implements ContractResource {
 
             return buildResponseObject(Response.Status.OK, contractListResponse);
         } catch (PaginationRangeOutOfBoundException ex) {
-            return buildResponseObject(Response.Status.NO_CONTENT, ex.getMessage());
+            return buildResponseObject(Response.Status.NO_CONTENT, null);
         } catch (Exception ex) {
             return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, Messages.INTERNAL_ERROR);
         }
@@ -120,10 +124,14 @@ public class ContractResourceImpl implements ContractResource {
     @PUT @RolesAllowed({Constants.ROLE_Resident})
     @Path("{contract-id}")
     public Response updateContract(@PathParam("contract-id") String contractId, ContractUpdateRequest contractUpdateRequest) {
+        if (contractUpdateRequest == null) {
+            return  buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUEST_BODY_REQUIRED);
+        }
+
         ContractUpdateOperation requestedOperation = contractUpdateRequest.getOperation();
 
         if (requestedOperation == null) {
-            return buildResponseObject(Response.Status.BAD_REQUEST, buildErrorResponseObject(Messages.REQUIRED_OPERATION));
+            return buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUIRED_OPERATION);
         }
 
         String successMsg = null;
@@ -133,7 +141,7 @@ public class ContractResourceImpl implements ContractResource {
                 successMsg = Messages.SUCCESSFUL_CONFIRMATION;
             } else {
                 if (contractUpdateRequest.getEndDate() == null) {
-                    return buildResponseObject(Response.Status.BAD_REQUEST, buildErrorResponseObject(Messages.REQUIRED_END_DATE));
+                    return buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUIRED_END_DATE);
                 }
 
                 if (contractUpdateRequest.getOperation() == ContractUpdateOperation.Extend) {
@@ -145,14 +153,14 @@ public class ContractResourceImpl implements ContractResource {
                 }
             }
         } catch (ObjectNotFoundException ex) {
-            return buildResponseObject(Response.Status.NOT_FOUND, buildErrorResponseObject(ex.getMessage()));
+            return buildResponseObject(Response.Status.NOT_FOUND, ex.getMessage());
         } catch (InvalidOperationException | ValidationException ex) {
-            return buildResponseObject(Response.Status.BAD_REQUEST, buildErrorResponseObject(ex.getMessage()));
+            return buildResponseObject(Response.Status.BAD_REQUEST, ex.getMessage());
         } catch (Exception ex) {
-            return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, buildErrorResponseObject(Messages.INTERNAL_ERROR));
+            return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, Messages.INTERNAL_ERROR);
         }
 
-        return buildResponseObject(Response.Status.NO_CONTENT, buildSuccessResponseObject(successMsg));
+        return buildResponseObject(Response.Status.NO_CONTENT, null);
     }
 
     private boolean isPaginationRequested(int pageNum, int pageSize) {
@@ -179,22 +187,6 @@ public class ContractResourceImpl implements ContractResource {
         if (pageSize > Constants.MAX_PAGE_SIZE) {
             throw new PaginationAttributeException("Max page size is " + Constants.MAX_PAGE_SIZE +".");
         }
-    }
-
-    private ErrorResponse buildErrorResponseObject(String errorMessage) {
-        return new ErrorResponse() {
-            {
-                setErrorMessage(errorMessage);
-            }
-        };
-    }
-
-    private SuccessResponse buildSuccessResponseObject(String msg) {
-        return new SuccessResponse() {
-            {
-                setMessage(msg);
-            }
-        };
     }
 
     private <T> Response buildResponseObject(Response.Status status, T entity) {
