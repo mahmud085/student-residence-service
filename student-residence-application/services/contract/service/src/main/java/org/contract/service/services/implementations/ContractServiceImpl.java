@@ -5,13 +5,14 @@ import org.contract.common.Messages;
 import org.contract.common.exceptions.ObjectNotFoundException;
 import org.contract.common.exceptions.PaginationRangeOutOfBoundException;
 import org.contract.dataaccess.data.models.Contract;
-import org.contract.dataaccess.models.ContractStatus;
+import org.contract.dataaccess.data.models.ContractStatus;
 import org.contract.dataaccess.models.PaginatedDataList;
 import org.contract.dataaccess.respositories.interfaces.ContractRepository;
 import org.contract.common.exceptions.InvalidOperationException;
 import org.contract.common.exceptions.ValidationException;
 import org.contract.common.helpers.DateHelper;
 import org.contract.common.helpers.ValidationHelper;
+import org.contract.dataaccess.respositories.interfaces.ContractStatusRepository;
 import org.contract.service.models.NewContract;
 import org.contract.service.services.interfaces.ContractService;
 
@@ -24,6 +25,9 @@ public class ContractServiceImpl implements ContractService {
     @Inject
     private ContractRepository contractRepository;
 
+    @Inject
+    private ContractStatusRepository contractStatusRepository;
+
     @Override
     public Contract createContract(NewContract newContract) throws ValidationException {
         ValidationHelper<NewContract> validationHelper = new ValidationHelper<>();
@@ -33,16 +37,21 @@ public class ContractServiceImpl implements ContractService {
             throw new ValidationException(Messages.INVALID_END_DATE);
         }
 
+        ContractStatus contractStatus = contractStatusRepository.get(newContract.getStatus().trim());
+        if (contractStatus == null) {
+            throw new ValidationException(Messages.INVALID_STATUS);
+        }
+
         Contract contract = new Contract() {
             {
                 setContractId(UUID.randomUUID().toString());
-                setContractorsName(newContract.getContractorsName());
-                setContractorsEmail(newContract.getContractorsEmail());
-                setContractorsPhone(newContract.getContractorsPhone());
-                setRoomNumber(newContract.getRoomNumber());
+                setContractorsName(newContract.getContractorsName().trim());
+                setContractorsEmail(newContract.getContractorsEmail().trim());
+                setContractorsPhone(newContract.getContractorsPhone().trim());
+                setRoomNumber(newContract.getRoomNumber().trim());
                 setStartDate(newContract.getStartDate());
                 setEndDate(newContract.getEndDate());
-                setStatus(newContract.getStatus());
+                setContractStatusId(contractStatus.getContractStatusId());
                 setCreatedOn(DateHelper.getCurrentDate());
             }
         };
@@ -84,9 +93,14 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public void confirmContract(String contractId) throws ObjectNotFoundException, InvalidOperationException {
         Contract contract = contractRepository.get(contractId);
+        ContractStatus confirmedContractStatus = contractStatusRepository.get("Confirmed");
 
         if (contract == null) {
             throw new ObjectNotFoundException(Messages.CONTRACT_NOT_FOUND_WITH_ID);
+        }
+
+        if (contract.getContractStatusId() == confirmedContractStatus.getContractStatusId()) {
+            throw new InvalidOperationException(Messages.CONTRACT_CONFIRMATION_ALREADY_CONFIRMED);
         }
 
         LocalDate currentDate = DateHelper.getCurrentDate();
@@ -94,10 +108,10 @@ public class ContractServiceImpl implements ContractService {
         // Business logic
         LocalDate dateTwoWeeksAfterCreation = contract.getCreatedOn().plusWeeks(2);
         if (currentDate.isAfter(dateTwoWeeksAfterCreation)) {
-            throw new InvalidOperationException("A contract can only be confirmed within the 2 weeks of it's creation.");
+            throw new InvalidOperationException(Messages.CONTRACT_CONFIRMATION_WINDOW_EXPIRED);
         }
 
-        contract.setStatus(ContractStatus.Confirmed);
+        contract.setContractStatusId(confirmedContractStatus.getContractStatusId());
         contractRepository.update(contract);
     }
 

@@ -3,33 +3,35 @@ package org.contract.service.models;
 import org.contract.common.Constants;
 import org.contract.common.Messages;
 import org.contract.common.adapters.LocalDateAdapter;
-import org.contract.dataaccess.models.ContractStatus;
+import org.contract.common.validation.annotations.HasValue;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
 
 @XmlRootElement(name = "contract")
 public class NewContract {
-    @NotNull(message = Messages.REQUIRED_CONTRACTORS_NAME)
+    @HasValue(message = Messages.REQUIRED_CONTRACTORS_NAME)
     private String contractorsName;
-    @NotNull(message = Messages.REQUIRED_CONTRACTORS_EMAIL)
-    @Email(message = Messages.INVALID_EMAIL)
+
+    @Pattern(regexp = Constants.REGEX_VALID_EMAIL, message = Messages.INVALID_EMAIL)
     private String contractorsEmail;
-    @NotNull(message = Messages.REQUIRED_CONTRACTORS_PHONE)
+
     @Pattern(regexp = Constants.REGEX_VALID_PHONE, message = Messages.INVALID_PHONE)
     private String contractorsPhone;
-    @NotNull(message = Messages.REQUIRED_ROOM_NUMBER)
+
+    @HasValue(message = Messages.REQUIRED_ROOM_NUMBER)
     private String roomNumber;
+
     @NotNull(message = Messages.REQUIRED_START_DATE)
     private LocalDate startDate;
+
     @NotNull(message = Messages.REQUIRED_END_DATE)
     private LocalDate endDate;
-    @NotNull(message = Messages.REQUIRED_STATUS)
-    private ContractStatus status;
+
+    @HasValue(message = Messages.REQUIRED_STATUS)
+    private String status;
 
     public String getContractorsName() {
         return contractorsName;
@@ -81,11 +83,11 @@ public class NewContract {
         this.endDate = endDate;
     }
 
-    public ContractStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(ContractStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 }
