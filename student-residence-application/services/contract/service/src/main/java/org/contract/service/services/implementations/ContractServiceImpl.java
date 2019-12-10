@@ -12,6 +12,7 @@ import org.contract.common.exceptions.InvalidOperationException;
 import org.contract.common.exceptions.ValidationException;
 import org.contract.common.helpers.DateHelper;
 import org.contract.common.helpers.ValidationHelper;
+import org.contract.dataaccess.respositories.interfaces.RoomRepository;
 import org.contract.service.models.NewContract;
 import org.contract.service.services.interfaces.ContractService;
 
@@ -19,18 +20,28 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-
 public class ContractServiceImpl implements ContractService {
     @Inject
     private ContractRepository contractRepository;
 
+    @Inject
+    private RoomRepository roomRepository;
+
     @Override
-    public Contract createContract(NewContract newContract) throws ValidationException {
+    public Contract createContract(NewContract newContract) throws ValidationException, InvalidOperationException {
         ValidationHelper<NewContract> validationHelper = new ValidationHelper<>();
         validationHelper.validate(newContract);
 
+        if (roomRepository.get(newContract.getRoomNumber()) == null) {
+            throw new ValidationException(Messages.INVALID_ROOM_NUMBER);
+        }
+
         if (newContract.getEndDate() != null && newContract.getEndDate().isBefore(newContract.getStartDate())) {
             throw new ValidationException(Messages.INVALID_END_DATE);
+        }
+
+        if (contractRepository.getActiveContractByRoomNumberInDateRange(newContract.getRoomNumber(), newContract.getStartDate(), newContract.getEndDate()) != null) {
+            throw new InvalidOperationException(Messages.CONTRACT_CREATION_CONTRACT_ALREADY_EXIST);
         }
 
         Contract contract = new Contract() {
@@ -116,7 +127,7 @@ public class ContractServiceImpl implements ContractService {
         LocalDate currentDate = DateHelper.getCurrentDate();
         LocalDate currentEndDate = contract.getEndDate();
 
-        if (newEndDate == null || isDateBeforeOrEqualToday(newEndDate) || newEndDate.isBefore(currentEndDate)) {
+        if (newEndDate == null || DateHelper.isDateBeforeOrEqualToday(newEndDate) || newEndDate.isBefore(currentEndDate)) {
             throw new ValidationException(Messages.INVALID_END_DATE);
         }
 
@@ -146,7 +157,7 @@ public class ContractServiceImpl implements ContractService {
         LocalDate currentDate = DateHelper.getCurrentDate();
         LocalDate currentEndDate = contract.getEndDate();
 
-        if (newEndDate == null || isDateBeforeOrEqualToday(newEndDate) || newEndDate.isAfter(currentEndDate)) {
+        if (newEndDate == null || DateHelper.isDateBeforeOrEqualToday(newEndDate) || newEndDate.isAfter(currentEndDate)) {
             throw new ValidationException(Messages.INVALID_END_DATE);
         }
 
@@ -158,11 +169,5 @@ public class ContractServiceImpl implements ContractService {
 
         contract.setEndDate(newEndDate);
         contractRepository.update(contract);
-    }
-
-    private boolean isDateBeforeOrEqualToday(LocalDate date) {
-        LocalDate currentDate = DateHelper.getCurrentDate();
-
-        return  currentDate.isBefore(date) || currentDate.isEqual(date);
     }
 }

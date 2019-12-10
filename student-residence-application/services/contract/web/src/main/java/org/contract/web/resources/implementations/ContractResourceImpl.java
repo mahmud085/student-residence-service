@@ -41,7 +41,7 @@ public class ContractResourceImpl implements ContractResource {
             Contract createdContract = contractService.createContract(newContract);
 
             return buildResponseObject(Response.Status.CREATED, createdContract);
-        } catch (ValidationException ex) {
+        } catch (ValidationException | InvalidOperationException ex) {
             return  buildResponseObject(Response.Status.BAD_REQUEST, ex.getMessage());
         } catch (Exception ex) {
             return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, Messages.INTERNAL_ERROR);

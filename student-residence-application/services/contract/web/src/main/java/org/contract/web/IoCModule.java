@@ -2,7 +2,9 @@ package org.contract.web;
 
 import com.google.inject.AbstractModule;
 import org.contract.dataaccess.respositories.implementations.ContractRepositoryImpl;
+import org.contract.dataaccess.respositories.implementations.RoomRepositoryImpl;
 import org.contract.dataaccess.respositories.interfaces.ContractRepository;
+import org.contract.dataaccess.respositories.interfaces.RoomRepository;
 import org.contract.service.services.implementations.ContractServiceImpl;
 import org.contract.service.services.interfaces.ContractService;
 
@@ -14,5 +16,8 @@ public class IoCModule extends AbstractModule {
 
         bind(ContractRepository.class)
                 .to(ContractRepositoryImpl.class);
+
+        bind(RoomRepository.class)
+                .to(RoomRepositoryImpl.class);
     }
 }

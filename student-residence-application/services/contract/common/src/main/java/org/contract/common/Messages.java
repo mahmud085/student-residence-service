@@ -20,8 +20,10 @@ public class Messages {
     public static final String INVALID_PAGE_SIZE = "Invalid 'pageSize' value.";
     public static final String INVALID_EMAIL = "Valid Email is required.";
     public static final String INVALID_PHONE = "Valid Phone Number is required.";
-    public static final String INVALID_END_DATE = "End Date is not valid.";
+    public static final String INVALID_END_DATE = "Valid End Date is required.";
+    public static final String INVALID_ROOM_NUMBER = "Valid Room Number is required.";
 
+    public static final String CONTRACT_CREATION_CONTRACT_ALREADY_EXIST = "The specified room already has a Confirmed/Pending contract for the specified dates.";
     public static final String CONTRACT_CONFIRMATION_ALREADY_CONFIRMED = "The contract has already been confirmed.";
     public static final String CONTRACT_CONFIRMATION_WINDOW_EXPIRED = "A contract can only be confirmed within the 2 weeks of it's creation.";
     public static final String CONTRACT_EXTENSION_INVALID_OPERATION_DATE = "A contract can only be extended before 3 months of it's current end date.";

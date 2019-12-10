@@ -3,12 +3,15 @@ package org.contract.dataaccess.respositories.implementations;
 import org.contract.common.Messages;
 import org.contract.common.exceptions.ObjectNotFoundException;
 import org.contract.common.exceptions.PaginationRangeOutOfBoundException;
+import org.contract.common.helpers.DateHelper;
 import org.contract.common.helpers.PaginationHelper;
+import org.contract.dataaccess.data.enums.ContractStatus;
 import org.contract.dataaccess.data.models.Contract;
 import org.contract.dataaccess.models.PaginatedDataList;
 import org.contract.dataaccess.respositories.interfaces.ContractRepository;
 import org.contract.dataaccess.store.DataStore;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,11 +35,7 @@ public class ContractRepositoryImpl implements ContractRepository {
                 .findFirst()
                 .orElse(null);
 
-        if (contract == null) {
-            return contract;
-        }
-
-        return contract.clone();
+        return contract != null ? contract.clone() : null;
     }
 
     @Override
@@ -62,6 +61,16 @@ public class ContractRepositoryImpl implements ContractRepository {
         contractToUpdate.setStartDate(contract.getStartDate());
         contractToUpdate.setEndDate(contract.getEndDate());
         contractToUpdate.setContractStatus(contract.getContractStatus());
+    }
+
+    @Override
+    public Contract getActiveContractByRoomNumberInDateRange(String roomNumber, LocalDate startDate, LocalDate endDate) {
+        Contract contract = DataStore.contracts.stream()
+                .filter(x -> isContractPending(x) || isContractValidWithInDateRange(x, startDate, endDate))
+                .findFirst()
+                .orElse(null);
+
+        return contract != null ? contract.clone() : null;
     }
 
     @Override
@@ -112,5 +121,28 @@ public class ContractRepositoryImpl implements ContractRepository {
                 setTotalDataCount(contractList.size());
             }
         };
+    }
+
+    private boolean isContractPending(Contract contract) {
+        LocalDate pendingValidTill = contract.getCreatedOn().plusWeeks(2);
+
+        return DateHelper.isDateAfterOrEqualToday(pendingValidTill);
+    }
+
+    private boolean isContractValidWithInDateRange(Contract contract, LocalDate startDate, LocalDate endDate) {
+        return (contract.getContractStatus() == ContractStatus.Confirmed && isContractPeriodCollide(contract, startDate, endDate));
+    }
+
+    private boolean isContractPeriodCollide(Contract contract, LocalDate startDate, LocalDate endDate) {
+        return isDateBetweenContractPeriod(contract, startDate)
+                || isDateBetweenContractPeriod(contract, endDate);
+    }
+
+    private boolean isDateBetweenContractPeriod(Contract contract, LocalDate date) {
+        LocalDate contractStartDate = contract.getStartDate();
+        LocalDate contractEndDate = contract.getEndDate();
+
+        return (contractStartDate.isEqual(date) || contractStartDate.isBefore(date))
+                && (contractEndDate.isEqual(date) || contractEndDate.isAfter(date));
     }
 }

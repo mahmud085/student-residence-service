@@ -4,9 +4,11 @@ import org.contract.common.exceptions.PaginationRangeOutOfBoundException;
 import org.contract.dataaccess.data.models.Contract;
 import org.contract.dataaccess.models.PaginatedDataList;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ContractRepository extends GenericRepository<Contract> {
+    Contract getActiveContractByRoomNumberInDateRange(String roomNumber, LocalDate startDate, LocalDate endDate);
     PaginatedDataList<Contract> getAll(int pageNum, int pageSize) throws PaginationRangeOutOfBoundException;
     List<Contract> getAll(String contractorsNameFilter);
     PaginatedDataList<Contract> getAll(String contractorsNameFilter, int pageNum, int pageSize) throws PaginationRangeOutOfBoundException;
