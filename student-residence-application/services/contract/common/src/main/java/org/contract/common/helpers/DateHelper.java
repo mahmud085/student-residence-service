@@ -17,10 +17,4 @@ public class DateHelper {
 
         return  date.isBefore(currentDate) || date.isEqual(currentDate);
     }
-
-    public static boolean isDateAfterOrEqualToday(LocalDate date) {
-        LocalDate currentDate = DateHelper.getCurrentDate();
-
-        return  date.isAfter(currentDate) || date.isEqual(currentDate);
-    }
 }

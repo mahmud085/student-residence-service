@@ -2,16 +2,16 @@ package org.contract.service.services.implementations;
 
 import com.google.inject.Inject;
 import org.contract.common.Messages;
+import org.contract.common.exceptions.InvalidOperationException;
 import org.contract.common.exceptions.ObjectNotFoundException;
 import org.contract.common.exceptions.PaginationRangeOutOfBoundException;
+import org.contract.common.exceptions.ValidationException;
+import org.contract.common.helpers.DateHelper;
+import org.contract.common.helpers.ValidationHelper;
 import org.contract.dataaccess.data.enums.ContractStatus;
 import org.contract.dataaccess.data.models.Contract;
 import org.contract.dataaccess.models.PaginatedDataList;
 import org.contract.dataaccess.respositories.interfaces.ContractRepository;
-import org.contract.common.exceptions.InvalidOperationException;
-import org.contract.common.exceptions.ValidationException;
-import org.contract.common.helpers.DateHelper;
-import org.contract.common.helpers.ValidationHelper;
 import org.contract.dataaccess.respositories.interfaces.RoomRepository;
 import org.contract.service.models.NewContract;
 import org.contract.service.services.interfaces.ContractService;
@@ -29,6 +29,8 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public Contract createContract(NewContract newContract) throws ValidationException, InvalidOperationException {
+        LocalDate createdOn = DateHelper.getCurrentDate();
+
         ValidationHelper<NewContract> validationHelper = new ValidationHelper<>();
         validationHelper.validate(newContract);
 
@@ -36,12 +38,20 @@ public class ContractServiceImpl implements ContractService {
             throw new ValidationException(Messages.INVALID_ROOM_NUMBER);
         }
 
-        if (newContract.getEndDate() != null && newContract.getEndDate().isBefore(newContract.getStartDate())) {
-            throw new ValidationException(Messages.INVALID_END_DATE);
+        if (!newContract.getStartDate().isBefore(createdOn)) {
+            throw new InvalidOperationException(Messages.CONTRACT_CREATION_START_DATE_IN_PAST);
+        }
+
+        if (!newContract.getEndDate().isAfter(newContract.getStartDate())) {
+            throw new InvalidOperationException(Messages.INVALID_END_DATE);
+        }
+
+        if (!newContract.getStartDate().isAfter(getLastDateForConfirmation(createdOn))) {
+            throw new InvalidOperationException(Messages.CONTRACT_CREATION_START_DATE_TOO_EARLY);
         }
 
         if (contractRepository.getActiveContractByRoomNumberInDateRange(newContract.getRoomNumber(), newContract.getStartDate(), newContract.getEndDate()) != null) {
-            throw new InvalidOperationException(Messages.CONTRACT_CREATION_CONTRACT_ALREADY_EXIST);
+            throw new InvalidOperationException(Messages.CONTRACT_CREATION_CONTRACT_ALREADY_EXIST_FOR_ROOM);
         }
 
         Contract contract = new Contract() {
@@ -54,7 +64,7 @@ public class ContractServiceImpl implements ContractService {
                 setStartDate(newContract.getStartDate());
                 setEndDate(newContract.getEndDate());
                 setContractStatus(newContract.getStatus());
-                setCreatedOn(DateHelper.getCurrentDate());
+                setCreatedOn(createdOn);
             }
         };
 
@@ -169,5 +179,9 @@ public class ContractServiceImpl implements ContractService {
 
         contract.setEndDate(newEndDate);
         contractRepository.update(contract);
+    }
+
+    private LocalDate getLastDateForConfirmation(LocalDate createdOn) {
+        return createdOn.plusWeeks(2);
     }
 }

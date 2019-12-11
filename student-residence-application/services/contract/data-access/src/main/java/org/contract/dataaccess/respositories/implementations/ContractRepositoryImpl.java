@@ -126,7 +126,7 @@ public class ContractRepositoryImpl implements ContractRepository {
     private boolean isContractPending(Contract contract) {
         LocalDate pendingValidTill = contract.getCreatedOn().plusWeeks(2);
 
-        return DateHelper.isDateAfterOrEqualToday(pendingValidTill);
+        return DateHelper.getCurrentDate().isBefore(pendingValidTill);
     }
 
     private boolean isContractValidWithInDateRange(Contract contract, LocalDate startDate, LocalDate endDate) {
