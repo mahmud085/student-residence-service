@@ -38,4 +38,6 @@ public class Messages {
     public static final String CONTRACT_TERMINATION_INVALID_OPERATION_DATE = "A contract can only be terminated before 3 months of it's current end date.";
 
     public static final String AUTHORIZATION_FAILED_USER_ROLE_NOT_ALLOWED = "This user's role is not allowed to perform this action.";
+
+    public static final String PAGINATION_RANGE_EXCEEDS = "Pagination attributes exceeds data range.";
 }

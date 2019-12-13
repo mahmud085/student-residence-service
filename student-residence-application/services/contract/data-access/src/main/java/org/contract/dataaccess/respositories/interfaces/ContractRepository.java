@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface ContractRepository extends GenericRepository<Contract> {
     Contract getActiveContractByRoomNumberInDateRange(String roomNumber, LocalDate startDate, LocalDate endDate);
+    List<Contract> getAllByContractorsUserId(String contractorsUserId);
     PaginatedDataList<Contract> getAll(int pageNum, int pageSize) throws PaginationRangeOutOfBoundException;
     List<Contract> getAll(String contractorsNameFilter);
     PaginatedDataList<Contract> getAll(String contractorsNameFilter, int pageNum, int pageSize) throws PaginationRangeOutOfBoundException;

@@ -31,7 +31,7 @@ public class ContractRepositoryImpl implements ContractRepository {
     @Override
     public Contract get(String contractId) {
         Contract contract = DataStore.contracts.stream()
-                .filter(x -> x.getContractId().equals(contractId))
+                .filter(x -> x.getContractId().equalsIgnoreCase(contractId))
                 .findFirst()
                 .orElse(null);
 
@@ -46,7 +46,7 @@ public class ContractRepositoryImpl implements ContractRepository {
     @Override
     public void update(Contract contract) throws ObjectNotFoundException {
         Contract contractToUpdate = DataStore.contracts.stream()
-                .filter(x -> x.getContractId().equals(contract.getContractId()))
+                .filter(x -> x.getContractId().equalsIgnoreCase(contract.getContractId()))
                 .findFirst()
                 .orElse(null);
 
@@ -67,11 +67,20 @@ public class ContractRepositoryImpl implements ContractRepository {
     @Override
     public Contract getActiveContractByRoomNumberInDateRange(String roomNumber, LocalDate startDate, LocalDate endDate) {
         Contract contract = DataStore.contracts.stream()
-                .filter(x -> isContractPending(x) || isContractValidWithInDateRange(x, startDate, endDate))
+                .filter(x -> x.getRoomNumber().equalsIgnoreCase(roomNumber)
+                        && isContractWithInDateRange(x, startDate, endDate)
+                        && (isContractPending(x) || isContractConfirmed(x)))
                 .findFirst()
                 .orElse(null);
 
         return contract != null ? contract.clone() : null;
+    }
+
+    @Override
+    public List<Contract> getAllByContractorsUserId(String contractorsUserId) {
+        return DataStore.contracts.stream()
+                .filter(x -> x.getContractorsUserId().equalsIgnoreCase(contractorsUserId))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -110,7 +119,7 @@ public class ContractRepositoryImpl implements ContractRepository {
         PaginationHelper paginationHelper = new PaginationHelper(pageNum, pageSize, contractList.size());
 
         if (paginationHelper.isIndexOutOfRange()) {
-            throw new PaginationRangeOutOfBoundException("Pagination attributes exceeds data range.");
+            throw new PaginationRangeOutOfBoundException(Messages.PAGINATION_RANGE_EXCEEDS);
         }
 
         int startIndex = paginationHelper.getStartIndex();
@@ -130,8 +139,12 @@ public class ContractRepositoryImpl implements ContractRepository {
         return DateHelper.getCurrentDate().isBefore(pendingValidTill);
     }
 
-    private boolean isContractValidWithInDateRange(Contract contract, LocalDate startDate, LocalDate endDate) {
-        return (contract.getContractStatus() == ContractStatus.Confirmed && isContractPeriodCollide(contract, startDate, endDate));
+    private boolean isContractConfirmed(Contract contract) {
+        return contract.getContractStatus() == ContractStatus.Confirmed;
+    }
+
+    private boolean isContractWithInDateRange(Contract contract, LocalDate startDate, LocalDate endDate) {
+        return isContractPeriodCollide(contract, startDate, endDate);
     }
 
     private boolean isContractPeriodCollide(Contract contract, LocalDate startDate, LocalDate endDate) {

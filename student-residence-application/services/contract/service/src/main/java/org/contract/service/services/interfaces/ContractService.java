@@ -15,6 +15,7 @@ public interface ContractService {
     Contract createContract(NewContract newContract, String contextUserId) throws ValidationException, InvalidOperationException;
     Contract getContract(String contractId) throws ObjectNotFoundException;
     List<Contract> getContracts();
+    List<Contract> getContractsByContractor(String contractorsUserID);
     PaginatedDataList<Contract> getContracts(int pageNum, int pageSize) throws PaginationRangeOutOfBoundException;
     List<Contract> getContracts(String contractorsNameFilter);
     PaginatedDataList<Contract> getContracts(String contractorsNameFilter, int pageNum, int pageSize) throws PaginationRangeOutOfBoundException;

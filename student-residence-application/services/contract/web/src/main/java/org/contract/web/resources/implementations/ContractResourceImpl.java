@@ -9,10 +9,7 @@ import org.contract.service.models.NewContract;
 import org.contract.service.services.interfaces.ContractService;
 import org.contract.web.Constants;
 import org.contract.web.helpers.PaginationMetadataHelper;
-import org.contract.web.models.ContractListResponse;
-import org.contract.web.models.ContractUpdateOperation;
-import org.contract.web.models.ContractUpdateRequest;
-import org.contract.web.models.PaginationMetadata;
+import org.contract.web.models.*;
 import org.contract.web.resources.interfaces.ContractResource;
 
 import javax.annotation.security.RolesAllowed;
@@ -63,7 +60,7 @@ public class ContractResourceImpl implements ContractResource {
         try {
             Contract contract = contractService.getContract(contractId);
 
-            if (!isAdminUser || !contract.getContractorsUserId().equals(contextUserId)) {
+            if (!isAdminUser || !contract.getContractorsUserId().equalsIgnoreCase(contextUserId)) {
                 return buildResponseObject(Response.Status.UNAUTHORIZED, Messages.USER_NOT_AUTHORISED_TO_OPERATE_RESOURCE);
             }
 
@@ -119,16 +116,42 @@ public class ContractResourceImpl implements ContractResource {
                 paginationMetadata = new PaginationMetadata();
             }
 
-            ContractListResponse contractListResponse = new ContractListResponse() {
+            PaginatedContractListResponse paginatedContractListResponse = new PaginatedContractListResponse() {
                 {
                     setContracts(contractList);
                     setMetadata(paginationMetadata);
                 }
             };
 
-            return buildResponseObject(Response.Status.OK, contractListResponse);
+            return buildResponseObject(Response.Status.OK, paginatedContractListResponse);
         } catch (PaginationRangeOutOfBoundException ex) {
             return buildResponseObject(Response.Status.NO_CONTENT, null);
+        } catch (Exception ex) {
+            return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, Messages.INTERNAL_ERROR);
+        }
+    }
+
+    @Override
+    @GET @RolesAllowed({Constants.ROLE_Resident, Constants.ROLE_ADMINISTRATOR})
+    @Path("contractors/{contractors-user-id}")
+    public Response getContractsByContractor(@PathParam("contractors-user-id") String contractorsUserId) {
+        String contextUserId = securityContext.getUserPrincipal().getName();
+        boolean isAdminUser = securityContext.isUserInRole(Constants.ROLE_ADMINISTRATOR);
+
+        if (!contextUserId.equalsIgnoreCase("dummy") || !isAdminUser || !contractorsUserId.equalsIgnoreCase(contextUserId)) {
+            return buildResponseObject(Response.Status.UNAUTHORIZED, Messages.USER_NOT_AUTHORISED_TO_OPERATE_RESOURCE);
+        }
+
+        try {
+            List<Contract> contracts = contractService.getContractsByContractor(contractorsUserId);
+
+            ContractListResponse contractListResponse = new ContractListResponse(){
+                {
+                    setContracts(contracts);
+                }
+            };
+
+            return buildResponseObject(Response.Status.OK, contractListResponse);
         } catch (Exception ex) {
             return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, Messages.INTERNAL_ERROR);
         }
@@ -147,7 +170,7 @@ public class ContractResourceImpl implements ContractResource {
         try {
             Contract contract = contractService.getContract(contractId);
 
-            if (!contextUserId.equals("dummy") || !contract.getContractorsUserId().equals(contextUserId)) {
+            if (!contextUserId.equalsIgnoreCase("dummy") || !contract.getContractorsUserId().equalsIgnoreCase(contextUserId)) {
                 return buildResponseObject(Response.Status.UNAUTHORIZED, Messages.USER_NOT_AUTHORISED_TO_OPERATE_RESOURCE);
             }
         } catch (ObjectNotFoundException ex) {

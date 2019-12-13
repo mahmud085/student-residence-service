@@ -8,10 +8,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 @XmlRootElement(name = "response")
-public class ContractListResponse {
+public class PaginatedContractListResponse {
     @XmlElementWrapper(name="contracts")
     @XmlElement(name="contract")
     private List<Contract> contracts;
+    private PaginationMetadata metadata;
 
     public List<Contract> getContracts() {
         return contracts;
@@ -19,5 +20,13 @@ public class ContractListResponse {
 
     public void setContracts(List<Contract> contracts) {
         this.contracts = contracts;
+    }
+
+    public PaginationMetadata getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(PaginationMetadata metadata) {
+        this.metadata = metadata;
     }
 }

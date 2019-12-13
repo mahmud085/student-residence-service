@@ -57,7 +57,7 @@ public class ContractServiceImpl implements ContractService {
             throw new InvalidOperationException(Messages.INVALID_END_DATE);
         }
 
-        if (!newContract.getStartDate().isAfter(getLastDateForConfirmation(createdOn))) {
+        if (newContract.getStatus() == ContractStatus.Unconfirmed && !newContract.getStartDate().isAfter(getLastDateForConfirmation(createdOn))) {
             throw new InvalidOperationException(Messages.CONTRACT_CREATION_START_DATE_TOO_EARLY);
         }
 
@@ -85,7 +85,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public Contract getContract(String contractId)throws ObjectNotFoundException {
+    public Contract getContract(String contractId) throws ObjectNotFoundException {
         Contract contract = contractRepository.get(contractId);
 
         if (contract == null) {
@@ -108,6 +108,11 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public List<Contract> getContracts(String contractorsNameFilter) {
         return contractRepository.getAll(contractorsNameFilter);
+    }
+
+    @Override
+    public List<Contract> getContractsByContractor(String contractorsUserID) {
+        return contractRepository.getAllByContractorsUserId(contractorsUserID);
     }
 
     @Override
