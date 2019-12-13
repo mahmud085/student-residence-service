@@ -1,7 +1,7 @@
 package org.contract.web;
 
 import com.fasterxml.jackson.jaxrs.xml.JacksonJaxbXMLProvider;
-import org.contract.web.filters.AuthorizationFilter;
+import org.contract.web.authorization.AuthorizationFilter;
 
 import javax.ws.rs.core.Application;
 import java.util.HashSet;

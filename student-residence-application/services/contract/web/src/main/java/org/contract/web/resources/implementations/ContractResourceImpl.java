@@ -9,15 +9,15 @@ import org.contract.service.models.NewContract;
 import org.contract.service.services.interfaces.ContractService;
 import org.contract.web.Constants;
 import org.contract.web.helpers.PaginationMetadataHelper;
-import org.contract.web.models.*;
+import org.contract.web.models.ContractListResponse;
+import org.contract.web.models.ContractUpdateOperation;
+import org.contract.web.models.ContractUpdateRequest;
+import org.contract.web.models.PaginationMetadata;
 import org.contract.web.resources.interfaces.ContractResource;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.util.List;
 
 @Path(Constants.RESOURCE_PATH_CONTRACT)
@@ -30,15 +30,20 @@ public class ContractResourceImpl implements ContractResource {
     @Context
     private UriInfo uriInfo;
 
+    @Context
+    private SecurityContext securityContext;
+
     @Override
     @POST @RolesAllowed({Constants.ROLE_ADMINISTRATOR})
     public Response createContract(NewContract newContract) {
+        String contextUserId = securityContext.getUserPrincipal().getName();
+
         if (newContract == null) {
             return  buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUEST_BODY_REQUIRED);
         }
 
         try {
-            Contract createdContract = contractService.createContract(newContract);
+            Contract createdContract = contractService.createContract(newContract, contextUserId);
 
             return buildResponseObject(Response.Status.CREATED, createdContract);
         } catch (ValidationException | InvalidOperationException ex) {
@@ -52,8 +57,15 @@ public class ContractResourceImpl implements ContractResource {
     @GET @RolesAllowed({Constants.ROLE_ADMINISTRATOR, Constants.ROLE_Resident})
     @Path("{contract-id}")
     public Response getContract(@PathParam("contract-id") String contractId) {
+        String contextUserId = securityContext.getUserPrincipal().getName();
+        boolean isAdminUser = securityContext.isUserInRole(Constants.ROLE_ADMINISTRATOR);
+
         try {
             Contract contract = contractService.getContract(contractId);
+
+            if (!isAdminUser || !contract.getContractorsUserId().equals(contextUserId)) {
+                return buildResponseObject(Response.Status.UNAUTHORIZED, Messages.USER_NOT_AUTHORISED_TO_OPERATE_RESOURCE);
+            }
 
             return buildResponseObject(Response.Status.OK, contract);
         } catch (ObjectNotFoundException ex) {
@@ -65,8 +77,10 @@ public class ContractResourceImpl implements ContractResource {
     }
 
     @Override
-    @GET @RolesAllowed({Constants.ROLE_ADMINISTRATOR, Constants.ROLE_Resident})
-    public Response getContracts(@QueryParam("contractorsName") String contractorsName, @QueryParam("pageNum") int pageNum, @QueryParam("pageSize") int pageSize) {
+    @GET @RolesAllowed({Constants.ROLE_ADMINISTRATOR})
+    public Response getContracts(@QueryParam("contractorsName") String contractorsName
+            , @QueryParam("pageNum") int pageNum
+            , @QueryParam("pageSize") int pageSize) {
         boolean isContractorsNameFilterPresent = isValuePresent(contractorsName);
         boolean isPaginationRequested = isPaginationRequested(pageNum, pageSize);
         String endpointPath = String.format("%s%s", uriInfo.getBaseUri(), Constants.RESOURCE_PATH_CONTRACT);
@@ -124,6 +138,22 @@ public class ContractResourceImpl implements ContractResource {
     @PUT @RolesAllowed({Constants.ROLE_Resident})
     @Path("{contract-id}")
     public Response updateContract(@PathParam("contract-id") String contractId, ContractUpdateRequest contractUpdateRequest) {
+        String contextUserId = securityContext.getUserPrincipal().getName();
+
+        if (contractId == null || contractId.isEmpty()) {
+            return  buildResponseObject(Response.Status.BAD_REQUEST, Messages.CONTRACT_ID_REQUIRED);
+        }
+
+        try {
+            Contract contract = contractService.getContract(contractId);
+
+            if (!contextUserId.equals("dummy") || !contract.getContractorsUserId().equals(contextUserId)) {
+                return buildResponseObject(Response.Status.UNAUTHORIZED, Messages.USER_NOT_AUTHORISED_TO_OPERATE_RESOURCE);
+            }
+        } catch (ObjectNotFoundException ex) {
+            return buildResponseObject(Response.Status.NOT_FOUND, ex.getMessage());
+        }
+
         if (contractUpdateRequest == null) {
             return  buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUEST_BODY_REQUIRED);
         }

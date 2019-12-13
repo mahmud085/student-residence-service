@@ -16,7 +16,7 @@ public class RoomRepositoryImpl implements RoomRepository {
     @Override
     public Room get(String roomNumber) {
         Room room = DataStore.rooms.stream()
-                .filter(x -> x.getNumber().equalsIgnoreCase(roomNumber))
+                .filter(x -> x.getRoomNumber().equalsIgnoreCase(roomNumber))
                 .findFirst()
                 .orElse(null);
 

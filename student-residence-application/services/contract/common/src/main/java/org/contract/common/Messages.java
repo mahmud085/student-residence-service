@@ -2,14 +2,17 @@ package org.contract.common;
 
 public class Messages {
     public static final String INTERNAL_ERROR = "An internal error occurred.";
+    public static final String CONTRACT_ID_REQUIRED = "Contract ID is required.";
     public static final String REQUEST_BODY_REQUIRED = "Request body is required.";
     public static final String CONTRACT_NOT_FOUND_WITH_ID = "No contract found with the specified contract ID.";
+    public static final String USER_NOT_AUTHORISED_TO_OPERATE_RESOURCE = "This User is not authorized to perform this operation on this resource.";
 
     public static final String SUCCESSFUL_CONFIRMATION = "Contract successfully confirmed.";
     public static final String SUCCESSFUL_EXTENSION = "Contract successfully extended.";
     public static final String SUCCESSFUL_TERMINATION = "Contract successfully terminated.";
 
     public static final String REQUIRED_CONTRACTORS_NAME = "Contractor's Name is required.";
+    public static final String REQUIRED_CONTRACTORS_USER_ID = "Contractor's User ID is required.";
     public static final String REQUIRED_ROOM_NUMBER = "Room Number is required.";
     public static final String REQUIRED_END_DATE = "Start Date is required.";
     public static final String REQUIRED_START_DATE = "End Date is required.";
@@ -22,8 +25,10 @@ public class Messages {
     public static final String INVALID_PHONE = "Valid Phone Number is required.";
     public static final String INVALID_END_DATE = "Valid End Date is required.";
     public static final String INVALID_ROOM_NUMBER = "Valid Room Number is required.";
+    public static final String INVALID_CONTRACTORS_USER_ID = "No User found with the specified User ID.";
+    public static final String INVALID_CONTRACTORS_USER_ROLE = "Contractor is not a resident.";
 
-    public static final String CONTRACT_CREATION_START_DATE_IN_PAST = "'The contract cannot start on past date.";
+    public static final String CONTRACT_CREATION_START_DATE_IN_PAST = "The contract cannot start on past date.";
     public static final String CONTRACT_CREATION_START_DATE_TOO_EARLY = "The contract must start after the confirmation period (2 weeks after the creation) ends.";
     public static final String CONTRACT_CREATION_CONTRACT_ALREADY_EXIST_FOR_ROOM = "The specified room already has a Confirmed/Pending contract for the specified dates.";
     public static final String CONTRACT_CONFIRMATION_ALREADY_CONFIRMED = "The contract has already been confirmed.";
@@ -31,4 +36,6 @@ public class Messages {
     public static final String CONTRACT_EXTENSION_INVALID_OPERATION_DATE = "A contract can only be extended before 3 months of it's current end date.";
     public static final String CONTRACT_EXTENSION_INVALID_EXTENSION_PERIOD = "A contract can only be extended for 6 months.";
     public static final String CONTRACT_TERMINATION_INVALID_OPERATION_DATE = "A contract can only be terminated before 3 months of it's current end date.";
+
+    public static final String AUTHORIZATION_FAILED_USER_ROLE_NOT_ALLOWED = "This user's role is not allowed to perform this action.";
 }

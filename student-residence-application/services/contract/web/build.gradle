@@ -18,10 +18,11 @@ dependencies {
     compile project(':service')
     compile project(':data-access')
 
+    compile group: 'com.google.inject', name: 'guice', version: '4.2.1'
     compile group: 'org.glassfish.jersey.core', name: 'jersey-server', version: '2.13'
-    compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-jdk-http', version: '2.29.1'
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-jaxb', version: '2.29.1'
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version: '2.29.1'
     compile group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-xml-provider', version: '2.9.5'
+    compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-jdk-http', version: '2.29.1'
 
 }

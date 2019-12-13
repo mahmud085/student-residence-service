@@ -13,19 +13,19 @@ public class DataStore {
             add(new Room() {
                 {
                     setId(1);
-                    setNumber("Room_1");
+                    setRoomNumber("Room_1");
                 }
             });
             add(new Room() {
                 {
                     setId(1);
-                    setNumber("Room_2");
+                    setRoomNumber("Room_2");
                 }
             });
             add(new Room() {
                 {
                     setId(1);
-                    setNumber("Room_3");
+                    setRoomNumber("Room_3");
                 }
             });
         }

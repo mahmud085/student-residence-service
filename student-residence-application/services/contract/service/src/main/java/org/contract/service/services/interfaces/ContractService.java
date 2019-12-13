@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface ContractService {
-    Contract createContract(NewContract newContract) throws ValidationException, InvalidOperationException;
+    Contract createContract(NewContract newContract, String contextUserId) throws ValidationException, InvalidOperationException;
     Contract getContract(String contractId) throws ObjectNotFoundException;
     List<Contract> getContracts();
     PaginatedDataList<Contract> getContracts(int pageNum, int pageSize) throws PaginationRangeOutOfBoundException;

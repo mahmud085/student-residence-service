@@ -17,6 +17,9 @@ public class NewContract {
     @HasValue(message = Messages.REQUIRED_CONTRACTORS_NAME)
     private String contractorsName;
 
+    @HasValue(message = Messages.REQUIRED_CONTRACTORS_USER_ID)
+    private String contractorsUserId;
+
     @Pattern(regexp = Constants.REGEX_VALID_EMAIL, message = Messages.INVALID_EMAIL)
     private String contractorsEmail;
 
@@ -41,6 +44,14 @@ public class NewContract {
 
     public void setContractorsName(String contractorsName) {
         this.contractorsName = contractorsName;
+    }
+
+    public String getContractorsUserId() {
+        return contractorsUserId;
+    }
+
+    public void setContractorsUserId(String contractorsUserId) {
+        this.contractorsUserId = contractorsUserId;
     }
 
     public String getContractorsEmail() {

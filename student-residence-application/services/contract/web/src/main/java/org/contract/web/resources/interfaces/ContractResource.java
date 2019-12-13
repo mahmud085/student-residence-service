@@ -4,6 +4,7 @@ import org.contract.service.models.NewContract;
 import org.contract.web.models.ContractUpdateRequest;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 
 public interface ContractResource {
     Response createContract(NewContract newContract);

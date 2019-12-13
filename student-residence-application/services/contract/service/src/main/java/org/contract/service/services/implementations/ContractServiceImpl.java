@@ -14,6 +14,8 @@ import org.contract.dataaccess.models.PaginatedDataList;
 import org.contract.dataaccess.respositories.interfaces.ContractRepository;
 import org.contract.dataaccess.respositories.interfaces.RoomRepository;
 import org.contract.service.models.NewContract;
+import org.contract.service.models.User;
+import org.contract.service.models.UserRole;
 import org.contract.service.services.interfaces.ContractService;
 
 import java.time.LocalDate;
@@ -28,17 +30,26 @@ public class ContractServiceImpl implements ContractService {
     private RoomRepository roomRepository;
 
     @Override
-    public Contract createContract(NewContract newContract) throws ValidationException, InvalidOperationException {
+    public Contract createContract(NewContract newContract, String contextUserId) throws ValidationException, InvalidOperationException {
         LocalDate createdOn = DateHelper.getCurrentDate();
 
         ValidationHelper<NewContract> validationHelper = new ValidationHelper<>();
         validationHelper.validate(newContract);
 
+        User contractorUser = getUser(newContract.getContractorsUserId());
+        if (contractorUser == null) {
+            throw new ValidationException(Messages.INVALID_CONTRACTORS_USER_ID);
+        }
+
+        if (contractorUser.getRole() != UserRole.Resident) {
+            throw new ValidationException(Messages.INVALID_CONTRACTORS_USER_ROLE);
+        }
+
         if (roomRepository.get(newContract.getRoomNumber()) == null) {
             throw new ValidationException(Messages.INVALID_ROOM_NUMBER);
         }
 
-        if (!newContract.getStartDate().isBefore(createdOn)) {
+        if (newContract.getStartDate().isBefore(createdOn)) {
             throw new InvalidOperationException(Messages.CONTRACT_CREATION_START_DATE_IN_PAST);
         }
 
@@ -58,12 +69,14 @@ public class ContractServiceImpl implements ContractService {
             {
                 setContractId(UUID.randomUUID().toString());
                 setContractorsName(newContract.getContractorsName().trim());
+                setContractorsUserId(newContract.getContractorsUserId());
                 setContractorsEmail(newContract.getContractorsEmail().trim());
                 setContractorsPhone(newContract.getContractorsPhone().trim());
                 setRoomNumber(newContract.getRoomNumber().trim());
                 setStartDate(newContract.getStartDate());
                 setEndDate(newContract.getEndDate());
                 setContractStatus(newContract.getStatus());
+                setCreatedBy(contextUserId);
                 setCreatedOn(createdOn);
             }
         };
@@ -183,5 +196,16 @@ public class ContractServiceImpl implements ContractService {
 
     private LocalDate getLastDateForConfirmation(LocalDate createdOn) {
         return createdOn.plusWeeks(2);
+    }
+
+    private User getUser(String userId) {
+
+        // this is dummy data, will be fully implemented after the auth service is ready
+        return new User() {
+            {
+                setUserId(userId);
+                setRole(UserRole.Resident);
+            }
+        };
     }
 }

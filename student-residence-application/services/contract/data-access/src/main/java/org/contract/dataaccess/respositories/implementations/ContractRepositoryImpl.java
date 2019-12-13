@@ -55,6 +55,7 @@ public class ContractRepositoryImpl implements ContractRepository {
         }
 
         contractToUpdate.setContractorsName(contract.getContractorsName());
+        contractToUpdate.setContractorsUserId(contract.getContractorsUserId());
         contractToUpdate.setContractorsEmail(contract.getContractorsEmail());
         contractToUpdate.setContractorsPhone(contract.getContractorsPhone());
         contractToUpdate.setRoomNumber(contract.getRoomNumber());
