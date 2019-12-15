@@ -1,0 +1,6 @@
+rootProject.name = 'appointment-service'
+include 'web'
+include 'data-access'
+include 'service'
+include 'common'
+
