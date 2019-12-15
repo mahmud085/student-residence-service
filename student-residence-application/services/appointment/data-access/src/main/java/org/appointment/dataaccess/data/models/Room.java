@@ -1,4 +1,4 @@
-package org.contract.dataaccess.data.models;
+package org.appointment.dataaccess.data.models;
 
 public class Room extends Entity implements Cloneable {
     private String roomNumber;

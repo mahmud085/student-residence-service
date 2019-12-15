@@ -1,4 +1,4 @@
-package org.contract.common.exceptions;
+package org.appointment.common.exceptions;
 
 public class ValidationException extends Exception {
     public ValidationException(String message) {

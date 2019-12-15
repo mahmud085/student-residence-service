@@ -1,6 +1,6 @@
-package org.contract.common.helpers;
+package org.appointment.common.helpers;
 
-import org.contract.common.exceptions.ValidationException;
+import org.appointment.common.exceptions.ValidationException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;

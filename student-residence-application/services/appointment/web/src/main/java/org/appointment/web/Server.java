@@ -2,7 +2,7 @@ package org.appointment.web;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import org.contract.web.resources.implementations.AppointmentResourceImpl;
+import org.appointment.web.resources.implementations.AppointmentResourceImpl;
 import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
@@ -22,5 +22,6 @@ public class Server {
         config.register(injector.getInstance(AppointmentResourceImpl.class));
 
         JdkHttpServerFactory.createHttpServer(baseUri, config);
+        System.out.println("Server ready to serve your requests...");
     }
 }

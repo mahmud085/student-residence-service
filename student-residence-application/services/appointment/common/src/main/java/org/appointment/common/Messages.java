@@ -1,4 +1,4 @@
-package org.contract.common;
+package org.appointment.common;
 
 public class Messages {
     public static final String INTERNAL_ERROR = "An internal error occurred.";
@@ -14,10 +14,8 @@ public class Messages {
     public static final String REQUIRED_CONTRACTORS_NAME = "Contractor's Name is required.";
     public static final String REQUIRED_CONTRACTORS_USER_ID = "Contractor's User ID is required.";
     public static final String REQUIRED_ROOM_NUMBER = "Room Number is required.";
-    public static final String REQUIRED_END_DATE = "Start Date is required.";
-    public static final String REQUIRED_START_DATE = "End Date is required.";
-    public static final String REQUIRED_STATUS = "Valid Status is required.";
-    public static final String REQUIRED_OPERATION = "Operation is required.";
+    public static final String REQUIRED_DATE = "Start Date is required.";
+    public static final String REQUIRED_ISSUE = "Valid Status is required.";
 
     public static final String INVALID_PAGE_NUM = "Invalid 'pageNum' value.";
     public static final String INVALID_PAGE_SIZE = "Invalid 'pageSize' value.";

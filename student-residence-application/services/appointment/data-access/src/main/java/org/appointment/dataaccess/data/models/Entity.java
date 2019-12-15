@@ -1,4 +1,4 @@
-package org.contract.dataaccess.data.models;
+package org.appointment.dataaccess.data.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

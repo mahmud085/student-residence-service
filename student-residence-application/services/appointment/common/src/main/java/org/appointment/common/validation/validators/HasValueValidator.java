@@ -1,6 +1,6 @@
-package org.contract.common.validation.validators;
+package org.appointment.common.validation.validators;
 
-import org.contract.common.validation.annotations.HasValue;
+import org.appointment.common.validation.annotations.HasValue;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

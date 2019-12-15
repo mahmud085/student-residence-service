@@ -1,4 +1,4 @@
-package org.contract.dataaccess.models;
+package org.appointment.dataaccess.models;
 
 import java.util.List;
 

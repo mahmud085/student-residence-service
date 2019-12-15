@@ -1,4 +1,4 @@
-package org.contract.common.adapters;
+package org.appointment.common.adapters;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.time.LocalDate;

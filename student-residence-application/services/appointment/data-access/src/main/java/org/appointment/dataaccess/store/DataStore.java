@@ -1,13 +1,13 @@
-package org.contract.dataaccess.store;
+package org.appointment.dataaccess.store;
 
-import org.contract.dataaccess.data.models.Contract;
-import org.contract.dataaccess.data.models.Room;
+import org.appointment.dataaccess.data.models.Appointment;
+import org.appointment.dataaccess.data.models.Room;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DataStore {
-    public static List<Contract> contracts = new ArrayList<>();
+    public static List<Appointment> appointments = new ArrayList<>();
     public static List<Room> rooms = new ArrayList<Room>() {
         {
             add(new Room() {

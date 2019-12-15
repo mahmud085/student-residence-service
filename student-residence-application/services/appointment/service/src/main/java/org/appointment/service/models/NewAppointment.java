@@ -4,7 +4,7 @@ import org.appointment.common.Constants;
 import org.appointment.common.Messages;
 import org.appointment.common.adapters.LocalDateAdapter;
 import org.appointment.common.validation.annotations.HasValue;
-import org.appointment.dataaccess.data.enums.ContractStatus;
+import org.appointment.dataaccess.data.enums.AppointmentPriorityLevel;
 import org.appointment.service.adapters.AppointmentTypeAdapter;
 import org.appointment.service.adapters.AppointmentPriorityLevelAdapter;
 
@@ -56,14 +56,6 @@ public class NewAppointment {
         this.roomNumber = roomNumber;
     }
 
-    @XmlJavaTypeAdapter(AppointmentPriorityLevelAdapter.class)
-    public AppointmentPriorityLevelAdapter getPriorityLevel() {
-        return priorityLevel;
-    }
-
-    public void setPriorityLevel(AppointmentPriorityLevel priorityLevel) {
-        this.priorityLevel = priorityLevel;
-    }
 
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     public LocalDate getDate() {
@@ -74,14 +66,5 @@ public class NewAppointment {
         this.date = date;
     }
 
-
-    @XmlJavaTypeAdapter(AppointmentTypeAdapter.class)
-    public AppointmentType getAppointmentType() {
-        return appointmentType;
-    }
-
-    public void setAppointmentType(AppointmentType appointmentType) {
-        this.appointmentType = appointmentType;
-    }
 
 }

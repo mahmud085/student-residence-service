@@ -1,6 +1,6 @@
-package org.contract.common.helpers;
+package org.appointment.common.helpers;
 
-import org.contract.common.Constants;
+import org.appointment.common.Constants;
 
 public class PaginationHelper {
     private int pageNum;
