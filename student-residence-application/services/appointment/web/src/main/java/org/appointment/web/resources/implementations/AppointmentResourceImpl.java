@@ -51,7 +51,6 @@ public class AppointmentResourceImpl implements AppointmentResource {
     }
 
 
-
     private <T> Response buildResponseObject(Response.Status status, T entity) {
         return Response.status(status)
                 .entity(entity)

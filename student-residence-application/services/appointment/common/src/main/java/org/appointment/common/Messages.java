@@ -12,10 +12,12 @@ public class Messages {
     public static final String SUCCESSFUL_TERMINATION = "Contract successfully terminated.";
 
     public static final String REQUIRED_CONTRACTORS_NAME = "Contractor's Name is required.";
-    public static final String REQUIRED_CONTRACTORS_USER_ID = "Contractor's User ID is required.";
     public static final String REQUIRED_ROOM_NUMBER = "Room Number is required.";
-    public static final String REQUIRED_DATE = "Start Date is required.";
-    public static final String REQUIRED_ISSUE = "Valid Status is required.";
+    public static final String REQUIRED_APPOINTMENT_TYPE = "Valid Appointment Type is required";
+    public static final String REQUIRED_ISSUE = "Valid Issue is required.";
+    public static final String REQUIRED_APPOINTMENT_PRIORITY = "Valid Appointment Priority is required";
+    public static final String REQUIRED_DESIRED_DATE = "Desired Date is required.";
+    public static final String REQUIRED_APPOINTMENT_STATUS = "Valid Appointment Status is required";
 
     public static final String INVALID_PAGE_NUM = "Invalid 'pageNum' value.";
     public static final String INVALID_PAGE_SIZE = "Invalid 'pageSize' value.";
