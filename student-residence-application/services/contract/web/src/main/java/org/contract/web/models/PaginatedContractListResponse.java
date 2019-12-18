@@ -1,5 +1,8 @@
 package org.contract.web.models;
 
+import com.fasterxml.jackson.annotation.JacksonAnnotation;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import org.contract.dataaccess.data.models.Contract;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -10,7 +13,8 @@ import java.util.List;
 @XmlRootElement(name = "response")
 public class PaginatedContractListResponse {
     @XmlElementWrapper(name="contracts")
-    @XmlElement(name="contract")
+    @JacksonXmlProperty(localName = "contract")
+    @JsonProperty("contracts")
     private List<Contract> contracts;
     private PaginationMetadata metadata;
 

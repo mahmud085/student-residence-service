@@ -4,7 +4,7 @@ public class Messages {
     public static final String INTERNAL_ERROR = "An internal error occurred.";
     public static final String CONTRACT_ID_REQUIRED = "Contract ID is required.";
     public static final String REQUEST_BODY_REQUIRED = "Request body is required.";
-    public static final String CONTRACT_NOT_FOUND_WITH_ID = "No contract found with the specified contract ID.";
+    public static final String CONTRACT_NOT_FOUND_WITH_ID = "No contract found with the specified Contract ID.";
     public static final String USER_NOT_AUTHORISED_TO_OPERATE_RESOURCE = "This User is not authorized to perform this operation on this resource.";
 
     public static final String SUCCESSFUL_CONFIRMATION = "Contract successfully confirmed.";
