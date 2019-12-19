@@ -10,4 +10,5 @@ import java.util.List;
 public interface AppointmentRepository extends GenericRepository<Appointment> {
     PaginatedDataList<Appointment> getAll(int pageNum, int pageSize) throws PaginationRangeOutOfBoundException;
     List<Appointment> getAll();
+    Appointment getById(String appointmentId);
 }

@@ -19,6 +19,7 @@ public class Messages {
     public static final String REQUIRED_APPOINTMENT_PRIORITY = "Valid Appointment Priority is required";
     public static final String REQUIRED_DESIRED_DATE = "Desired Date is required.";
     public static final String REQUIRED_APPOINTMENT_STATUS = "Valid Appointment Status is required";
+    public static final String APPOINTMENT_NOT_FOUND="Appointment Not Found With this ID";
 
     public static final String INVALID_PAGE_NUM = "Invalid 'pageNum' value.";
     public static final String INVALID_PAGE_SIZE = "Invalid 'pageSize' value.";
@@ -30,6 +31,7 @@ public class Messages {
     public static final String INVALID_DESIRED_DATE = "Appointment desired date should be between two weeks before start or end date";
     public static final String INVALID_CONTRACTORS_USER_ID = "No User found with the specified User ID.";
     public static final String INVALID_CONTRACTORS_USER_ROLE = "Contractor is not a resident.";
+    
 
 
     public static final String AUTHORIZATION_FAILED_USER_ROLE_NOT_ALLOWED = "This user's role is not allowed to perform this action.";

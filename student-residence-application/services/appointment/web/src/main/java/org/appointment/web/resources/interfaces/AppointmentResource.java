@@ -6,4 +6,11 @@ import javax.ws.rs.core.Response;
 
 public interface AppointmentResource {
     Response createAppointment(NewAppointment newAppointment);
+    
+    /**
+     * 
+     */
+    
+    Response getAppointment(String appointmentId);
+    
 }

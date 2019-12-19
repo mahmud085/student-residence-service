@@ -16,53 +16,64 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class AppointmentRepositoryImpl implements AppointmentRepository {
-    private static int id = 0;
+	private static int id = 0;
 
-    @Override
-    public Appointment add(Appointment appointment) {
-        appointment.setId(getNewId());
+	@Override
+	public Appointment add(Appointment appointment) {
+		appointment.setId(getNewId());
 
-        DataStore.appointments.add(appointment);
+		DataStore.appointments.add(appointment);
 
-        return appointment;
-    }
-
-
-    @Override
-    public List<Appointment> getAll() {
-        return new ArrayList<>(DataStore.appointments);
-    }
+		return appointment;
+	}
 
 
-    @Override
-    public PaginatedDataList<Appointment> getAll(int pageNum, int pageSize) throws PaginationRangeOutOfBoundException {
-        List<Appointment> appointmentList = DataStore.appointments;
+	@Override
+	public List<Appointment> getAll() {
+		return new ArrayList<>(DataStore.appointments);
+	}
 
-        return getPaginatedAppointmentList(pageNum, pageSize, appointmentList);
-    }
+	@Override
+	public Appointment getById(String appointmentId) {
+		for(Appointment  appointment : DataStore.appointments){
+			if(appointment.getAppointmentId().equals(appointmentId)) {
+				return appointment;
+			}
+
+		}
+		return null;
+	}
 
 
-    private synchronized int getNewId() {
-        return ++id;
-    }
+	@Override
+	public PaginatedDataList<Appointment> getAll(int pageNum, int pageSize) throws PaginationRangeOutOfBoundException {
+		List<Appointment> appointmentList = DataStore.appointments;
+
+		return getPaginatedAppointmentList(pageNum, pageSize, appointmentList);
+	}
 
 
-    private PaginatedDataList<Appointment> getPaginatedAppointmentList(int pageNum, int pageSize, List<Appointment> appointmentList) throws PaginationRangeOutOfBoundException {
-        PaginationHelper paginationHelper = new PaginationHelper(pageNum, pageSize, appointmentList.size());
+	private synchronized int getNewId() {
+		return ++id;
+	}
 
-        if (paginationHelper.isIndexOutOfRange()) {
-            throw new PaginationRangeOutOfBoundException(Messages.PAGINATION_RANGE_EXCEEDS);
-        }
 
-        int startIndex = paginationHelper.getStartIndex();
-        int endIndex = paginationHelper.getEndIndex();
+	private PaginatedDataList<Appointment> getPaginatedAppointmentList(int pageNum, int pageSize, List<Appointment> appointmentList) throws PaginationRangeOutOfBoundException {
+		PaginationHelper paginationHelper = new PaginationHelper(pageNum, pageSize, appointmentList.size());
 
-        return new PaginatedDataList<Appointment>() {
-            {
-                setData(appointmentList.subList(startIndex, endIndex));
-                setTotalDataCount(appointmentList.size());
-            }
-        };
-    }
+		if (paginationHelper.isIndexOutOfRange()) {
+			throw new PaginationRangeOutOfBoundException(Messages.PAGINATION_RANGE_EXCEEDS);
+		}
+
+		int startIndex = paginationHelper.getStartIndex();
+		int endIndex = paginationHelper.getEndIndex();
+
+		return new PaginatedDataList<Appointment>() {
+			{
+				setData(appointmentList.subList(startIndex, endIndex));
+				setTotalDataCount(appointmentList.size());
+			}
+		};
+	}
 
 }

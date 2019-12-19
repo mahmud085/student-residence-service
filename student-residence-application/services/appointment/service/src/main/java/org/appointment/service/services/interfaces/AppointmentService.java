@@ -14,4 +14,11 @@ import java.util.List;
 public interface AppointmentService {
     Appointment createAppointment(NewAppointment newAppointment, String contextUserId) throws ValidationException, InvalidOperationException, ObjectNotFoundException;
 
+    
+    /**
+     * 
+     * @author Kowshik Dipta Das Joy
+     * 
+     */
+    Appointment gettAppointment(String appointmentId , String contextUserId) throws ValidationException, InvalidOperationException, ObjectNotFoundException; 
 }

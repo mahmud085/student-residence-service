@@ -21,90 +21,125 @@ import java.util.UUID;
 
 
 public class AppointmentServiceImpl implements org.appointment.service.services.interfaces.AppointmentService {
-    @Inject
-    private AppointmentRepository appointmentRepository;
+	@Inject
+	private AppointmentRepository appointmentRepository;
 
-    private Client client;
+	private Client client;
 
-    @Override
-    public Appointment createAppointment(NewAppointment newAppointment, String contextUserId) throws ValidationException, InvalidOperationException, ObjectNotFoundException {
-        LocalDate createdOn = DateHelper.getCurrentDate();
-        String contractId = newAppointment.getContractId();
-        ValidationHelper<NewAppointment> validationHelper = new ValidationHelper<>();
-        validationHelper.validate(newAppointment);
+	@Override
+	public Appointment createAppointment(NewAppointment newAppointment, String contextUserId) throws ValidationException, InvalidOperationException, ObjectNotFoundException {
 
-        try {
-            Contract contract = getContractor(contractId);
 
-            if (!contract.getRoomNumber().equals(newAppointment.getRoomNumber())) {
-                throw new ValidationException(Messages.INVALID_ROOM_NUMBER);
-            }
+		LocalDate createdOn = DateHelper.getCurrentDate();
+		String contractId = newAppointment.getContractId();
 
-            if (newAppointment.getAppointmentType() == AppointmentType.MoveIn) {
+		ValidationHelper<NewAppointment> validationHelper = new ValidationHelper<>();
+		validationHelper.validate(newAppointment);
 
-                if (!contract.getContractStatus().equals("Confirmed")) {
-                    throw new InvalidOperationException(Messages.INVALID_CONTRACT);
-                }
 
-                LocalDate twoWeeksBefore = contract.getStartDate().minusWeeks(2);
+		try {
+			//  Contract contract = getContractor(contractId);
+			/*
+			 * Only for Testing 
+			 */
 
-                if (newAppointment.getDesiredDate().isBefore(twoWeeksBefore)) {
-                    throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
-                }
-                if (newAppointment.getDesiredDate().isAfter(contract.getStartDate())) {
-                    throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
-                }
-            }
+			Contract contract = new Contract();
+			contract.setContractId("45678");
+			contract.setContractorsEmail("koushikjay66");
+			contract.setContractorsName("bulbuli");
+			contract.setContractorsPhone("123456787");
+			contract.setContractorsUserId("koushikja66");
+			contract.setContractStatus("Confirmed");
+			contract.setCreatedOn(LocalDate.of(2018, 12, 31));
+			contract.setEndDate(LocalDate.of(2020, 3, 4));
+			contract.setRoomNumber("67890");
+			contract.setStartDate(LocalDate.now());
 
-            if (newAppointment.getAppointmentType() == AppointmentType.MoveOut) {
 
-                LocalDate twoWeeksBefore = contract.getEndDate().minusWeeks(2);
+			if (!contract.getRoomNumber().equals(newAppointment.getRoomNumber())) {
 
-                if (newAppointment.getDesiredDate().isBefore(twoWeeksBefore)) {
-                    throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
-                }
-                if (newAppointment.getDesiredDate().isAfter(contract.getEndDate())) {
-                    throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
-                }
-            }
+				throw new ValidationException(Messages.INVALID_ROOM_NUMBER);
+			}
 
-            Appointment appointment = new Appointment() {
-                {
-                    setAppointmentId(UUID.randomUUID().toString());
-                    setContractorsName(newAppointment.getContractorsName().trim());
-                    setContractId(newAppointment.getContractId());
-                    setRoomNumber(newAppointment.getRoomNumber().trim());
-                    setAppointmentType(newAppointment.getAppointmentType());
-                    setIssue(newAppointment.getIssue());
-                    setPriority(newAppointment.getPriority());
-                    setDesiredDate(newAppointment.getDesiredDate());
-                    setStatus(AppointmentStatus.Received);
-                    setCreatedBy(contextUserId);
-                    setCreatedOn(createdOn);
-                }
-            };
+			if (newAppointment.getAppointmentType() == AppointmentType.MoveIn) {
 
-            return appointmentRepository.add(appointment);
-        } catch (Exception e){
-            throw new ObjectNotFoundException(e.getMessage());
-        }
+				if (!contract.getContractStatus().equals("Confirmed")) {
+					throw new InvalidOperationException(Messages.INVALID_CONTRACT);
+				}
 
-    }
-    private Contract getContractor(String contractId) throws ObjectNotFoundException {
-        client = ClientBuilder.newClient();
-        Response response = client.target("http://localhost:8081/api/contracts")
-                .path("{contractId}")
-                .resolveTemplate("contractId", contractId)
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .get();
+				LocalDate twoWeeksBefore = contract.getStartDate().minusWeeks(2);
 
-        try {
-            Contract contract = response.readEntity(Contract.class);
-            return contract;
-        } catch(Exception e) {
+				if (newAppointment.getDesiredDate().isBefore(twoWeeksBefore)) {
 
-            throw new ObjectNotFoundException(Messages.CONTRACT_NOT_FOUND_WITH_ID);
-        }
-    }
+					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
+				}
+				if (newAppointment.getDesiredDate().isAfter(contract.getStartDate())) {
+					System.out.println("tuntuni");
+					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
+				}
+
+			}
+
+			if (newAppointment.getAppointmentType() == AppointmentType.MoveOut) {
+
+				LocalDate twoWeeksBefore = contract.getEndDate().minusWeeks(2);
+
+				if (newAppointment.getDesiredDate().isBefore(twoWeeksBefore)) {
+					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
+				}
+				if (newAppointment.getDesiredDate().isAfter(contract.getEndDate())) {
+					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
+				}
+			}
+
+			Appointment appointment = new Appointment() {
+				{
+					setAppointmentId(UUID.randomUUID().toString());
+					setContractorsName(newAppointment.getContractorsName().trim());
+					setContractId(newAppointment.getContractId());
+					setRoomNumber(newAppointment.getRoomNumber().trim());
+					setAppointmentType(newAppointment.getAppointmentType());
+					setIssue(newAppointment.getIssue());
+					setPriority(newAppointment.getPriority());
+					setDesiredDate(newAppointment.getDesiredDate());
+					setStatus(AppointmentStatus.Received);
+					setCreatedBy(contextUserId);
+					setCreatedOn(createdOn);
+				}
+			};
+
+			return appointmentRepository.add(appointment);
+		} catch (Exception e){
+			throw new ObjectNotFoundException(e.getMessage());
+		}
+
+	}
+
+	@Override
+	public Appointment gettAppointment(String appointmentId, String contextUserId) throws ObjectNotFoundException {
+		Appointment appointment=appointmentRepository.getById(appointmentId);
+		if(appointment==null)
+				throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
+		
+		return appointment;
+	}
+
+
+	private Contract getContractor(String contractId) throws ObjectNotFoundException {
+		client = ClientBuilder.newClient();
+		Response response = client.target("http://localhost:8081/api/contracts")
+				.path("{contractId}")
+				.resolveTemplate("contractId", contractId)
+				.request(MediaType.APPLICATION_JSON_TYPE)
+				.get();
+
+		try {
+			Contract contract = response.readEntity(Contract.class);
+			return contract;
+		} catch(Exception e) {
+
+			throw new ObjectNotFoundException(Messages.CONTRACT_NOT_FOUND_WITH_ID);
+		}
+	}
 
 }
