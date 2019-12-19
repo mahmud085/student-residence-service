@@ -21,6 +21,9 @@ public class NewAppointment {
     @HasValue(message = Messages.REQUIRED_CONTRACTORS_NAME)
     private String contractorsName;
 
+    @HasValue(message = Messages.REQUIRED_CONTRACT_ID)
+    private String contractId;
+
     @HasValue(message = Messages.REQUIRED_ROOM_NUMBER)
     private String roomNumber;
 
@@ -36,7 +39,6 @@ public class NewAppointment {
     @NotNull(message = Messages.REQUIRED_DESIRED_DATE)
     private LocalDate desiredDate;
 
-    @NotNull(message = Messages.REQUIRED_APPOINTMENT_STATUS)
     private AppointmentStatus status;
 
     public String getContractorsName() {
@@ -47,6 +49,13 @@ public class NewAppointment {
         this.contractorsName = contractorsName;
     }
 
+    public String getContractId() {
+        return contractId;
+    }
+
+    public void setContractId(String contractId) {
+        this.contractId = contractId;
+    }
     public String getRoomNumber() {
         return roomNumber;
     }

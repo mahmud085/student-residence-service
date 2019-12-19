@@ -15,23 +15,32 @@ import java.time.LocalDate;
 
 @XmlRootElement(name = "appointment")
 public class Appointment extends Entity implements Cloneable  {
+    private String appointmentId;
     private String contractorsName;
+    private String contractId;
     private String roomNumber;
-   // @XmlJavaTypeAdapter(AppointmentTypeAdapter.class)
+
     private AppointmentType appointmentType;
     private String issue;
 
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate desiredDate;
-    // @XmlJavaTypeAdapter(AppointmentStatusAdapter.class)
+
     private AppointmentStatus status;
-    // @XmlJavaTypeAdapter(AppointmentPriorityAdapter.class)
+
     private AppointmentPriority priority;
 
     @JsonIgnore
     private String createdBy;
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate createdOn;
+    public String getAppointmentId() {
+        return appointmentId;
+    }
+
+    public void setAppointmentId(String appointmentId) {
+        this.appointmentId = appointmentId;
+    }
 
     public String getContractorsName() {
         return contractorsName;
@@ -40,7 +49,13 @@ public class Appointment extends Entity implements Cloneable  {
     public void setContractorsName(String contractorsName) {
         this.contractorsName = contractorsName;
     }
+    public String getContractId() {
+        return contractId;
+    }
 
+    public void setContractId(String contractId) {
+        this.contractId = contractId;
+    }
     public String getRoomNumber() {
         return roomNumber;
     }

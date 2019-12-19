@@ -31,7 +31,7 @@ public class AppointmentResourceImpl implements AppointmentResource {
     private SecurityContext securityContext;
 
     @Override
-    @POST @RolesAllowed({Constants.ROLE_ADMINISTRATOR})
+    @POST @RolesAllowed({Constants.ROLE_Resident})
     public Response createAppointment(NewAppointment newAppointment) {
         String contextUserId = securityContext.getUserPrincipal().getName();
 

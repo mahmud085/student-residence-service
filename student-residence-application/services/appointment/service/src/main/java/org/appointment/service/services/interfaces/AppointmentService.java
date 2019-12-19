@@ -12,6 +12,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface AppointmentService {
-    Appointment createAppointment(NewAppointment newAppointment, String contextUserId) throws ValidationException, InvalidOperationException;
+    Appointment createAppointment(NewAppointment newAppointment, String contextUserId) throws ValidationException, InvalidOperationException, ObjectNotFoundException;
 
 }

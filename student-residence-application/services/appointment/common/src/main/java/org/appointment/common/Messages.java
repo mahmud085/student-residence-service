@@ -12,6 +12,7 @@ public class Messages {
     public static final String SUCCESSFUL_TERMINATION = "Contract successfully terminated.";
 
     public static final String REQUIRED_CONTRACTORS_NAME = "Contractor's Name is required.";
+    public static final String REQUIRED_CONTRACT_ID = "Contract ID is required.";
     public static final String REQUIRED_ROOM_NUMBER = "Room Number is required.";
     public static final String REQUIRED_APPOINTMENT_TYPE = "Valid Appointment Type is required";
     public static final String REQUIRED_ISSUE = "Valid Issue is required.";
@@ -25,6 +26,8 @@ public class Messages {
     public static final String INVALID_PHONE = "Valid Phone Number is required.";
     public static final String INVALID_END_DATE = "Valid End Date is required.";
     public static final String INVALID_ROOM_NUMBER = "Valid Room Number is required.";
+    public static final String INVALID_CONTRACT = "Contract is not confirmed yet";
+    public static final String INVALID_DESIRED_DATE = "Appointment desired date should be between two weeks before start or end date";
     public static final String INVALID_CONTRACTORS_USER_ID = "No User found with the specified User ID.";
     public static final String INVALID_CONTRACTORS_USER_ROLE = "Contractor is not a resident.";
 
