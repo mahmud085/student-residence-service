@@ -38,22 +38,8 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 
 
 		try {
-			//  Contract contract = getContractor(contractId);
-			/*
-			 * Only for Testing 
-			 */
-
-			Contract contract = new Contract();
-			contract.setContractId("45678");
-			contract.setContractorsEmail("koushikjay66");
-			contract.setContractorsName("bulbuli");
-			contract.setContractorsPhone("123456787");
-			contract.setContractorsUserId("koushikja66");
-			contract.setContractStatus("Confirmed");
-			contract.setCreatedOn(LocalDate.of(2018, 12, 31));
-			contract.setEndDate(LocalDate.of(2020, 3, 4));
-			contract.setRoomNumber("67890");
-			contract.setStartDate(LocalDate.now());
+			  Contract contract = getContractor(contractId);
+			
 
 
 			if (!contract.getRoomNumber().equals(newAppointment.getRoomNumber())) {
@@ -74,7 +60,7 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
 				}
 				if (newAppointment.getDesiredDate().isAfter(contract.getStartDate())) {
-					System.out.println("tuntuni");
+
 					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
 				}
 
@@ -123,8 +109,27 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 		
 		return appointment;
 	}
-
-
+	
+	
+	@Override
+	public Appointment acceptAppointment(String appointmentId, String contextUserId) throws ObjectNotFoundException , InvalidOperationException {
+		Appointment appointment=appointmentRepository.getById(appointmentId);
+		if(appointment==null)
+			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
+		if(appointment.getStatus()==AppointmentStatus.Accepted)
+				throw new InvalidOperationException(Messages.APPOINTMENT_ALREADY_ACCEPTED);
+		if(appointment.getDesiredDate().isAfter(LocalDate.now()))
+				throw new InvalidOperationException(Messages.APPOINTMENT_DATE_EXPIRED);
+		
+		
+		appointment=appointmentRepository.updateAppointmentStatus(appointmentId, AppointmentStatus.Accepted);
+		if(appointment==null)
+			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
+		
+		
+		return appointment;
+	}
+    
 	private Contract getContractor(String contractId) throws ObjectNotFoundException {
 		client = ClientBuilder.newClient();
 		Response response = client.target("http://localhost:8081/api/contracts")

@@ -20,6 +20,8 @@ public class Messages {
     public static final String REQUIRED_DESIRED_DATE = "Desired Date is required.";
     public static final String REQUIRED_APPOINTMENT_STATUS = "Valid Appointment Status is required";
     public static final String APPOINTMENT_NOT_FOUND="Appointment Not Found With this ID";
+    public static final String APPOINTMENT_ALREADY_ACCEPTED="Appointment is already accepted";
+    public static final String APPOINTMENT_DATE_EXPIRED="You need to accept appointment before desired date";
 
     public static final String INVALID_PAGE_NUM = "Invalid 'pageNum' value.";
     public static final String INVALID_PAGE_SIZE = "Invalid 'pageSize' value.";

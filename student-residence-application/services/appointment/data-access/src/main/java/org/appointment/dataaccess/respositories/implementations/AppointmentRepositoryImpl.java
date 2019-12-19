@@ -5,6 +5,7 @@ import org.appointment.common.exceptions.ObjectNotFoundException;
 import org.appointment.common.exceptions.PaginationRangeOutOfBoundException;
 import org.appointment.common.helpers.DateHelper;
 import org.appointment.common.helpers.PaginationHelper;
+import org.appointment.dataaccess.data.enums.AppointmentStatus;
 import org.appointment.dataaccess.data.models.Appointment;
 import org.appointment.dataaccess.models.PaginatedDataList;
 import org.appointment.dataaccess.respositories.interfaces.AppointmentRepository;
@@ -44,6 +45,22 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 		return null;
 	}
 
+	@Override
+	public Appointment updateAppointmentStatus(String  appointmentId, AppointmentStatus status) {
+		
+		int appointmentIndex;
+		for(Appointment  appointment : DataStore.appointments){
+			if(appointment.getAppointmentId().equals(appointmentId)) {
+				appointmentIndex= DataStore.appointments.indexOf(appointment);			
+				appointment.setStatus(status);
+				DataStore.appointments.set(appointmentIndex, appointment);
+				return appointment;
+			}
+		
+		}
+		return null;
+		
+	}
 
 	@Override
 	public PaginatedDataList<Appointment> getAll(int pageNum, int pageSize) throws PaginationRangeOutOfBoundException {
