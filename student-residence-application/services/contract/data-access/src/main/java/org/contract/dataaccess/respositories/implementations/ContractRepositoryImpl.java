@@ -7,6 +7,7 @@ import org.contract.common.helpers.DateHelper;
 import org.contract.common.helpers.PaginationHelper;
 import org.contract.dataaccess.data.enums.ContractStatus;
 import org.contract.dataaccess.data.models.Contract;
+import org.contract.dataaccess.helpers.DataHelper;
 import org.contract.dataaccess.models.PaginatedDataList;
 import org.contract.dataaccess.respositories.interfaces.ContractRepository;
 import org.contract.dataaccess.store.DataStore;
@@ -17,11 +18,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ContractRepositoryImpl implements ContractRepository {
-    private static int id = 0;
-
     @Override
     public Contract add(Contract contract) {
-        contract.setId(getNewId());
+        int newId = DataHelper.getNewId(new ArrayList<>(DataStore.contracts));
+
+        contract.setId(newId);
 
         DataStore.contracts.add(contract);
 
@@ -105,10 +106,6 @@ public class ContractRepositoryImpl implements ContractRepository {
                 .collect(Collectors.toList());
 
         return getPaginatedContractList(pageNum, pageSize, filteredContractList);
-    }
-
-    private synchronized int getNewId() {
-        return ++id;
     }
 
     private boolean containsIgnoreCase(String str, String subString) {

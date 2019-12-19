@@ -59,8 +59,9 @@ public class ContractResourceImpl implements ContractResource {
 
         try {
             Contract contract = contractService.getContract(contractId);
+            boolean isUserAuthorizedForThisResource = isAdminUser || contract.getContractorsUserId().equalsIgnoreCase(contextUserId);
 
-            if (!isAdminUser || !contract.getContractorsUserId().equalsIgnoreCase(contextUserId)) {
+            if (!isUserAuthorizedForThisResource) {
                 return buildResponseObject(Response.Status.UNAUTHORIZED, Messages.USER_NOT_AUTHORISED_TO_OPERATE_RESOURCE);
             }
 
@@ -137,8 +138,9 @@ public class ContractResourceImpl implements ContractResource {
     public Response getContractsByContractor(@PathParam("contractors-user-id") String contractorsUserId) {
         String contextUserId = securityContext.getUserPrincipal().getName();
         boolean isAdminUser = securityContext.isUserInRole(Constants.ROLE_ADMINISTRATOR);
+        boolean isUserAuthorizedForThisResource = isAdminUser || contractorsUserId.equalsIgnoreCase(contextUserId);
 
-        if (!contextUserId.equalsIgnoreCase("dummy") || !isAdminUser || !contractorsUserId.equalsIgnoreCase(contextUserId)) {
+        if (!isUserAuthorizedForThisResource) {
             return buildResponseObject(Response.Status.UNAUTHORIZED, Messages.USER_NOT_AUTHORISED_TO_OPERATE_RESOURCE);
         }
 
@@ -162,6 +164,7 @@ public class ContractResourceImpl implements ContractResource {
     @Path("{contract-id}")
     public Response updateContract(@PathParam("contract-id") String contractId, ContractUpdateRequest contractUpdateRequest) {
         String contextUserId = securityContext.getUserPrincipal().getName();
+        boolean isAdminUser = securityContext.isUserInRole(Constants.ROLE_ADMINISTRATOR);
 
         if (contractId == null || contractId.isEmpty()) {
             return  buildResponseObject(Response.Status.BAD_REQUEST, Messages.CONTRACT_ID_REQUIRED);
@@ -170,7 +173,10 @@ public class ContractResourceImpl implements ContractResource {
         try {
             Contract contract = contractService.getContract(contractId);
 
-            if (!contextUserId.equalsIgnoreCase("dummy") || !contract.getContractorsUserId().equalsIgnoreCase(contextUserId)) {
+            // isAdminUser should be removed from this logic
+            boolean isUserAuthorizedForThisResource = isAdminUser || contract.getContractorsUserId().equalsIgnoreCase(contextUserId);
+
+            if (!isUserAuthorizedForThisResource) {
                 return buildResponseObject(Response.Status.UNAUTHORIZED, Messages.USER_NOT_AUTHORISED_TO_OPERATE_RESOURCE);
             }
         } catch (ObjectNotFoundException ex) {
@@ -187,11 +193,9 @@ public class ContractResourceImpl implements ContractResource {
             return buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUIRED_OPERATION);
         }
 
-        String successMsg = null;
         try {
             if (requestedOperation == ContractUpdateOperation.Confirm) {
                 contractService.confirmContract(contractId);
-                successMsg = Messages.SUCCESSFUL_CONFIRMATION;
             } else {
                 if (contractUpdateRequest.getEndDate() == null) {
                     return buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUIRED_END_DATE);
@@ -199,10 +203,8 @@ public class ContractResourceImpl implements ContractResource {
 
                 if (contractUpdateRequest.getOperation() == ContractUpdateOperation.Extend) {
                     contractService.extendContract(contractId, contractUpdateRequest.getEndDate());
-                    successMsg = Messages.SUCCESSFUL_EXTENSION;
                 } else if (contractUpdateRequest.getOperation() == ContractUpdateOperation.Terminate) {
                     contractService.terminateContract(contractId, contractUpdateRequest.getEndDate());
-                    successMsg = Messages.SUCCESSFUL_TERMINATION;
                 }
             }
         } catch (ObjectNotFoundException ex) {
@@ -217,7 +219,7 @@ public class ContractResourceImpl implements ContractResource {
     }
 
     private boolean isPaginationRequested(int pageNum, int pageSize) {
-        return isValuePresent(pageNum) && isValuePresent(pageSize);
+        return isValuePresent(pageNum) || isValuePresent(pageSize);
     }
 
     private boolean isValuePresent(String value) {
