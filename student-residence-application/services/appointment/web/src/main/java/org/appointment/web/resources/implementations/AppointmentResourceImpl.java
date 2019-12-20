@@ -90,7 +90,7 @@ public class AppointmentResourceImpl implements AppointmentResource {
 	}
 
 	@Override
-	@GET @RolesAllowed({Constants.ROLE_Resident, Constants.ROLE_ADMINISTRATOR})
+	@GET @RolesAllowed({Constants.ROLE_Resident, Constants.ROLE_Caretaker})
 	@Path("/all")
 	public Response getAllAppointments() {
 		String contextUserId = securityContext.getUserPrincipal().getName();
