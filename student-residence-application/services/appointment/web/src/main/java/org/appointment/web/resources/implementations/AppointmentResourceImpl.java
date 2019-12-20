@@ -68,7 +68,7 @@ public class AppointmentResourceImpl implements AppointmentResource {
 
 	@Override
 
-	@GET @RolesAllowed({Constants.ROLE_Resident, Constants.ROLE_ADMINISTRATOR})
+	@GET @RolesAllowed({Constants.ROLE_Resident, Constants.ROLE_Caretaker})
 	@Path("{appointment-id}")
 	public Response getAppointment(@PathParam("appointment-id") String appointmentId) {
 
@@ -107,19 +107,17 @@ public class AppointmentResourceImpl implements AppointmentResource {
 	}
 
 	@Override
-	@PUT @RolesAllowed({Constants.ROLE_ADMINISTRATOR})
-	@Path("/acceptAppointment")
-	public Response acceptAppointment(String appointmentId) {
-		System.out.println(appointmentId);
+	@PUT @RolesAllowed({Constants.ROLE_Caretaker})
+	@Path("{appointment-id}")
+	public Response acceptAppointment(@PathParam("appointment-id") String appointmentId) {
 		String contextUserId = securityContext.getUserPrincipal().getName();
 		if(appointmentId==null || appointmentId.length()==0) {
 			return  buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUEST_BODY_REQUIRED);
 		}
 
 		try {
-
-			Appointment appointment=appointmentService.acceptAppointment(appointmentId, contextUserId);
-
+			Appointment appointment = appointmentService.acceptAppointment(appointmentId, contextUserId);
+			System.out.println(appointmentId);
 			return buildResponseObject(Response.Status.OK, appointment.getStatus());
 		} catch (ValidationException | InvalidOperationException | ObjectNotFoundException e) {
 			// TODO Auto-generated catch block

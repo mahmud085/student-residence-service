@@ -79,6 +79,9 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 				}
 			}
 
+			if(newAppointment.getDesiredDate().isBefore(LocalDate.now()))
+				throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
+
 			Appointment appointment = new Appointment() {
 				{
 					setAppointmentId(UUID.randomUUID().toString());
@@ -123,20 +126,20 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 
 	@Override
 	public Appointment acceptAppointment(String appointmentId, String contextUserId) throws ObjectNotFoundException , InvalidOperationException {
-		Appointment appointment=appointmentRepository.getById(appointmentId);
-		if(appointment==null)
+		Appointment appointment = appointmentRepository.getById(appointmentId);
+		LocalDate oneDayBefore = appointment.getDesiredDate().minusDays(1);
+
+		if(appointment == null)
 			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
-		if(appointment.getStatus()==AppointmentStatus.Accepted)
+		if(appointment.getStatus()== AppointmentStatus.Accepted)
 				throw new InvalidOperationException(Messages.APPOINTMENT_ALREADY_ACCEPTED);
-		if(appointment.getDesiredDate().isAfter(LocalDate.now()))
+		if(!LocalDate.now().isBefore(appointment.getDesiredDate()))
 				throw new InvalidOperationException(Messages.APPOINTMENT_DATE_EXPIRED);
-		
-		
-		appointment=appointmentRepository.updateAppointmentStatus(appointmentId, AppointmentStatus.Accepted);
-		if(appointment==null)
+
+		appointment = appointmentRepository.updateAppointmentStatus(appointmentId, AppointmentStatus.Accepted);
+		if(appointment == null)
 			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
-		
-		
+
 		return appointment;
 	}
     
