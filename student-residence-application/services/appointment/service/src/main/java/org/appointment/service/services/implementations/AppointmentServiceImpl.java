@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.*;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -109,8 +110,17 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 		
 		return appointment;
 	}
-	
-	
+
+	@Override
+	public List<Appointment> allAppointment(String contextUserId) throws ValidationException, InvalidOperationException, ObjectNotFoundException {
+		List<Appointment> appointment=appointmentRepository.getAll();
+		if(appointment==null)
+			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
+
+		return appointment;
+	}
+
+
 	@Override
 	public Appointment acceptAppointment(String appointmentId, String contextUserId) throws ObjectNotFoundException , InvalidOperationException {
 		Appointment appointment=appointmentRepository.getById(appointmentId);

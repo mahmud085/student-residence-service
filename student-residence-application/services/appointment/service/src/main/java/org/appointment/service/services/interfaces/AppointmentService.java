@@ -20,7 +20,8 @@ public interface AppointmentService {
      * @author Kowshik Dipta Das Joy
      * 
      */
-    Appointment gettAppointment(String appointmentId , String contextUserId) throws ValidationException, InvalidOperationException, ObjectNotFoundException; 
-    
+    Appointment gettAppointment(String appointmentId , String contextUserId) throws ValidationException, InvalidOperationException, ObjectNotFoundException;
+    List<Appointment> allAppointment(String contextUserId) throws ValidationException, InvalidOperationException, ObjectNotFoundException;
+
     Appointment acceptAppointment(String appointmentId , String contextUserId) throws ValidationException, InvalidOperationException, ObjectNotFoundException; 
 }

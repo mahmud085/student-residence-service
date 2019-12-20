@@ -90,6 +90,23 @@ public class AppointmentResourceImpl implements AppointmentResource {
 	}
 
 	@Override
+	@GET @RolesAllowed({Constants.ROLE_Resident, Constants.ROLE_ADMINISTRATOR})
+	@Path("/all")
+	public Response getAllAppointments() {
+		String contextUserId = securityContext.getUserPrincipal().getName();
+		try {
+
+			List<Appointment> appointment=appointmentService.allAppointment(contextUserId);
+
+			return buildResponseObject(Response.Status.OK, appointment);
+		} catch (ValidationException | InvalidOperationException | ObjectNotFoundException e) {
+			// TODO Auto-generated catch block
+			return  buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());
+		}
+
+	}
+
+	@Override
 	@PUT @RolesAllowed({Constants.ROLE_ADMINISTRATOR})
 	@Path("/acceptAppointment")
 	public Response acceptAppointment(String appointmentId) {

@@ -12,6 +12,7 @@ public interface AppointmentResource {
      */
     
     Response getAppointment(String appointmentId);
+    Response getAllAppointments();
     
     Response acceptAppointment(String appointmentId);
     
