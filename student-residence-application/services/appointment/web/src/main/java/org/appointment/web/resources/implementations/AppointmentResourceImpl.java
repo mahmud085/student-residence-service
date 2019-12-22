@@ -67,7 +67,6 @@ public class AppointmentResourceImpl implements AppointmentResource {
 	}
 
 
-	@Override
 
 	@GET @RolesAllowed({Constants.ROLE_Resident, Constants.ROLE_Caretaker})
 	@Path("{appointment-id}")
@@ -92,24 +91,6 @@ public class AppointmentResourceImpl implements AppointmentResource {
 
 	@Override
 	@GET @RolesAllowed({Constants.ROLE_Resident, Constants.ROLE_Caretaker})
-	@Path("/all")
-	public Response getAllAppointments() {
-		String contextUserId = securityContext.getUserPrincipal().getName();
-		try {
-
-			List<Appointment> appointment=appointmentService.getallAppointment();
-
-			return buildResponseObject(Response.Status.OK, appointment);
-		} catch (ValidationException | InvalidOperationException | ObjectNotFoundException e) {
-			// TODO Auto-generated catch block
-			return  buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());
-		}
-
-	}
-
-	@Override
-	@GET @RolesAllowed({Constants.ROLE_Resident, Constants.ROLE_Caretaker})
-	@Path("/getAppointments")
 	public Response getAppointments(@QueryParam("desiredDate") String desiredDate
 			, @QueryParam("pageNum") int pageNum
 			, @QueryParam("pageSize") int pageSize) {
