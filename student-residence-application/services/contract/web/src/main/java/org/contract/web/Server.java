@@ -3,6 +3,7 @@ package org.contract.web;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.contract.web.resources.implementations.ContractResourceImpl;
+import org.contract.web.resources.implementations.ContractorResourceImpl;
 import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
@@ -20,6 +21,7 @@ public class Server {
 
         ResourceConfig config = ResourceConfig.forApplicationClass(ContractServiceApplication.class);
         config.register(injector.getInstance(ContractResourceImpl.class));
+        config.register(injector.getInstance(ContractorResourceImpl.class));
 
         JdkHttpServerFactory.createHttpServer(baseUri, config);
     }

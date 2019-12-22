@@ -75,7 +75,7 @@ public class ContractServiceImpl implements ContractService {
                 setRoomNumber(newContract.getRoomNumber().trim());
                 setStartDate(newContract.getStartDate());
                 setEndDate(newContract.getEndDate());
-                setContractStatus(newContract.getStatus());
+                setStatus(newContract.getStatus());
                 setCreatedBy(contextUserId);
                 setCreatedOn(createdOn);
             }
@@ -128,8 +128,8 @@ public class ContractServiceImpl implements ContractService {
             throw new ObjectNotFoundException(Messages.CONTRACT_NOT_FOUND_WITH_ID);
         }
 
-        if (contract.getContractStatus() == ContractStatus.Confirmed) {
-            throw new InvalidOperationException(Messages.CONTRACT_CONFIRMATION_ALREADY_CONFIRMED);
+        if (contract.getStatus() == ContractStatus.Confirmed) {
+            return;
         }
 
         LocalDate currentDate = DateHelper.getCurrentDate();
@@ -140,7 +140,7 @@ public class ContractServiceImpl implements ContractService {
             throw new InvalidOperationException(Messages.CONTRACT_CONFIRMATION_WINDOW_EXPIRED);
         }
 
-        contract.setContractStatus(ContractStatus.Confirmed);
+        contract.setStatus(ContractStatus.Confirmed);
         contractRepository.update(contract);
     }
 

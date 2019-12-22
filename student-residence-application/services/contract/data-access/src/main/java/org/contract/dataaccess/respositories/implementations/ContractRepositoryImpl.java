@@ -62,7 +62,7 @@ public class ContractRepositoryImpl implements ContractRepository {
         contractToUpdate.setRoomNumber(contract.getRoomNumber());
         contractToUpdate.setStartDate(contract.getStartDate());
         contractToUpdate.setEndDate(contract.getEndDate());
-        contractToUpdate.setContractStatus(contract.getContractStatus());
+        contractToUpdate.setStatus(contract.getStatus());
     }
 
     @Override
@@ -137,7 +137,7 @@ public class ContractRepositoryImpl implements ContractRepository {
     }
 
     private boolean isContractConfirmed(Contract contract) {
-        return contract.getContractStatus() == ContractStatus.Confirmed;
+        return contract.getStatus() == ContractStatus.Confirmed;
     }
 
     private boolean isContractWithInDateRange(Contract contract, LocalDate startDate, LocalDate endDate) {

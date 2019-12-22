@@ -7,7 +7,6 @@ import org.contract.dataaccess.data.models.Room;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class DataStore {
     public static List<Contract> contracts = new ArrayList<Contract>() {
@@ -23,7 +22,7 @@ public class DataStore {
                     setRoomNumber("Room_1");
                     setStartDate(LocalDate.parse("2020-01-01"));
                     setEndDate(LocalDate.parse("2020-06-30"));
-                    setContractStatus(ContractStatus.Unconfirmed);
+                    setStatus(ContractStatus.Unconfirmed);
                     setCreatedBy("AD1");
                     setCreatedOn(LocalDate.parse("2019-12-01"));
                 }
@@ -40,7 +39,7 @@ public class DataStore {
                     setRoomNumber("Room_2");
                     setStartDate(LocalDate.parse("2020-01-01"));
                     setEndDate(LocalDate.parse("2020-06-30"));
-                    setContractStatus(ContractStatus.Confirmed);
+                    setStatus(ContractStatus.Confirmed);
                     setCreatedBy("AD1");
                     setCreatedOn(LocalDate.parse("2019-12-01"));
                 }
@@ -57,7 +56,7 @@ public class DataStore {
                     setRoomNumber("Room_3");
                     setStartDate(LocalDate.parse("2020-01-01"));
                     setEndDate(LocalDate.parse("2020-06-30"));
-                    setContractStatus(ContractStatus.Confirmed);
+                    setStatus(ContractStatus.Confirmed);
                     setCreatedBy("AD1");
                     setCreatedOn(LocalDate.parse("2019-12-01"));
                 }

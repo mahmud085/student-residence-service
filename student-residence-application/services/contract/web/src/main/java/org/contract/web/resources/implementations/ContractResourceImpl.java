@@ -133,33 +133,6 @@ public class ContractResourceImpl implements ContractResource {
     }
 
     @Override
-    @GET @RolesAllowed({Constants.ROLE_Resident, Constants.ROLE_ADMINISTRATOR})
-    @Path("contractors/{contractors-user-id}")
-    public Response getContractsByContractor(@PathParam("contractors-user-id") String contractorsUserId) {
-        String contextUserId = securityContext.getUserPrincipal().getName();
-        boolean isAdminUser = securityContext.isUserInRole(Constants.ROLE_ADMINISTRATOR);
-        boolean isUserAuthorizedForThisResource = isAdminUser || contractorsUserId.equalsIgnoreCase(contextUserId);
-
-        if (!isUserAuthorizedForThisResource) {
-            return buildResponseObject(Response.Status.UNAUTHORIZED, Messages.USER_NOT_AUTHORISED_TO_OPERATE_RESOURCE);
-        }
-
-        try {
-            List<Contract> contracts = contractService.getContractsByContractor(contractorsUserId);
-
-            ContractListResponse contractListResponse = new ContractListResponse(){
-                {
-                    setContracts(contracts);
-                }
-            };
-
-            return buildResponseObject(Response.Status.OK, contractListResponse);
-        } catch (Exception ex) {
-            return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, Messages.INTERNAL_ERROR);
-        }
-    }
-
-    @Override
     @PUT @RolesAllowed({Constants.ROLE_Resident})
     @Path("{contract-id}")
     public Response updateContract(@PathParam("contract-id") String contractId, ContractUpdateRequest contractUpdateRequest) {

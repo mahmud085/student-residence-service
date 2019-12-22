@@ -20,8 +20,7 @@ public class Contract extends Entity implements Cloneable  {
     private LocalDate startDate;
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate endDate;
-    private ContractStatus contractStatus;
-    @JsonIgnore
+    private ContractStatus status;
     private String createdBy;
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate createdOn;
@@ -90,12 +89,12 @@ public class Contract extends Entity implements Cloneable  {
         this.endDate = endDate;
     }
 
-    public ContractStatus getContractStatus() {
-        return contractStatus;
+    public ContractStatus getStatus() {
+        return status;
     }
 
-    public void setContractStatus(ContractStatus contractStatus) {
-        this.contractStatus = contractStatus;
+    public void setStatus(ContractStatus status) {
+        this.status = status;
     }
 
     public String getCreatedBy() {
