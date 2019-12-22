@@ -31,13 +31,10 @@ public class Messages {
     public static final String CONTRACT_CREATION_START_DATE_IN_PAST = "The contract cannot start on past date.";
     public static final String CONTRACT_CREATION_START_DATE_TOO_EARLY = "The contract must start after the confirmation period (2 weeks after the creation) ends.";
     public static final String CONTRACT_CREATION_CONTRACT_ALREADY_EXIST_FOR_ROOM = "The specified room already has a Confirmed/Pending contract for the specified dates.";
-    public static final String CONTRACT_CONFIRMATION_ALREADY_CONFIRMED = "The contract has already been confirmed.";
     public static final String CONTRACT_CONFIRMATION_WINDOW_EXPIRED = "A contract can only be confirmed within the 2 weeks of it's creation.";
     public static final String CONTRACT_EXTENSION_INVALID_OPERATION_DATE = "A contract can only be extended before 3 months of it's current end date.";
     public static final String CONTRACT_EXTENSION_INVALID_EXTENSION_PERIOD = "A contract can only be extended for 6 months.";
     public static final String CONTRACT_TERMINATION_INVALID_OPERATION_DATE = "A contract can only be terminated before 3 months of it's current end date.";
 
     public static final String AUTHORIZATION_FAILED_USER_ROLE_NOT_ALLOWED = "This user's role is not allowed to perform this action.";
-
-    public static final String PAGINATION_RANGE_EXCEEDS = "Pagination attributes exceeds data range.";
 }

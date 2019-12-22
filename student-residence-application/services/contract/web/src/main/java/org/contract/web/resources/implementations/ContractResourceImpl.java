@@ -2,7 +2,10 @@ package org.contract.web.resources.implementations;
 
 import com.google.inject.Inject;
 import org.contract.common.Messages;
-import org.contract.common.exceptions.*;
+import org.contract.common.exceptions.InvalidOperationException;
+import org.contract.common.exceptions.ObjectNotFoundException;
+import org.contract.common.exceptions.PaginationAttributeException;
+import org.contract.common.exceptions.ValidationException;
 import org.contract.dataaccess.data.models.Contract;
 import org.contract.dataaccess.models.PaginatedDataList;
 import org.contract.service.models.NewContract;
@@ -48,8 +51,10 @@ public class ContractResourceImpl implements ContractResource {
             Contract createdContract = contractService.createContract(newContract, contextUserId);
 
             return buildResponseObject(Response.Status.CREATED, createdContract);
-        } catch (ValidationException | InvalidOperationException ex) {
+        } catch (ValidationException ex) {
             return  buildResponseObject(Response.Status.BAD_REQUEST, ex.getMessage());
+        } catch (InvalidOperationException ex) {
+            return  buildResponseObject(Response.Status.PRECONDITION_FAILED, ex.getMessage());
         } catch (Exception ex) {
             return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, Messages.INTERNAL_ERROR);
         }
@@ -86,6 +91,9 @@ public class ContractResourceImpl implements ContractResource {
             , @QueryParam("pageSize") int pageSize) {
         boolean isContractorsNameFilterPresent = isValuePresent(contractorsName);
         boolean isPaginationRequested = isPaginationRequested(pageNum, pageSize);
+        Map<String, String> queryParams = isContractorsNameFilterPresent
+                ? new HashMap<String, String>() {{ put("contractorsName", contractorsName); }}
+                : null;
         String endpointPath = String.format("%s%s", uriInfo.getBaseUri(), Constants.RESOURCE_PATH_CONTRACT);
 
         if (isPaginationRequested) {
@@ -112,7 +120,7 @@ public class ContractResourceImpl implements ContractResource {
                 }
 
                 contractList = paginatedContractList.getData();
-                paginationMetadata = (new PaginationMetadataHelper(isPaginationRequested, endpointPath, pageNum, pageSize, paginatedContractList.getTotalDataCount())
+                paginationMetadata = (new PaginationMetadataHelper(isPaginationRequested, endpointPath, pageNum, pageSize, paginatedContractList.getTotalDataCount(), queryParams)
                         .buildPaginationMetadata());
             } else if (isContractorsNameFilterPresent) {
                 contractList = contractService.getContracts(contractorsName);
@@ -169,9 +177,11 @@ public class ContractResourceImpl implements ContractResource {
             return buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUIRED_OPERATION);
         }
 
+        String successMsg = null;
         try {
             if (requestedOperation == ContractUpdateOperation.Confirm) {
                 contractService.confirmContract(contractId);
+                successMsg = Messages.SUCCESSFUL_CONFIRMATION;
             } else {
                 if (contractUpdateRequest.getEndDate() == null) {
                     return buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUIRED_END_DATE);
@@ -179,19 +189,23 @@ public class ContractResourceImpl implements ContractResource {
 
                 if (contractUpdateRequest.getOperation() == ContractUpdateOperation.Extend) {
                     contractService.extendContract(contractId, contractUpdateRequest.getEndDate());
+                    successMsg = Messages.SUCCESSFUL_EXTENSION;
                 } else if (contractUpdateRequest.getOperation() == ContractUpdateOperation.Terminate) {
                     contractService.terminateContract(contractId, contractUpdateRequest.getEndDate());
+                    successMsg = Messages.SUCCESSFUL_TERMINATION;
                 }
             }
         } catch (ObjectNotFoundException ex) {
             return buildResponseObject(Response.Status.NOT_FOUND, ex.getMessage());
-        } catch (InvalidOperationException | ValidationException ex) {
+        } catch (ValidationException ex) {
             return buildResponseObject(Response.Status.BAD_REQUEST, ex.getMessage());
+        } catch (InvalidOperationException ex) {
+            return  buildResponseObject(Response.Status.PRECONDITION_FAILED, ex.getMessage());
         } catch (Exception ex) {
             return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, Messages.INTERNAL_ERROR);
         }
 
-        return buildResponseObject(Response.Status.NO_CONTENT, null);
+        return buildResponseObject(Response.Status.OK, successMsg);
     }
 
     private boolean isPaginationRequested(int pageNum, int pageSize) {

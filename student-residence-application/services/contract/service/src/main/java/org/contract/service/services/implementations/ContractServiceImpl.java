@@ -30,7 +30,7 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public Contract createContract(NewContract newContract, String contextUserId) throws ValidationException, InvalidOperationException {
-        LocalDate createdOn = DateHelper.getCurrentDate();
+        LocalDate createdOn = LocalDate.now();
 
         ValidationHelper<NewContract> validationHelper = new ValidationHelper<>();
         validationHelper.validate(newContract);
@@ -131,7 +131,7 @@ public class ContractServiceImpl implements ContractService {
             return;
         }
 
-        LocalDate currentDate = DateHelper.getCurrentDate();
+        LocalDate currentDate = LocalDate.now();
 
         // Business logic
         LocalDate dateTwoWeeksAfterCreation = contract.getCreatedOn().plusWeeks(2);
@@ -151,7 +151,7 @@ public class ContractServiceImpl implements ContractService {
             throw new ObjectNotFoundException(Messages.CONTRACT_NOT_FOUND_WITH_ID);
         }
 
-        LocalDate currentDate = DateHelper.getCurrentDate();
+        LocalDate currentDate = LocalDate.now();
         LocalDate currentEndDate = contract.getEndDate();
 
         if (newEndDate == null || DateHelper.isDateBeforeOrEqualToday(newEndDate) || newEndDate.isBefore(currentEndDate)) {
@@ -159,7 +159,7 @@ public class ContractServiceImpl implements ContractService {
         }
 
         // Business logic
-        LocalDate dateThreeMonthsBeforeCurrentEndDate = currentEndDate.plusMonths(-3);
+        LocalDate dateThreeMonthsBeforeCurrentEndDate = currentEndDate.minusMonths(3);
         if (currentDate.isAfter(dateThreeMonthsBeforeCurrentEndDate)) {
             throw new InvalidOperationException(Messages.CONTRACT_EXTENSION_INVALID_OPERATION_DATE);
         }
@@ -181,7 +181,7 @@ public class ContractServiceImpl implements ContractService {
             throw new ObjectNotFoundException(Messages.CONTRACT_NOT_FOUND_WITH_ID);
         }
 
-        LocalDate currentDate = DateHelper.getCurrentDate();
+        LocalDate currentDate = LocalDate.now();
         LocalDate currentEndDate = contract.getEndDate();
 
         if (newEndDate == null || DateHelper.isDateBeforeOrEqualToday(newEndDate) || newEndDate.isAfter(currentEndDate)) {
@@ -189,7 +189,7 @@ public class ContractServiceImpl implements ContractService {
         }
 
         // Business logic
-        LocalDate dateThreeMonthsBeforeNewEndDate = newEndDate.plusMonths(-3);
+        LocalDate dateThreeMonthsBeforeNewEndDate = newEndDate.minusMonths(3);
         if (currentDate.isAfter(dateThreeMonthsBeforeNewEndDate)) {
             throw new InvalidOperationException(Messages.CONTRACT_TERMINATION_INVALID_OPERATION_DATE);
         }
