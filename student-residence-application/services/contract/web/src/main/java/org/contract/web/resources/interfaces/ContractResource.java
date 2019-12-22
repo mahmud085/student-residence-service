@@ -10,6 +10,5 @@ public interface ContractResource {
     Response createContract(NewContract newContract);
     Response getContract(String contractId);
     Response getContracts(String contractorsName, int pageNum, int pageSize);
-    Response getContractsByContractor(String contractorsUserId);
     Response updateContract(String contractId, ContractUpdateRequest contractUpdateRequest);
 }

@@ -2,6 +2,8 @@ package org.contract.web.helpers;
 
 import org.contract.web.models.PaginationMetadata;
 
+import java.util.Map;
+
 public class PaginationMetadataHelper {
     private final int currentPageNum;
     private final int pageSize;
@@ -10,8 +12,9 @@ public class PaginationMetadataHelper {
     private final boolean isPaginationRequested;
     private final int firstPageNum;
     private final int lastPageNum;
+    private final Map<String, String> queryParams;
 
-    public PaginationMetadataHelper(boolean isPaginationRequested, String endpointPath, int currentPageNum, int pageSize, int totalDataCount) {
+    public PaginationMetadataHelper(boolean isPaginationRequested, String endpointPath, int currentPageNum, int pageSize, int totalDataCount, Map<String, String> queryParams) {
         this.isPaginationRequested = isPaginationRequested;
         this.endpointPath = endpointPath;
         this.currentPageNum = currentPageNum;
@@ -19,6 +22,7 @@ public class PaginationMetadataHelper {
         this.totalDataCount = totalDataCount;
         this.firstPageNum = 1;
         this.lastPageNum = (int) Math.ceil((float) totalDataCount / pageSize);
+        this.queryParams = queryParams;
     }
 
     public PaginationMetadata buildPaginationMetadata() {
@@ -39,6 +43,10 @@ public class PaginationMetadataHelper {
             return null;
         }
 
+        if (previousPageNum > lastPageNum) {
+            return getLastHref();
+        }
+
         return buildUrl(previousPageNum);
     }
 
@@ -47,6 +55,10 @@ public class PaginationMetadataHelper {
 
         if (nextPageNum > lastPageNum) {
             return null;
+        }
+
+        if (nextPageNum < firstPageNum) {
+            return getFirstHref();
         }
 
         return buildUrl(nextPageNum);
@@ -61,7 +73,7 @@ public class PaginationMetadataHelper {
     }
 
     private String getLastHref() {
-        if (lastPageNum == currentPageNum) {
+        if (lastPageNum < 1 || lastPageNum == currentPageNum) {
             return null;
         }
 
@@ -69,6 +81,19 @@ public class PaginationMetadataHelper {
     }
 
     private String buildUrl(int pageNum) {
-        return String.format("%s?pageNum=%d&pageSize=%d", endpointPath, pageNum, pageSize);
+        return String.format("%s?%spageNum=%d&pageSize=%d", endpointPath, getQueryParamString() , pageNum, pageSize);
+    }
+
+    private String getQueryParamString() {
+        String queryParamsStr = "";
+        if (queryParams == null) {
+            return queryParamsStr;
+        }
+
+        for (Map.Entry<String, String> entry : queryParams.entrySet()) {
+            queryParamsStr += String.format("%s=%s&", entry.getKey(), entry.getValue());
+        }
+
+        return queryParamsStr;
     }
 }

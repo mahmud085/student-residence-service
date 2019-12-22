@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import org.contract.common.Messages;
 import org.contract.common.exceptions.InvalidOperationException;
 import org.contract.common.exceptions.ObjectNotFoundException;
-import org.contract.common.exceptions.PaginationRangeOutOfBoundException;
 import org.contract.common.exceptions.ValidationException;
 import org.contract.common.helpers.DateHelper;
 import org.contract.common.helpers.ValidationHelper;
@@ -31,7 +30,7 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public Contract createContract(NewContract newContract, String contextUserId) throws ValidationException, InvalidOperationException {
-        LocalDate createdOn = DateHelper.getCurrentDate();
+        LocalDate createdOn = LocalDate.now();
 
         ValidationHelper<NewContract> validationHelper = new ValidationHelper<>();
         validationHelper.validate(newContract);
@@ -75,7 +74,7 @@ public class ContractServiceImpl implements ContractService {
                 setRoomNumber(newContract.getRoomNumber().trim());
                 setStartDate(newContract.getStartDate());
                 setEndDate(newContract.getEndDate());
-                setContractStatus(newContract.getStatus());
+                setStatus(newContract.getStatus());
                 setCreatedBy(contextUserId);
                 setCreatedOn(createdOn);
             }
@@ -101,7 +100,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public PaginatedDataList<Contract> getContracts(int pageNum, int pageSize) throws PaginationRangeOutOfBoundException {
+    public PaginatedDataList<Contract> getContracts(int pageNum, int pageSize) {
         return contractRepository.getAll(pageNum, pageSize);
     }
 
@@ -116,7 +115,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public PaginatedDataList<Contract> getContracts(String contractorsNameFilter, int pageNum, int pageSize) throws PaginationRangeOutOfBoundException {
+    public PaginatedDataList<Contract> getContracts(String contractorsNameFilter, int pageNum, int pageSize) {
         return contractRepository.getAll(contractorsNameFilter, pageNum, pageSize);
     }
 
@@ -128,11 +127,11 @@ public class ContractServiceImpl implements ContractService {
             throw new ObjectNotFoundException(Messages.CONTRACT_NOT_FOUND_WITH_ID);
         }
 
-        if (contract.getContractStatus() == ContractStatus.Confirmed) {
-            throw new InvalidOperationException(Messages.CONTRACT_CONFIRMATION_ALREADY_CONFIRMED);
+        if (contract.getStatus() == ContractStatus.Confirmed) {
+            return;
         }
 
-        LocalDate currentDate = DateHelper.getCurrentDate();
+        LocalDate currentDate = LocalDate.now();
 
         // Business logic
         LocalDate dateTwoWeeksAfterCreation = contract.getCreatedOn().plusWeeks(2);
@@ -140,7 +139,7 @@ public class ContractServiceImpl implements ContractService {
             throw new InvalidOperationException(Messages.CONTRACT_CONFIRMATION_WINDOW_EXPIRED);
         }
 
-        contract.setContractStatus(ContractStatus.Confirmed);
+        contract.setStatus(ContractStatus.Confirmed);
         contractRepository.update(contract);
     }
 
@@ -152,7 +151,7 @@ public class ContractServiceImpl implements ContractService {
             throw new ObjectNotFoundException(Messages.CONTRACT_NOT_FOUND_WITH_ID);
         }
 
-        LocalDate currentDate = DateHelper.getCurrentDate();
+        LocalDate currentDate = LocalDate.now();
         LocalDate currentEndDate = contract.getEndDate();
 
         if (newEndDate == null || DateHelper.isDateBeforeOrEqualToday(newEndDate) || newEndDate.isBefore(currentEndDate)) {
@@ -160,7 +159,7 @@ public class ContractServiceImpl implements ContractService {
         }
 
         // Business logic
-        LocalDate dateThreeMonthsBeforeCurrentEndDate = currentEndDate.plusMonths(-3);
+        LocalDate dateThreeMonthsBeforeCurrentEndDate = currentEndDate.minusMonths(3);
         if (currentDate.isAfter(dateThreeMonthsBeforeCurrentEndDate)) {
             throw new InvalidOperationException(Messages.CONTRACT_EXTENSION_INVALID_OPERATION_DATE);
         }
@@ -182,7 +181,7 @@ public class ContractServiceImpl implements ContractService {
             throw new ObjectNotFoundException(Messages.CONTRACT_NOT_FOUND_WITH_ID);
         }
 
-        LocalDate currentDate = DateHelper.getCurrentDate();
+        LocalDate currentDate = LocalDate.now();
         LocalDate currentEndDate = contract.getEndDate();
 
         if (newEndDate == null || DateHelper.isDateBeforeOrEqualToday(newEndDate) || newEndDate.isAfter(currentEndDate)) {
@@ -190,7 +189,7 @@ public class ContractServiceImpl implements ContractService {
         }
 
         // Business logic
-        LocalDate dateThreeMonthsBeforeNewEndDate = newEndDate.plusMonths(-3);
+        LocalDate dateThreeMonthsBeforeNewEndDate = newEndDate.minusMonths(3);
         if (currentDate.isAfter(dateThreeMonthsBeforeNewEndDate)) {
             throw new InvalidOperationException(Messages.CONTRACT_TERMINATION_INVALID_OPERATION_DATE);
         }
