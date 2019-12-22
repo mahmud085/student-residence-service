@@ -2,158 +2,150 @@ package org.contract.dataaccess.respositories.implementations;
 
 import org.contract.common.Messages;
 import org.contract.common.exceptions.ObjectNotFoundException;
-import org.contract.common.exceptions.PaginationRangeOutOfBoundException;
-import org.contract.common.helpers.DateHelper;
-import org.contract.common.helpers.PaginationHelper;
 import org.contract.dataaccess.data.enums.ContractStatus;
 import org.contract.dataaccess.data.models.Contract;
-import org.contract.dataaccess.helpers.DataHelper;
 import org.contract.dataaccess.models.PaginatedDataList;
 import org.contract.dataaccess.respositories.interfaces.ContractRepository;
-import org.contract.dataaccess.store.DataStore;
 
+import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ContractRepositoryImpl implements ContractRepository {
+
+    private EntityManager entityManager;
+
+    public ContractRepositoryImpl() {
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory( "contract_service_jpa" );
+        entityManager = entityManagerFactory.createEntityManager();
+    }
+
     @Override
     public Contract add(Contract contract) {
-        int newId = DataHelper.getNewId(new ArrayList<>(DataStore.contracts));
+        entityManager.getTransaction().begin();
 
-        contract.setId(newId);
+        Contract newContract = new Contract();
+        newContract.setContractId(contract.getContractId());
+        newContract.setCreatedBy(contract.getCreatedBy());
+        newContract.setCreatedOn(contract.getCreatedOn());
 
-        DataStore.contracts.add(contract);
+        mapMutableFields(newContract, contract);
 
-        return contract;
+        entityManager.persist(newContract);
+        entityManager.getTransaction().commit();
+
+        return newContract;
     }
 
     @Override
     public Contract get(String contractId) {
-        Contract contract = DataStore.contracts.stream()
-                .filter(x -> x.getContractId().equalsIgnoreCase(contractId))
-                .findFirst()
-                .orElse(null);
+        try {
+            Query query = entityManager.createNamedQuery("Contract.findSingleByContractId");
+            query.setParameter("contractId", contractId);
 
-        return contract != null ? contract.clone() : null;
+            return (Contract) query.getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 
     @Override
     public List<Contract> getAll() {
-        return new ArrayList<>(DataStore.contracts);
+        Query query = entityManager.createNamedQuery("Contract.getAll");
+
+        return query.getResultList();
     }
 
     @Override
     public void update(Contract contract) throws ObjectNotFoundException {
-        Contract contractToUpdate = DataStore.contracts.stream()
-                .filter(x -> x.getContractId().equalsIgnoreCase(contract.getContractId()))
-                .findFirst()
-                .orElse(null);
+        entityManager.getTransaction().begin();
+
+        Contract contractToUpdate = get(contract.getContractId());
 
         if (contractToUpdate == null) {
             throw new ObjectNotFoundException(Messages.CONTRACT_NOT_FOUND_WITH_ID);
         }
 
-        contractToUpdate.setContractorsName(contract.getContractorsName());
-        contractToUpdate.setContractorsUserId(contract.getContractorsUserId());
-        contractToUpdate.setContractorsEmail(contract.getContractorsEmail());
-        contractToUpdate.setContractorsPhone(contract.getContractorsPhone());
-        contractToUpdate.setRoomNumber(contract.getRoomNumber());
-        contractToUpdate.setStartDate(contract.getStartDate());
-        contractToUpdate.setEndDate(contract.getEndDate());
-        contractToUpdate.setStatus(contract.getStatus());
+        mapMutableFields(contractToUpdate, contract);
+
+        entityManager.getTransaction().commit();
     }
 
     @Override
     public Contract getActiveContractByRoomNumberInDateRange(String roomNumber, LocalDate startDate, LocalDate endDate) {
-        Contract contract = DataStore.contracts.stream()
-                .filter(x -> x.getRoomNumber().equalsIgnoreCase(roomNumber)
-                        && isContractWithInDateRange(x, startDate, endDate)
-                        && (isContractPending(x) || isContractConfirmed(x)))
-                .findFirst()
-                .orElse(null);
+        LocalDate earliestPossibleCreatedOnForPending = LocalDate.now().minusWeeks(2);
 
-        return contract != null ? contract.clone() : null;
+        try {
+            Query query = entityManager.createNamedQuery("Contract.findActiveContractForRoomByDates");
+            query.setParameter("roomNumber", roomNumber);
+            query.setParameter("startDate", startDate);
+            query.setParameter("endDate", endDate);
+            query.setParameter("earliestPossibleCreatedOnForPending", earliestPossibleCreatedOnForPending);
+            query.setParameter("confirmedStatus", ContractStatus.Confirmed);
+
+            return (Contract) query.getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 
     @Override
     public List<Contract> getAllByContractorsUserId(String contractorsUserId) {
-        return DataStore.contracts.stream()
-                .filter(x -> x.getContractorsUserId().equalsIgnoreCase(contractorsUserId))
-                .collect(Collectors.toList());
+        Query query = entityManager.createNamedQuery("Contract.findMultipleByContractorsUserId");
+        query.setParameter("contractorsUserId", contractorsUserId);
+
+        return query.getResultList();
     }
 
     @Override
-    public PaginatedDataList<Contract> getAll(int pageNum, int pageSize) throws PaginationRangeOutOfBoundException {
-        List<Contract> contractList = DataStore.contracts;
+    public PaginatedDataList<Contract> getAll(int pageNum, int pageSize) {
+        Query countQuery = entityManager.createNamedQuery("Contract.getCount");
+        Query retrieveQuery = entityManager.createNamedQuery("Contract.getAll");
+        retrieveQuery.setFirstResult((pageNum - 1) * pageSize);
+        retrieveQuery.setMaxResults(pageSize);
 
-        return getPaginatedContractList(pageNum, pageSize, contractList);
-    }
-
-    @Override
-    public List<Contract> getAll(String contractorsNameFilter) {
-        return DataStore.contracts
-                .stream()
-                .filter(x -> containsIgnoreCase(x.getContractorsName(), contractorsNameFilter))
-                .collect(Collectors.toList());    }
-
-    @Override
-    public PaginatedDataList<Contract> getAll(String contractorsNameFilter, int pageNum, int pageSize) throws PaginationRangeOutOfBoundException {
-        List<Contract> filteredContractList = DataStore.contracts
-                .stream()
-                .filter(x -> containsIgnoreCase(x.getContractorsName(), contractorsNameFilter))
-                .collect(Collectors.toList());
-
-        return getPaginatedContractList(pageNum, pageSize, filteredContractList);
-    }
-
-    private boolean containsIgnoreCase(String str, String subString) {
-        return str.trim().toLowerCase().contains(subString.trim().toLowerCase());
-    }
-
-    private PaginatedDataList<Contract> getPaginatedContractList(int pageNum, int pageSize, List<Contract> contractList) throws PaginationRangeOutOfBoundException {
-        PaginationHelper paginationHelper = new PaginationHelper(pageNum, pageSize, contractList.size());
-
-        if (paginationHelper.isIndexOutOfRange()) {
-            throw new PaginationRangeOutOfBoundException(Messages.PAGINATION_RANGE_EXCEEDS);
-        }
-
-        int startIndex = paginationHelper.getStartIndex();
-        int endIndex = paginationHelper.getEndIndex();
-
-        return new PaginatedDataList<Contract>() {
+        return new PaginatedDataList() {
             {
-                setData(contractList.subList(startIndex, endIndex));
-                setTotalDataCount(contractList.size());
+                setData(retrieveQuery.getResultList());
+                setTotalDataCount((int) (long) countQuery.getSingleResult());
             }
         };
     }
 
-    private boolean isContractPending(Contract contract) {
-        LocalDate pendingValidTill = contract.getCreatedOn().plusWeeks(2);
+    @Override
+    public List<Contract> getAll(String contractorsNameFilter) {
+        Query query = entityManager.createNamedQuery("Contract.filterByContractorsName");
+        query.setParameter("contractorsNameFilterText", contractorsNameFilter);
 
-        return DateHelper.getCurrentDate().isBefore(pendingValidTill);
+        return query.getResultList();
     }
 
-    private boolean isContractConfirmed(Contract contract) {
-        return contract.getStatus() == ContractStatus.Confirmed;
+    @Override
+    public PaginatedDataList<Contract> getAll(String contractorsNameFilter, int pageNum, int pageSize) {
+        Query countQuery = entityManager.createNamedQuery("Contract.getCountFilterByContractorsName");
+        countQuery.setParameter("contractorsNameFilterText", contractorsNameFilter);
+
+        Query retrieveQuery = entityManager.createNamedQuery("Contract.filterByContractorsName");
+        retrieveQuery.setParameter("contractorsNameFilterText", contractorsNameFilter);
+        retrieveQuery.setFirstResult((pageNum - 1) * pageSize);
+        retrieveQuery.setMaxResults(pageSize);
+
+        return new PaginatedDataList() {
+            {
+                setData(retrieveQuery.getResultList());
+                setTotalDataCount((int) (long) countQuery.getSingleResult());
+            }
+        };
     }
 
-    private boolean isContractWithInDateRange(Contract contract, LocalDate startDate, LocalDate endDate) {
-        return isContractPeriodCollide(contract, startDate, endDate);
-    }
-
-    private boolean isContractPeriodCollide(Contract contract, LocalDate startDate, LocalDate endDate) {
-        return isDateBetweenContractPeriod(contract, startDate)
-                || isDateBetweenContractPeriod(contract, endDate);
-    }
-
-    private boolean isDateBetweenContractPeriod(Contract contract, LocalDate date) {
-        LocalDate contractStartDate = contract.getStartDate();
-        LocalDate contractEndDate = contract.getEndDate();
-
-        return (contractStartDate.isEqual(date) || contractStartDate.isBefore(date))
-                && (contractEndDate.isEqual(date) || contractEndDate.isAfter(date));
+    private void mapMutableFields(Contract to, Contract from) {
+        to.setContractorsUserId(from.getContractorsUserId());
+        to.setContractorsName(from.getContractorsName());
+        to.setContractorsEmail(from.getContractorsEmail());
+        to.setContractorsPhone(from.getContractorsPhone());
+        to.setRoomNumber(from.getRoomNumber());
+        to.setStartDate(from.getStartDate());
+        to.setEndDate(from.getEndDate());
+        to.setStatus(from.getStatus());
     }
 }

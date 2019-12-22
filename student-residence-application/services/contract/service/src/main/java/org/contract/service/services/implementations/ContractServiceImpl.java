@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import org.contract.common.Messages;
 import org.contract.common.exceptions.InvalidOperationException;
 import org.contract.common.exceptions.ObjectNotFoundException;
-import org.contract.common.exceptions.PaginationRangeOutOfBoundException;
 import org.contract.common.exceptions.ValidationException;
 import org.contract.common.helpers.DateHelper;
 import org.contract.common.helpers.ValidationHelper;
@@ -101,7 +100,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public PaginatedDataList<Contract> getContracts(int pageNum, int pageSize) throws PaginationRangeOutOfBoundException {
+    public PaginatedDataList<Contract> getContracts(int pageNum, int pageSize) {
         return contractRepository.getAll(pageNum, pageSize);
     }
 
@@ -116,7 +115,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public PaginatedDataList<Contract> getContracts(String contractorsNameFilter, int pageNum, int pageSize) throws PaginationRangeOutOfBoundException {
+    public PaginatedDataList<Contract> getContracts(String contractorsNameFilter, int pageNum, int pageSize) {
         return contractRepository.getAll(contractorsNameFilter, pageNum, pageSize);
     }
 

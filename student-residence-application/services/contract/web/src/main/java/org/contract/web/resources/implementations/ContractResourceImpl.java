@@ -9,13 +9,18 @@ import org.contract.service.models.NewContract;
 import org.contract.service.services.interfaces.ContractService;
 import org.contract.web.Constants;
 import org.contract.web.helpers.PaginationMetadataHelper;
-import org.contract.web.models.*;
+import org.contract.web.models.ContractUpdateOperation;
+import org.contract.web.models.ContractUpdateRequest;
+import org.contract.web.models.PaginatedContractListResponse;
+import org.contract.web.models.PaginationMetadata;
 import org.contract.web.resources.interfaces.ContractResource;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Path(Constants.RESOURCE_PATH_CONTRACT)
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
@@ -125,8 +130,6 @@ public class ContractResourceImpl implements ContractResource {
             };
 
             return buildResponseObject(Response.Status.OK, paginatedContractListResponse);
-        } catch (PaginationRangeOutOfBoundException ex) {
-            return buildResponseObject(Response.Status.NO_CONTENT, null);
         } catch (Exception ex) {
             return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, Messages.INTERNAL_ERROR);
         }
