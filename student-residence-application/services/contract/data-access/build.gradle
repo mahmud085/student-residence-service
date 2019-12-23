@@ -20,4 +20,8 @@ dependencies {
     compile group: 'org.glassfish.jersey.inject', name: 'jersey-hk2', version: '2.28'
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-jaxb', version: '2.29.1'
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version: '2.29.1'
+
+    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.18'
+    compile group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
+    compile group: 'org.eclipse.persistence', name: 'org.eclipse.persistence.jpa', version: '2.7.5'
 }

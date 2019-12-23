@@ -1,15 +1,42 @@
 package org.contract.dataaccess.data.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.contract.common.adapters.LocalDateAdapter;
 import org.contract.dataaccess.data.enums.ContractStatus;
 
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
 
+@javax.persistence.Entity
+@Table(name = "contract")
+@NamedQueries({
+        @NamedQuery(name = "Contract.getCount",
+                query = "select count(c.id) from Contract c"),
+
+        @NamedQuery(name = "Contract.getAll",
+                query = "select c from Contract c"),
+
+        @NamedQuery(name = "Contract.findSingleByContractId",
+                query = "select c from Contract c where c.contractId like :contractId"),
+
+        @NamedQuery(name = "Contract.findMultipleByContractorsUserId",
+                query = "select c from Contract c where c.contractorsUserId like :contractorsUserId"),
+
+        @NamedQuery(name = "Contract.filterByContractorsName",
+                query = "select c from Contract c where c.contractorsName like concat('%', :contractorsNameFilterText, '%')"),
+
+        @NamedQuery(name = "Contract.getCountFilterByContractorsName",
+                query = "select count(c.id) from Contract c where c.contractorsName like concat('%', :contractorsNameFilterText, '%')"),
+
+        @NamedQuery(name = "Contract.findActiveContractForRoomByDates",
+                query = "select c from Contract c " +
+                        "where c.roomNumber like :roomNumber " +
+                        "and ((:startDate between c.startDate and c.endDate) or (:endDate between c.startDate and c.endDate) or (:startDate < c.startDate and :endDate > c.endDate)) " +
+                        "and (c.status = :confirmedStatus or c.createdOn >= :earliestPossibleCreatedOnForPending)")
+})
 @XmlRootElement(name = "contract")
-public class Contract extends Entity implements Cloneable  {
+public class Contract extends Entity {
     private String contractId;
     private String contractorsName;
     private String contractorsUserId;
@@ -20,8 +47,8 @@ public class Contract extends Entity implements Cloneable  {
     private LocalDate startDate;
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate endDate;
-    private ContractStatus contractStatus;
-    @JsonIgnore
+    @Enumerated(EnumType.STRING)
+    private ContractStatus status;
     private String createdBy;
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate createdOn;
@@ -90,12 +117,12 @@ public class Contract extends Entity implements Cloneable  {
         this.endDate = endDate;
     }
 
-    public ContractStatus getContractStatus() {
-        return contractStatus;
+    public ContractStatus getStatus() {
+        return status;
     }
 
-    public void setContractStatus(ContractStatus contractStatus) {
-        this.contractStatus = contractStatus;
+    public void setStatus(ContractStatus status) {
+        this.status = status;
     }
 
     public String getCreatedBy() {
@@ -112,13 +139,5 @@ public class Contract extends Entity implements Cloneable  {
 
     public void setCreatedOn(LocalDate createdOn) {
         this.createdOn = createdOn;
-    }
-
-    public Contract clone() {
-        try {
-            return (Contract) super.clone();
-        } catch (CloneNotSupportedException ex) {
-            return null;
-        }
     }
 }
