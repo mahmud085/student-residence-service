@@ -151,6 +151,10 @@ public class ContractServiceImpl implements ContractService {
             throw new ObjectNotFoundException(Messages.CONTRACT_NOT_FOUND_WITH_ID);
         }
 
+        if (contract.getStatus() != ContractStatus.Confirmed) {
+            throw new InvalidOperationException(Messages.CONTRACT_EXTENSION_NOT_YET_CONFIRMED);
+        }
+
         LocalDate currentDate = LocalDate.now();
         LocalDate currentEndDate = contract.getEndDate();
 
@@ -179,6 +183,10 @@ public class ContractServiceImpl implements ContractService {
 
         if (contract == null) {
             throw new ObjectNotFoundException(Messages.CONTRACT_NOT_FOUND_WITH_ID);
+        }
+
+        if (contract.getStatus() != ContractStatus.Confirmed) {
+            throw new InvalidOperationException(Messages.CONTRACT_TERMINATION_NOT_YET_CONFIRMED);
         }
 
         LocalDate currentDate = LocalDate.now();
