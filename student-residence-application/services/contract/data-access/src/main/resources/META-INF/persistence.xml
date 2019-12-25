@@ -9,6 +9,8 @@
         <class>org.contract.dataaccess.data.models.Contract</class>
         <class>org.contract.dataaccess.data.models.Room</class>
 
+        <shared-cache-mode>NONE</shared-cache-mode>
+
         <properties>
             <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/student_residence_contract"/>
             <property name="javax.persistence.jdbc.user" value="root"/>
