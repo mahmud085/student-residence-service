@@ -197,7 +197,7 @@ public class ContractServiceImpl implements ContractService {
         }
 
         // Business logic
-        LocalDate dateThreeMonthsBeforeNewEndDate = newEndDate.minusMonths(3);
+        LocalDate dateThreeMonthsBeforeNewEndDate = contract.getEndDate().minusMonths(3);
         if (currentDate.isAfter(dateThreeMonthsBeforeNewEndDate)) {
             throw new InvalidOperationException(Messages.CONTRACT_TERMINATION_INVALID_OPERATION_DATE);
         }
