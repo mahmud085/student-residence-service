@@ -6,7 +6,8 @@ import org.authentication.common.validation.annotations.HasValue;
 public class NewUser {
     @HasValue(message = Messages.REQUIRED_USER_ID)
     private String userId;
-    private String name;
+    private String firstname;
+    private String lastname;
     @HasValue(message = Messages.REQUIRED_USER_PASSWORD)
     private String password;
 
@@ -28,12 +29,18 @@ public class NewUser {
         this.userId = userId;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstname() { return firstname; }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
     public UserRole getRole() {

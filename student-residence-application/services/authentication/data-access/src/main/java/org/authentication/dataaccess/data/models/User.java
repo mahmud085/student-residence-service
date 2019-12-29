@@ -12,7 +12,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class User extends Entity implements Cloneable {
 
     private String userId;
-    private String userName;
+    private String firstname;
+    private String lastname;
     private String password;
 
     private UserType userType;
@@ -25,12 +26,20 @@ public class User extends Entity implements Cloneable {
         this.userId = userId;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
     public String getPassword() {
