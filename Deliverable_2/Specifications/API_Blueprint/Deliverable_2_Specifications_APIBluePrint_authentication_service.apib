@@ -1,0 +1,98 @@
+FORMAT: 1A
+HOST: http://authentication-service-base-uriDefaultValue/api
+
+# Authentication Service
+## Authentication
+This API uses JSON Web Tokens for its authentication.
+
+The parameters that are needed to be sent for this type of authentication are as follows:
++ `JWTHeaderName`
++ `JWTAcquireURL`
++ `JWTDestroyURL`
+
+# Group authentication
+
+Methods for authentication
+
+## Authentication User [/authentication/user]
+
+### Authenticates a user [POST]
+Method to authenticate an user.
+
++ Request (application/json)
+
+    + Attributes (LoginRequest)
+
+
+
++ Response 200 (application/json)
+
+        Successful operation
+
+    + Attributes (LoginResponse)
+
+
+
++ Response 403 
+
+        Wrong password
+
+
+
+
++ Response 404 
+
+        No user found with the specified user id.
+
+
+
+
+
+## Authentication Accesstoken [/authentication/accesstoken]
+
+### Authenticates an access token [GET]
+Method to authenticates an access token.
+
++ Response 200 (application/json)
+
+        Successful operation
+
+    + Attributes (User)
+
+
+
++ Response 401 
+
+        Authentication failed
+
+
+
+
+
+
+# Data Structures
+
+## LoginRequest (object)
+
+
+### Properties
++ `userId` (string, optional) 
++ `password` (string, optional) 
+
+
+## LoginResponse (object)
+
+
+### Properties
++ `accessToken` (string, optional) 
+
+
+## User (object)
+
+
+### Properties
++ `userId` (string, optional) 
++ `firstName` (string, optional) 
++ `lastName` (string, optional) 
++ `roles` (array[string], optional) 
+
