@@ -48,7 +48,13 @@ public class UserResourceImpl implements UserResource {
     @RolesAllowed({Constants.ROLE_Resident, Constants.ROLE_Caretaker})
     @Path("{user-id}")
     public Response getUserById(@PathParam("user-id") String userId, @Context HttpHeaders headers) {
-                String contextUserId = securityContext.getUserPrincipal().getName();
+        String authCheck = checkAuthenticationToken(headers);
+        if (authCheck.equals("401-1")) {
+            return buildResponseObject(Response.Status.UNAUTHORIZED, Messages.AUTHORIZATION_FAILED_CAUSE_NO_AUTHORIZATION_HEADER);
+        } else if (authCheck.equals("401-2")) {
+            return buildResponseObject(Response.Status.UNAUTHORIZED, Messages.INVALID_ACCESS_TOKEN);
+        }
+        String contextUserId = securityContext.getUserPrincipal().getName();
         if (userId == null || userId.length() == 0) {
             return buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUEST_BODY_REQUIRED);
         }
@@ -62,6 +68,38 @@ public class UserResourceImpl implements UserResource {
             // TODO Auto-generated catch block
             return buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());
         }
+    }
+
+    public String checkAuthenticationToken(HttpHeaders headers) {
+        /*List<String> headerList = headers.getRequestHeader(HttpHeaders.AUTHORIZATION);*/
+
+        // Check if the HTTP Authorization header is present and formatted correctly
+        String authorizationHeader;
+        try {
+            authorizationHeader = headers.getRequestHeader(HttpHeaders.AUTHORIZATION).get(0);
+        } catch (Exception e) {
+            return "401-1";
+        }
+        logger.info("#### authorizationHeader : " + authorizationHeader);
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            logger.severe("#### invalid authorizationHeader : " + authorizationHeader);
+            throw new NotAuthorizedException("Accurate Authorization header must be provided");
+        }
+        // Extract the token from the HTTP Authorization header
+        String token = authorizationHeader.substring("Bearer".length()).trim();
+
+        try {
+            // Validate the token
+            Key key = keyGenerator.generateKey();
+            Jwts.parser().setSigningKey(key).parseClaimsJws(token);
+            logger.info("#### valid token : " + token);
+            return "200";
+
+        } catch (Exception e) {
+            logger.severe("#### invalid token : " + token);
+            return "401-2";
+        }
+
     }
 
 
