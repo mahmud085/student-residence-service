@@ -1,5 +1,6 @@
 package org.appointment.service.services.implementations;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.google.inject.Inject;
 import org.appointment.common.exceptions.InvalidOperationException;
 import org.appointment.common.exceptions.ObjectNotFoundException;
@@ -15,6 +16,10 @@ import org.appointment.dataaccess.models.PaginatedDataList;
 import org.appointment.dataaccess.respositories.interfaces.AppointmentRepository;
 import org.appointment.service.models.Contract;
 import org.appointment.service.models.NewAppointment;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvider;
+
 import java.time.LocalDate;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -156,7 +161,8 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 	}
 
 	private Contract getContract(String contractId) throws ObjectNotFoundException {
-		client = ClientBuilder.newClient();
+		final JacksonJsonProvider jacksonJsonProvider = new JacksonJaxbJsonProvider().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		client = ClientBuilder.newClient(new ClientConfig(jacksonJsonProvider));
 		Response response = client.target("http://localhost:8081/api/contracts")
 				.path("{contractId}")
 				.resolveTemplate("contractId", contractId)
