@@ -35,6 +35,24 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 	}
 
 	@Override
+	public List<Appointment> getAll(LocalDate desiredDateFilter) {
+		return DataStore.appointments
+				.stream()
+				.filter(x -> x.getDesiredDate().equals(desiredDateFilter))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public PaginatedDataList<Appointment> getAll(LocalDate desiredDateFilter, int pageNum, int pageSize) throws PaginationRangeOutOfBoundException {
+		List<Appointment> filteredAppointmentList = DataStore.appointments
+				.stream()
+				.filter(x -> x.getDesiredDate().equals(desiredDateFilter))
+				.collect(Collectors.toList());
+
+		return getPaginatedAppointmentList(pageNum, pageSize, filteredAppointmentList);
+	}
+
+	@Override
 	public Appointment getById(String appointmentId) {
 		for(Appointment  appointment : DataStore.appointments){
 			if(appointment.getAppointmentId().equals(appointmentId)) {
@@ -87,7 +105,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
 		return new PaginatedDataList<Appointment>() {
 			{
-				setData(appointmentList.subList(startIndex, endIndex));
+				setData(appointmentList.subList(startIndex, endIndex+1));
 				setTotalDataCount(appointmentList.size());
 			}
 		};

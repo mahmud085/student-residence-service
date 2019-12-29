@@ -12,7 +12,6 @@ public interface AppointmentResource {
      */
     
     Response getAppointment(String appointmentId);
-    
+    Response getAppointments(String desiredDate, int pageNum, int pageSize);
     Response acceptAppointment(String appointmentId);
-    
 }

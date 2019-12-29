@@ -1,7 +1,8 @@
 package org.appointment.web;
 
 public class Constants {
-    public static final String RESOURCE_PATH_CONTRACT = "appointments";
+    public static final String RESOURCE_PATH_APPOINTMENTS = "appointments";
+    public static final String RESOURCE_PATH_GET_APPOINTMENTS = "getAppointments";
 
     public static final String ROLE_ADMINISTRATOR = "Administrator";
     public static final String ROLE_Resident = "Resident";
