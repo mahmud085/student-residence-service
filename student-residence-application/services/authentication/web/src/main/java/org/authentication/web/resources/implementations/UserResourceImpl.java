@@ -48,7 +48,20 @@ public class UserResourceImpl implements UserResource {
     @RolesAllowed({Constants.ROLE_Resident, Constants.ROLE_Caretaker})
     @Path("{user-id}")
     public Response getUserById(@PathParam("user-id") String userId, @Context HttpHeaders headers) {
-        return null;
+                String contextUserId = securityContext.getUserPrincipal().getName();
+        if (userId == null || userId.length() == 0) {
+            return buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUEST_BODY_REQUIRED);
+        }
+
+        try {
+
+            User user = userService.getUser(userId, contextUserId);
+
+            return buildResponseObject(Response.Status.OK, user);
+        } catch (ValidationException | InvalidOperationException | ObjectNotFoundException e) {
+            // TODO Auto-generated catch block
+            return buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());
+        }
     }
 
 
