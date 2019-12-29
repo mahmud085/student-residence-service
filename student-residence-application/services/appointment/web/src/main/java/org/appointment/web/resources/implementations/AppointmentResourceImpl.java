@@ -17,9 +17,10 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
 import java.io.Console;
+import java.time.LocalDate;
 import java.util.List;
 
-@Path(Constants.RESOURCE_PATH_CONTRACT)
+@Path(Constants.RESOURCE_PATH_APPOINTMENTS)
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class AppointmentResourceImpl implements AppointmentResource {
@@ -66,7 +67,6 @@ public class AppointmentResourceImpl implements AppointmentResource {
 	}
 
 
-	@Override
 
 	@GET @RolesAllowed({Constants.ROLE_Resident, Constants.ROLE_Caretaker})
 	@Path("{appointment-id}")
@@ -88,6 +88,93 @@ public class AppointmentResourceImpl implements AppointmentResource {
 		}
 
 	}
+
+	@Override
+	@GET @RolesAllowed({Constants.ROLE_Resident, Constants.ROLE_Caretaker})
+	public Response getAppointments(@QueryParam("desiredDate") String desiredDate
+			, @QueryParam("pageNum") int pageNum
+			, @QueryParam("pageSize") int pageSize) {
+		boolean isdesiredDateFilterPresent = isValuePresent(desiredDate);
+		LocalDate desiredDateConverted = isdesiredDateFilterPresent ? LocalDate.parse(desiredDate) : null;
+
+		boolean isPaginationRequested = isPaginationRequested(pageNum, pageSize);
+		String endpointPath = String.format("%s%s/%s", uriInfo.getBaseUri(), Constants.RESOURCE_PATH_APPOINTMENTS ,Constants.RESOURCE_PATH_GET_APPOINTMENTS);
+
+		if (isPaginationRequested) {
+			pageNum = pageNum == 0 ? Constants.DEFAULT_PAGE_NUM : pageNum;
+			pageSize = pageSize == 0 ? Constants.DEFAULT_PAGE_SIZE : pageSize;
+
+			try {
+				validatePaginationAttributes(pageNum, pageSize);
+			} catch (PaginationAttributeException ex) {
+				return buildResponseObject(Response.Status.BAD_REQUEST, ex.getMessage());
+			}
+		}
+
+		try {
+			List<Appointment> AppointmentList;
+			PaginationMetadata paginationMetadata;
+
+			if (isPaginationRequested) {
+				PaginatedDataList<Appointment> paginatedAppointmentList;
+				if (isdesiredDateFilterPresent) {
+					paginatedAppointmentList = appointmentService.getallAppointment(desiredDateConverted, pageNum, pageSize);
+				} else {
+					paginatedAppointmentList = appointmentService.getallAppointment(pageNum, pageSize);
+				}
+
+				AppointmentList = paginatedAppointmentList.getData();
+				paginationMetadata = (new PaginationMetadataHelper(isPaginationRequested, endpointPath, pageNum, pageSize, paginatedAppointmentList.getTotalDataCount())
+						.buildPaginationMetadata());
+			} else if (isdesiredDateFilterPresent) {
+				AppointmentList = appointmentService.getallAppointment(desiredDateConverted);
+				paginationMetadata = new PaginationMetadata();
+			} else {
+				AppointmentList = appointmentService.getallAppointment();
+				paginationMetadata = new PaginationMetadata();
+			}
+
+			PaginatedAppointmentListResponse paginatedAppointmentListResponse = new PaginatedAppointmentListResponse() {
+				{
+					setAppointments(AppointmentList);
+					setMetadata(paginationMetadata);
+				}
+			};
+
+			return buildResponseObject(Response.Status.OK, paginatedAppointmentListResponse);
+		} catch (PaginationRangeOutOfBoundException ex) {
+			return buildResponseObject(Response.Status.NO_CONTENT, null);
+		} catch (Exception ex) {
+			return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, Messages.INTERNAL_ERROR);
+		}
+	}
+
+	private boolean isPaginationRequested(int pageNum, int pageSize) {
+		return isValuePresent(pageNum) || isValuePresent(pageSize);
+	}
+
+	private boolean isValuePresent(String value) {
+		return (value != null && !value.isEmpty());
+	}
+
+	private boolean isValuePresent(int value) {
+		return value > 0;
+	}
+	private void validatePaginationAttributes(int pageNum, int pageSize) throws PaginationAttributeException {
+		if (pageNum < 1) {
+			throw new PaginationAttributeException(Messages.INVALID_PAGE_NUM);
+		}
+
+		if (pageSize < 1) {
+			throw new PaginationAttributeException(Messages.INVALID_PAGE_SIZE);
+		}
+
+		if (pageSize > Constants.MAX_PAGE_SIZE) {
+			throw new PaginationAttributeException("Max page size is " + Constants.MAX_PAGE_SIZE +".");
+		}
+	}
+
+
 
 	@Override
 	@PUT @RolesAllowed({Constants.ROLE_Caretaker})
