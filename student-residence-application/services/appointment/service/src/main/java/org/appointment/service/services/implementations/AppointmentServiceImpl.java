@@ -31,19 +31,14 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 
 	@Override
 	public Appointment createAppointment(NewAppointment newAppointment, String contextUserId) throws ValidationException, InvalidOperationException, ObjectNotFoundException {
-
-
 		LocalDate createdOn = DateHelper.getCurrentDate();
 		String contractId = newAppointment.getContractId();
 
 		ValidationHelper<NewAppointment> validationHelper = new ValidationHelper<>();
 		validationHelper.validate(newAppointment);
 
-
 		try {
-			Contract contract = getContractor(contractId);
-
-
+			Contract contract = getContract(contractId);
 
 			if (!contract.getRoomNumber().equals(newAppointment.getRoomNumber())) {
 
@@ -108,7 +103,7 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 	}
 
 	@Override
-	public Appointment gettAppointment(String appointmentId, String contextUserId) throws ObjectNotFoundException {
+	public Appointment getAppointment(String appointmentId) throws ObjectNotFoundException {
 		Appointment appointment=appointmentRepository.getById(appointmentId);
 		if(appointment==null)
 			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
@@ -117,7 +112,7 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 	}
 
 	@Override
-	public List<Appointment> getallAppointment() throws ValidationException, InvalidOperationException, ObjectNotFoundException {
+	public List<Appointment> getAllAppointments() throws ValidationException, InvalidOperationException, ObjectNotFoundException {
 		List<Appointment> appointment=appointmentRepository.getAll();
 		if(appointment==null)
 			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
@@ -126,23 +121,23 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 	}
 
 	@Override
-	public PaginatedDataList<Appointment> getallAppointment(int pageNum, int pageSize) throws PaginationRangeOutOfBoundException {
+	public PaginatedDataList<Appointment> getAllAppointments(int pageNum, int pageSize) throws PaginationRangeOutOfBoundException {
 		return appointmentRepository.getAll(pageNum, pageSize);
 	}
 
 	@Override
-	public List<Appointment> getallAppointment(LocalDate desiredDate) {
+	public List<Appointment> getAllAppointments(LocalDate desiredDate) {
 		return appointmentRepository.getAll(desiredDate);
 	}
 
 	@Override
-	public PaginatedDataList<Appointment> getallAppointment(LocalDate desiredDate, int pageNum, int pageSize) throws PaginationRangeOutOfBoundException {
+	public PaginatedDataList<Appointment> getAllAppointments(LocalDate desiredDate, int pageNum, int pageSize) throws PaginationRangeOutOfBoundException {
 		return appointmentRepository.getAll(desiredDate, pageNum, pageSize);
 	}
 
 
 	@Override
-	public Appointment acceptAppointment(String appointmentId, String contextUserId) throws ObjectNotFoundException , InvalidOperationException {
+	public Appointment acceptAppointment(String appointmentId) throws ObjectNotFoundException , InvalidOperationException {
 		Appointment appointment = appointmentRepository.getById(appointmentId);
 		LocalDate oneDayBefore = appointment.getDesiredDate().minusDays(1);
 
@@ -160,7 +155,7 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 		return appointment;
 	}
 
-	private Contract getContractor(String contractId) throws ObjectNotFoundException {
+	private Contract getContract(String contractId) throws ObjectNotFoundException {
 		client = ClientBuilder.newClient();
 		Response response = client.target("http://localhost:8081/api/contracts")
 				.path("{contractId}")
@@ -176,5 +171,4 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 			throw new ObjectNotFoundException(Messages.CONTRACT_NOT_FOUND_WITH_ID);
 		}
 	}
-
 }

@@ -39,8 +39,6 @@ public class NewAppointment {
     @NotNull(message = Messages.REQUIRED_DESIRED_DATE)
     private LocalDate desiredDate;
 
-    private AppointmentStatus status;
-
     public String getContractorsName() {
         return contractorsName;
     }
@@ -100,15 +98,4 @@ public class NewAppointment {
     public void setDesiredDate(LocalDate desiredDate) {
         this.desiredDate = desiredDate;
     }
-
-    @XmlJavaTypeAdapter(AppointmentStatusAdapter.class)
-    public AppointmentStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(AppointmentStatus status) {
-        this.status = status;
-    }
-
-
 }
