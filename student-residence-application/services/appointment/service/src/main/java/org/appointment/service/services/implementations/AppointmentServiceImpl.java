@@ -43,46 +43,58 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 		validationHelper.validate(newAppointment);
 
 		try {
-			Contract contract = getContract(contractId);
-
-			if (!contract.getRoomNumber().equals(newAppointment.getRoomNumber())) {
-
-				throw new ValidationException(Messages.INVALID_ROOM_NUMBER);
-			}
-
-			if (newAppointment.getAppointmentType() == AppointmentType.MoveIn) {
-
-				if (!contract.getContractStatus().equals("Confirmed")) {
-					throw new InvalidOperationException(Messages.INVALID_CONTRACT);
-				}
-
-				LocalDate twoWeeksBefore = contract.getStartDate().minusWeeks(2);
-
-				if (newAppointment.getDesiredDate().isBefore(twoWeeksBefore)) {
-
-					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
-				}
-				if (newAppointment.getDesiredDate().isAfter(contract.getStartDate())) {
-
-					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
-				}
-
-			}
-
-			if (newAppointment.getAppointmentType() == AppointmentType.MoveOut) {
-
-				LocalDate twoWeeksBefore = contract.getEndDate().minusWeeks(2);
-
-				if (newAppointment.getDesiredDate().isBefore(twoWeeksBefore)) {
-					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
-				}
-				if (newAppointment.getDesiredDate().isAfter(contract.getEndDate())) {
-					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
-				}
-			}
-
-			if(newAppointment.getDesiredDate().isBefore(LocalDate.now()))
-				throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
+			//Contract contract = getContract(contractId);
+			
+			Contract contract = new Contract();
+			contract.setContractId("45678");
+			contract.setContractorsEmail("koushikjay66");
+			contract.setContractorsName("bulbuli");
+			contract.setContractorsPhone("123456787");
+			contract.setContractorsUserId("koushikja66");
+			contract.setContractStatus("Confirmed");
+			contract.setCreatedOn(LocalDate.of(2018, 12, 31));
+			contract.setEndDate(LocalDate.of(2020, 3, 4));
+			contract.setRoomNumber("67890");
+			contract.setStartDate(LocalDate.now());
+//
+//			if (!contract.getRoomNumber().equals(newAppointment.getRoomNumber())) {
+//
+//				throw new ValidationException(Messages.INVALID_ROOM_NUMBER);
+//			}
+//
+//			if (newAppointment.getAppointmentType() == AppointmentType.MoveIn) {
+//
+//				if (!contract.getContractStatus().equals("Confirmed")) {
+//					throw new InvalidOperationException(Messages.INVALID_CONTRACT);
+//				}
+//
+//				LocalDate twoWeeksBefore = contract.getStartDate().minusWeeks(2);
+//
+//				if (newAppointment.getDesiredDate().isBefore(twoWeeksBefore)) {
+//
+//					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
+//				}
+//				if (newAppointment.getDesiredDate().isAfter(contract.getStartDate())) {
+//
+//					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
+//				}
+//
+//			}
+//
+//			if (newAppointment.getAppointmentType() == AppointmentType.MoveOut) {
+//
+//				LocalDate twoWeeksBefore = contract.getEndDate().minusWeeks(2);
+//
+//				if (newAppointment.getDesiredDate().isBefore(twoWeeksBefore)) {
+//					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
+//				}
+//				if (newAppointment.getDesiredDate().isAfter(contract.getEndDate())) {
+//					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
+//				}
+//			}
+//
+//			if(newAppointment.getDesiredDate().isBefore(LocalDate.now()))
+//				throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
 
 			Appointment appointment = new Appointment() {
 				{
@@ -99,7 +111,7 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 					setCreatedOn(createdOn);
 				}
 			};
-
+			
 			return appointmentRepository.add(appointment);
 		} catch (Exception e){
 			throw new ObjectNotFoundException(e.getMessage());
@@ -109,6 +121,7 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 
 	@Override
 	public Appointment getAppointment(String appointmentId) throws ObjectNotFoundException {
+		System.out.println("Get By IDDDD");
 		Appointment appointment=appointmentRepository.getById(appointmentId);
 		if(appointment==null)
 			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
