@@ -55,7 +55,9 @@ public class UserServiceImpl implements org.authentication.service.services.inte
 
     @Override
     public User createLoginRequest(String userId, String password) throws ValidationException, InvalidOperationException, ObjectNotFoundException {
-        User user = userRepository.getUserByIdPass(userId, password);
+    	System.out.println("Entered Here");
+    	
+    	User user = userRepository.getUserByIdPass(userId, password);
         if (user == null)
             throw new ObjectNotFoundException(Messages.USER_NOT_FOUND);
 

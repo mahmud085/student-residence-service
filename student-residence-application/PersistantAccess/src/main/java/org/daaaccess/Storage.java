@@ -57,11 +57,12 @@ public final class Storage {
 	 */
 	public Storage build(Properties properties) {
 
-
+		
 		emanager= Persistence
 				.createEntityManagerFactory(properties.getProperty("persistent.unitname") , getDBProperties(properties))
 				.createEntityManager();
-
+		
+		
 
 		return Storage.INSTANCE;
 	}
@@ -166,6 +167,7 @@ public final class Storage {
 		Set<Entry<Object, Object>> propEntries = properties.entrySet();
 		for (Entry<Object, Object> obj : propEntries) {
 			if(obj.getKey().toString().contains("jdbc"))
+				System.out.println(obj.getKey().toString()+" => "+ obj.getValue().toString());
 				prop.put(b+obj.getKey().toString(), obj.getValue().toString());
 		}
 		return prop;

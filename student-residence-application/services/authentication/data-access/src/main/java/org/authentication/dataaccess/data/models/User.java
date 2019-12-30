@@ -17,8 +17,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "user")
 @NamedQueries({
 	
-	@NamedQuery(name = "user.findByUserIdPassword" ,query = "SELECT u FROM user u where u.userId=:userId AND u.password=:password")
-	,@NamedQuery(name = "user.getAllUser" ,query = "SELECT u FROM user u")
+	 @NamedQuery(name = "user.findByUserIdPassword" ,query = "SELECT u FROM user u where u.userId=:userId AND u.password=:password")
+	,@NamedQuery(name = "user.getAll" ,query = "SELECT u FROM user u")
+	, @NamedQuery(name = "user.findByUserId" ,query = "SELECT u FROM user u where u.userId=:userId")
 })
 
 public class User extends Entity implements Cloneable {
@@ -30,6 +31,7 @@ public class User extends Entity implements Cloneable {
 	@Column(name="password")
 	private String password;
 
+	@Column(name = "userType")
 	private UserType userType;
 
 	public String getUserId() {
