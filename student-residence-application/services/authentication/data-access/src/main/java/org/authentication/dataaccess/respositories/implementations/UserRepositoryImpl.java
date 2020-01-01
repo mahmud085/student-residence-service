@@ -30,16 +30,8 @@ public class UserRepositoryImpl implements UserRepository {
 
 	@Override
 	public User add(User obj) {
-		
-		System.out.println("User add called");
-		Properties p = new Properties();
-		p.put("jdbc.url", "jdbc:mysql://localhost:3306/projectrestapi");
-		p.put("jdbc.user", "root");
-		p.put("jdbc.password", "");
-		p.put("jdbc.driver", "com.mysql.cj.jdbc.Driver");
-		p.put("persistent.unitname", "AuthenticationStorage");
 
-		Storage storage = Storage.instance().build(Configuration.loadProperties("tuntuni.properties"));
+		Storage storage = Storage.instance().build(org.authentication.dataaccess.helpers.Configuration.loadProperties("dbProperties.properties"));
 
 		System.out.println("Now going to add user");
 		User u = new User();
@@ -98,17 +90,6 @@ public class UserRepositoryImpl implements UserRepository {
 
 	@Override
 	public User getUserByIdPass(String userId, String password) {
-		
-		
-		Properties p = new Properties();
-		p.put("jdbc.url", "jdbc:mysql://localhost:3306/projectrestapi");
-		p.put("jdbc.user", "root");
-		p.put("jdbc.password", "");
-		p.put("jdbc.driver", "com.mysql.cj.jdbc.Driver");
-		p.put("persistent.unitname", "AuthenticationStorage");
-		
-		
-		System.out.println("Get User by ID Pass called");
 
 		//		for (User user : DataStore.user) {
 		//			if (user.getUserId().equals(userId) && user.getPassword().equals(password)) {
@@ -124,22 +105,12 @@ public class UserRepositoryImpl implements UserRepository {
 		//		}
 		//		return null;
 
-		User user= new User();
-		user.setId(getNewId());
-		user.setPassword("Nopassword01");
-		user.setUserId("Tuntuni");
-		user.setUserName("Tuntuni");
-		user.setUserType(UserType.Admin);
-		
-		
-		add(user);
-		System.out.println("Added User");
-		Storage storage = Storage.instance().build(Configuration.loadProperties("tuntuni.properties"));
+		Storage storage = Storage.instance().build(org.authentication.dataaccess.helpers.Configuration.loadProperties("dbProperties.properties"));
 		HashMap<String, String> hm = new HashMap<String, String>();
 		hm.put("userId", userId);
 		hm.put("password", password);
 
-		List<User> userlist=(List<User>)storage.execute("user.findByUserId", hm);
+		List<User> userlist=(List<User>)storage.execute("user.findByUserIdPassword",hm);
 		if(userlist.size()==0)
 			return null;
 

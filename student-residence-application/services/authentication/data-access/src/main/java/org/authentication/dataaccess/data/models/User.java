@@ -2,10 +2,7 @@ package org.authentication.dataaccess.data.models;
 
 import org.authentication.dataaccess.data.enums.UserType;
 
-import javax.persistence.Column;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
 //import org.appointment.service.adapters.AppointmentPriorityAdapter;
@@ -31,6 +28,7 @@ public class User extends Entity implements Cloneable {
 	@Column(name="password")
 	private String password;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "userType")
 	private UserType userType;
 
