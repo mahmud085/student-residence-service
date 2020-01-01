@@ -23,6 +23,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
 import java.security.Key;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -81,8 +82,8 @@ public class AuthenticationResourceImpl implements AuthenticationResource {
                     {
                         setUserId(user.getUserId());
                         setAccessToken(finalToken);
-                        setGeneratedTime(new Date().toString());
-                        setExpiryTime(toDate(LocalDateTime.now().plusMinutes(15)).toString());
+                        setGeneratedTime(LocalDate.now());
+                        setExpiryTime(LocalDate.now().plusDays(10));
 
                     }
                 };

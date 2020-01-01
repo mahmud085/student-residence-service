@@ -7,6 +7,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.time.LocalDate;
 
 //import org.appointment.service.adapters.AppointmentPriorityAdapter;
 //import org.appointment.service.adapters.AppointmentStatusAdapter;
@@ -24,9 +25,9 @@ public class Authentication extends Entity implements Cloneable {
 	@Column(name = "userId")
 	private String userId;
 	@Column(name = "generatedTime")
-	private String generatedTime;
+	private LocalDate generatedTime;
 	@Column(name = "expiryTime")
-	private String expiryTime;
+	private LocalDate expiryTime;
 	@Column(name = "accessToken")
 	private String accessToken;
 
@@ -38,19 +39,19 @@ public class Authentication extends Entity implements Cloneable {
 		this.userId = userId;
 	}
 
-	public String getGeneratedTime() {
+	public LocalDate getGeneratedTime() {
 		return generatedTime;
 	}
 
-	public void setGeneratedTime(String generatedTime) {
+	public void setGeneratedTime(LocalDate generatedTime) {
 		this.generatedTime = generatedTime;
 	}
 
-	public String getExpiryTime() {
+	public LocalDate getExpiryTime() {
 		return expiryTime;
 	}
 
-	public void setExpiryTime(String expiryTime) {
+	public void setExpiryTime(LocalDate expiryTime) {
 		this.expiryTime = expiryTime;
 	}
 
