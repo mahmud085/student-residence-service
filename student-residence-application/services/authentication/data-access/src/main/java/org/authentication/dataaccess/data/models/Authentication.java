@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @javax.persistence.Entity(name ="authentication")
 @Table(name = "authentication")
 @NamedQueries({
-	@NamedQuery(name = "authentication.getByUserId" , query = "SELECT a FROM authentication a WHERE a.userId=:userId")
+	@NamedQuery(name = "authentication.getByUserId" , query = "SELECT a.userId FROM authentication a WHERE a.accessToken=:accessToken")
 })
 public class Authentication extends Entity implements Cloneable {
 

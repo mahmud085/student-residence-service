@@ -59,7 +59,7 @@ public class UserRepositoryImpl implements UserRepository {
 
 	@Override
 	public User getUserById(String userId) {
-		Storage storage = Storage.instance().build(Configuration.loadProperties("tuntuni.properties"));
+		Storage storage = Storage.instance().build(org.authentication.dataaccess.helpers.Configuration.loadProperties("dbProperties.properties"));
 		//		for (User user : DataStore.user) {
 		//			if (user.getUserId().equals(userId)) {
 		//				return user;
@@ -79,13 +79,23 @@ public class UserRepositoryImpl implements UserRepository {
 
 	@Override
 	public User getUserIdByAccessToken(String accessToken) {
-		for (Authentication authentication : DataStore.authentications) {
-			if (authentication.getAccessToken().equals(accessToken)) {
-				return getUserById(authentication.getUserId());
-			}
+		Storage storage = Storage.instance().build(org.authentication.dataaccess.helpers.Configuration.loadProperties("dbProperties.properties"));
 
-		}
-		return null;
+		HashMap<String, String> hm = new HashMap<String, String>();
+		hm.put("accessToken", accessToken);
+		System.out.println("Here is Access Token");
+		String userId= storage.execute("authentication.getByUserId",hm).toString();
+		userId= userId.replaceAll("\\p{P}","");
+		System.out.println(userId);
+		HashMap<String, String> hm1 = new HashMap<String, String>();
+		hm1.put("userId", userId);
+		System.out.println("Here is getUserById");
+		List<User> userlist=(List<User>)storage.execute("user.findByUserId", hm1);
+		if(userlist.size()==0)
+			return null;
+
+		return userlist.get(0);
+
 	}
 
 	@Override
