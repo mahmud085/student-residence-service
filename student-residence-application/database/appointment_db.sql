@@ -1,7 +1,9 @@
-use projectRestApi;
+create database if not exists `student_residence_appointment`;
+
+use `student_residence_appointment`;
 
 CREATE TABLE IF NOT EXISTS appointment (
- Id INT NOT NULL auto_increment,
+  Id INT NOT NULL auto_increment,
   appointmentId VARCHAR(100) NOT NULL,
   contractorsName VARCHAR(45) NULL,
   contractId VARCHAR(45) NULL,
@@ -15,5 +17,5 @@ CREATE TABLE IF NOT EXISTS appointment (
   createdOn DATE NULL,
  
   PRIMARY KEY (Id),
-   unique key (appointmentId)
-  )
+  unique key (appointmentId)
+)
