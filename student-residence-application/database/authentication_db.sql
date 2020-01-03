@@ -1,4 +1,8 @@
-CREATE TABLE IF NOT EXISTS projectrestapi.authentication (
+create database if not exists `student_residence_authentication`;
+
+use `student_residence_authentication`;
+
+CREATE TABLE IF NOT EXISTS authentication (
   id INT NOT NULL AUTO_INCREMENT,
   userId VARCHAR(100) NULL,
   generatedTime DATE NULL,
@@ -8,7 +12,7 @@ CREATE TABLE IF NOT EXISTS projectrestapi.authentication (
 
 
 
-CREATE TABLE IF NOT EXISTS projectrestapi.user (
+CREATE TABLE IF NOT EXISTS user (
   id INT NOT NULL AUTO_INCREMENT,
   userId VARCHAR(100) NULL,
   userName VARCHAR(100) NULL,

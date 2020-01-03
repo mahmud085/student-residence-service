@@ -85,7 +85,9 @@ public class AppointmentResourceImpl implements AppointmentResource {
 			AppointmentResponse response = HateoasResponseHelper.getAppointmentResponse(uriInfo.getBaseUri().toString(), appointment);
 
 			return buildResponseObject(Response.Status.OK, response);
-		} catch (ValidationException | ObjectNotFoundException e) {
+		} catch (ObjectNotFoundException e) {
+			return  buildResponseObject(Response.Status.NOT_FOUND, e.getMessage());
+		} catch (ValidationException e) {
 			return  buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());
 		} catch (InvalidOperationException e) {
 			return  buildResponseObject(Response.Status.PRECONDITION_FAILED, e.getMessage());

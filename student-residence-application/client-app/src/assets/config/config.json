@@ -1,0 +1,10 @@
+{
+    "service": {
+        "contract": {
+            "baseUrl": "http://localhost:8081"
+        },
+        "appointment": {
+            "baseUrl": "http://localhost:8082"
+        }
+    }
+}
