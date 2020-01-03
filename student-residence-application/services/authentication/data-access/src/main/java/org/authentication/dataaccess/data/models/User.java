@@ -27,6 +27,8 @@ public class User extends Entity implements Cloneable {
 	private String userName;
 	@Column(name="password")
 	private String password;
+	@Column(name="userEmail")
+	private String userEmail;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "userType")
@@ -54,6 +56,14 @@ public class User extends Entity implements Cloneable {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getUserEmail() {
+		return userEmail;
+	}
+
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
 	}
 
 	public UserType getUserType() {
