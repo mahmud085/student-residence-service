@@ -7,8 +7,8 @@ import org.authentication.dataaccess.data.models.User;
 
 public interface UserService {
 
-    User getUserByAccessToken(String accessToken, String contextUserId) throws ValidationException, InvalidOperationException, ObjectNotFoundException;
+    User getUserByAccessToken(String accessToken) throws ValidationException, InvalidOperationException, ObjectNotFoundException;
 
-    User getUser(String userId, String contextUserI) throws ValidationException, InvalidOperationException, ObjectNotFoundException;
+    User getUser(String userId) throws ValidationException, InvalidOperationException, ObjectNotFoundException;
     User createLoginRequest(String userId, String password) throws ValidationException, InvalidOperationException, ObjectNotFoundException;
 }

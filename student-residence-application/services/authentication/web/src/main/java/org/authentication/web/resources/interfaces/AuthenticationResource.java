@@ -8,5 +8,5 @@ import javax.ws.rs.core.Response;
 
 public interface AuthenticationResource {
     Response createLoginRequest(NewUser newUser);
-    Response getUserByAccessToken(String accessToken, @Context HttpHeaders headers);
+    Response getUserByAccessToken(String accessToken);
 }

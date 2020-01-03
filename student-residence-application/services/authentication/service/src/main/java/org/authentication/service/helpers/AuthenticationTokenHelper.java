@@ -1,15 +1,11 @@
-package org.authentication.web.helpers;
+package org.authentication.service.helpers;
 
 import com.google.inject.Inject;
 import io.jsonwebtoken.Jwts;
-import org.authentication.common.Messages;
 
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
 import java.security.Key;
-import java.security.MessageDigest;
-import java.util.Base64;
 import java.util.List;
 
 

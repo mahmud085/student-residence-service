@@ -7,7 +7,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
 public interface UserResource {
-    Response getUserById(String userId, @Context HttpHeaders headers);
+    Response getUserById(String userId);
 
 
 }

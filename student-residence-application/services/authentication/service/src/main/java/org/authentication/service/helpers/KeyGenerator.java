@@ -1,4 +1,4 @@
-package org.authentication.web.helpers;
+package org.authentication.service.helpers;
 
 import java.security.Key;
 

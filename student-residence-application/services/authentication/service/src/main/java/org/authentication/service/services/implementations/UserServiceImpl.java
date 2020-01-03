@@ -26,6 +26,7 @@ import javax.ws.rs.core.Response;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 
 public class UserServiceImpl implements org.authentication.service.services.interfaces.UserService {
@@ -33,10 +34,10 @@ public class UserServiceImpl implements org.authentication.service.services.inte
     private UserRepository userRepository;
 
     private Client client;
-
+    private Logger logger;
 
     @Override
-    public User getUserByAccessToken(String accessToken, String contextUserId) throws ValidationException, InvalidOperationException, ObjectNotFoundException {
+    public User getUserByAccessToken(String accessToken) throws ValidationException, InvalidOperationException, ObjectNotFoundException {
 		User user = userRepository.getUserIdByAccessToken(accessToken);
 		if (user == null)
 			throw new ObjectNotFoundException(Messages.USER_NOT_FOUND);
@@ -45,7 +46,7 @@ public class UserServiceImpl implements org.authentication.service.services.inte
     }
 
     @Override
-    public User getUser(String userId, String contextUserI) throws ValidationException, InvalidOperationException, ObjectNotFoundException {
+    public User getUser(String userId) throws ValidationException, InvalidOperationException, ObjectNotFoundException {
         User user = userRepository.getUserById(userId);
         if (user == null)
             throw new ObjectNotFoundException(Messages.USER_NOT_FOUND);
@@ -55,7 +56,8 @@ public class UserServiceImpl implements org.authentication.service.services.inte
 
     @Override
     public User createLoginRequest(String userId, String password) throws ValidationException, InvalidOperationException, ObjectNotFoundException {
-        User user = userRepository.getUserByIdPass(userId, password);
+    	System.out.println("Entered Here");
+    	User user = userRepository.getUserByIdPass(userId, password);
         if (user == null)
             throw new ObjectNotFoundException(Messages.USER_NOT_FOUND);
 
