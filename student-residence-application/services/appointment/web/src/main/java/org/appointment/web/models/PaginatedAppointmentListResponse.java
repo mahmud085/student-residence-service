@@ -11,14 +11,14 @@ import java.util.List;
 public class PaginatedAppointmentListResponse {
     @XmlElementWrapper(name="appointments")
     @XmlElement(name="appointment")
-    private List<Appointment> appointments;
+    private List<AppointmentResponse> appointments;
     private PaginationMetadata metadata;
 
-    public List<Appointment> getAppointments() {
+    public List<AppointmentResponse> getAppointments() {
         return appointments;
     }
 
-    public void setAppointments(List<Appointment> appointments) {
+    public void setAppointments(List<AppointmentResponse> appointments) {
         this.appointments = appointments;
     }
 

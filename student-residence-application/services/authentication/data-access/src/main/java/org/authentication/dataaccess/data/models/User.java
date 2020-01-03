@@ -9,61 +9,76 @@ import javax.xml.bind.annotation.XmlRootElement;
 //import org.appointment.service.adapters.AppointmentTypeAdapter;
 
 @XmlRootElement(name = "user")
+@javax.persistence.Entity(name = "user")
+@Table(name = "user")
+@NamedQueries({
+
+	 @NamedQuery(name = "user.findByUserIdPassword" ,query = "SELECT u FROM user u where u.userId=:userId AND u.password=:password")
+	,@NamedQuery(name = "user.getAll" ,query = "SELECT u FROM user u")
+	, @NamedQuery(name = "user.findByUserId" ,query = "SELECT u FROM user u where u.userId=:userId")
+})
+
 public class User extends Entity implements Cloneable {
 
-    private String userId;
-    private String firstname;
-    private String lastname;
-    private String password;
+	@Column(name = "userId")
+	private String userId;
+	@Column(name="userName")
+	private String userName;
+	@Column(name="password")
+	private String password;
+	@Column(name="userEmail")
+	private String userEmail;
 
-    private UserType userType;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "userType")
+	private UserType userType;
 
-    public String getUserId() {
-        return userId;
-    }
+	public String getUserId() {
+		return userId;
+	}
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 
-    public String getFirstname() {
-        return firstname;
-    }
+	public String getUserName() {
+		return userName;
+	}
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
 
-    public String getLastname() {
-        return lastname;
-    }
+	public String getPassword() {
+		return password;
+	}
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	public String getUserEmail() {
+		return userEmail;
+	}
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
+	}
 
-    public UserType getUserType() {
-        return userType;
-    }
+	public UserType getUserType() {
+		return userType;
+	}
 
-    public void setUserType(UserType userType) {
-        this.userType = userType;
-    }
+	public void setUserType(UserType userType) {
+		this.userType = userType;
+	}
 
 
-    public User clone() {
-        try {
-            return (User) super.clone();
-        } catch (CloneNotSupportedException ex) {
-            return null;
-        }
-    }
+	public User clone() {
+		try {
+			return (User) super.clone();
+		} catch (CloneNotSupportedException ex) {
+			return null;
+		}
+	}
 }

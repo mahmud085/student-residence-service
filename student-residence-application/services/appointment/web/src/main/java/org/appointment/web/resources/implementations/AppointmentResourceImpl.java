@@ -8,6 +8,7 @@ import org.appointment.dataaccess.models.PaginatedDataList;
 import org.appointment.service.models.NewAppointment;
 import org.appointment.service.services.interfaces.AppointmentService;
 import org.appointment.web.Constants;
+import org.appointment.web.helpers.HateoasResponseHelper;
 import org.appointment.web.helpers.PaginationMetadataHelper;
 import org.appointment.web.models.*;
 import org.appointment.web.resources.interfaces.AppointmentResource;
@@ -18,7 +19,12 @@ import javax.ws.rs.core.*;
 
 import java.io.Console;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Path(Constants.RESOURCE_PATH_APPOINTMENTS)
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
@@ -33,72 +39,82 @@ public class AppointmentResourceImpl implements AppointmentResource {
 	@Context
 	private SecurityContext securityContext;
 
-
-
 	@Override
 	@POST @RolesAllowed({Constants.ROLE_Resident})
 	public Response createAppointment(NewAppointment newAppointment) {
 		String contextUserId = securityContext.getUserPrincipal().getName();
 
 		if (newAppointment == null) {
-
 			return  buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUEST_BODY_REQUIRED);
 		}
 
 		try {
 			Appointment createdAppointment = appointmentService.createAppointment(newAppointment, contextUserId);
+			AppointmentResponse response = HateoasResponseHelper.getAppointmentResponse(uriInfo.getBaseUri().toString(), createdAppointment);
 
-			return buildResponseObject(Response.Status.CREATED, createdAppointment);
-		} catch (ValidationException | InvalidOperationException ex) {
+			return buildResponseObject(Response.Status.CREATED, response);
+		} catch (ValidationException ex) {
 			return  buildResponseObject(Response.Status.BAD_REQUEST, ex.getMessage());
+		} catch (InvalidOperationException e) {
+			return  buildResponseObject(Response.Status.PRECONDITION_FAILED, e.getMessage());
 		} catch (Exception ex) {
 			return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, Messages.INTERNAL_ERROR);
 		}
 	}
 
-
-
-
-
-	private <T> Response buildResponseObject(Response.Status status, T entity) {
-		return Response.status(status)
-				.entity(entity)
-				.build();
-	}
-
-
-
-	@GET @RolesAllowed({Constants.ROLE_Resident, Constants.ROLE_Caretaker})
+	@GET @RolesAllowed({Constants.ROLE_ADMINISTRATOR, Constants.ROLE_Resident, Constants.ROLE_Caretaker})
 	@Path("{appointment-id}")
 	public Response getAppointment(@PathParam("appointment-id") String appointmentId) {
-
 		String contextUserId = securityContext.getUserPrincipal().getName();
-		if(appointmentId==null || appointmentId.length()==0) {
-			return  buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUEST_BODY_REQUIRED);
+		boolean isAdminUser = securityContext.isUserInRole(Constants.ROLE_ADMINISTRATOR);
+		boolean isCaretakerUser = securityContext.isUserInRole(Constants.ROLE_Caretaker);
+
+		if(appointmentId == null || appointmentId.length() == 0) {
+			return  buildResponseObject(Response.Status.BAD_REQUEST, Messages.APPOINTMENT_ID_REQUIRED);
 		}
 
 		try {
+			Appointment appointment = appointmentService.getAppointment(appointmentId);
 
-			Appointment appointment=appointmentService.gettAppointment(appointmentId, contextUserId);
+			boolean isUserAuthorizedForThisResource = isAdminUser || isCaretakerUser || appointment.getCreatedBy().equalsIgnoreCase(contextUserId);
 
-			return buildResponseObject(Response.Status.OK, appointment);
-		} catch (ValidationException | InvalidOperationException | ObjectNotFoundException e) {
-			// TODO Auto-generated catch block
+			if (!isUserAuthorizedForThisResource) {
+				return buildResponseObject(Response.Status.UNAUTHORIZED, Messages.USER_NOT_AUTHORISED_TO_OPERATE_RESOURCE);
+			}
+
+			AppointmentResponse response = HateoasResponseHelper.getAppointmentResponse(uriInfo.getBaseUri().toString(), appointment);
+
+			return buildResponseObject(Response.Status.OK, response);
+		} catch (ObjectNotFoundException e) {
+			return  buildResponseObject(Response.Status.NOT_FOUND, e.getMessage());
+		} catch (ValidationException e) {
 			return  buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());
+		} catch (InvalidOperationException e) {
+			return  buildResponseObject(Response.Status.PRECONDITION_FAILED, e.getMessage());
 		}
 
 	}
 
 	@Override
-	@GET @RolesAllowed({Constants.ROLE_Resident, Constants.ROLE_Caretaker})
+	@GET @RolesAllowed({Constants.ROLE_ADMINISTRATOR, Constants.ROLE_Caretaker})
 	public Response getAppointments(@QueryParam("desiredDate") String desiredDate
 			, @QueryParam("pageNum") int pageNum
 			, @QueryParam("pageSize") int pageSize) {
-		boolean isdesiredDateFilterPresent = isValuePresent(desiredDate);
-		LocalDate desiredDateConverted = isdesiredDateFilterPresent ? LocalDate.parse(desiredDate) : null;
+		boolean isDesiredDateFilterPresent = isValuePresent(desiredDate);
+
+		if (isDesiredDateFilterPresent) {
+			if (!isDateStringValid(desiredDate)) {
+				return  buildResponseObject(Response.Status.BAD_REQUEST, Messages.INVALID_DESIRED_DATE_STRING);
+			}
+		}
+
+		LocalDate desiredDateConverted = isDesiredDateFilterPresent ? LocalDate.parse(desiredDate) : null;
 
 		boolean isPaginationRequested = isPaginationRequested(pageNum, pageSize);
-		String endpointPath = String.format("%s%s/%s", uriInfo.getBaseUri(), Constants.RESOURCE_PATH_APPOINTMENTS ,Constants.RESOURCE_PATH_GET_APPOINTMENTS);
+		Map<String, String> queryParams = isDesiredDateFilterPresent
+				? new HashMap<String, String>() {{ put("desiredDate", desiredDate); }}
+				: null;
+		String endpointPath = String.format("%s%s/%s", uriInfo.getBaseUri(), Constants.RESOURCE_PATH_APPOINTMENTS, Constants.RESOURCE_PATH_GET_APPOINTMENTS);
 
 		if (isPaginationRequested) {
 			pageNum = pageNum == 0 ? Constants.DEFAULT_PAGE_NUM : pageNum;
@@ -112,31 +128,33 @@ public class AppointmentResourceImpl implements AppointmentResource {
 		}
 
 		try {
-			List<Appointment> AppointmentList;
+			List<Appointment> appointmentList;
 			PaginationMetadata paginationMetadata;
 
 			if (isPaginationRequested) {
 				PaginatedDataList<Appointment> paginatedAppointmentList;
-				if (isdesiredDateFilterPresent) {
-					paginatedAppointmentList = appointmentService.getallAppointment(desiredDateConverted, pageNum, pageSize);
+				if (isDesiredDateFilterPresent) {
+					paginatedAppointmentList = appointmentService.getAllAppointments(desiredDateConverted, pageNum, pageSize);
 				} else {
-					paginatedAppointmentList = appointmentService.getallAppointment(pageNum, pageSize);
+					paginatedAppointmentList = appointmentService.getAllAppointments(pageNum, pageSize);
 				}
 
-				AppointmentList = paginatedAppointmentList.getData();
-				paginationMetadata = (new PaginationMetadataHelper(isPaginationRequested, endpointPath, pageNum, pageSize, paginatedAppointmentList.getTotalDataCount())
+				appointmentList = paginatedAppointmentList.getData();
+				paginationMetadata = (new PaginationMetadataHelper(isPaginationRequested, endpointPath, pageNum, pageSize, paginatedAppointmentList.getTotalDataCount(), queryParams)
 						.buildPaginationMetadata());
-			} else if (isdesiredDateFilterPresent) {
-				AppointmentList = appointmentService.getallAppointment(desiredDateConverted);
+			} else if (isDesiredDateFilterPresent) {
+				appointmentList = appointmentService.getAllAppointments(desiredDateConverted);
 				paginationMetadata = new PaginationMetadata();
 			} else {
-				AppointmentList = appointmentService.getallAppointment();
+				appointmentList = appointmentService.getAllAppointments();
 				paginationMetadata = new PaginationMetadata();
 			}
 
 			PaginatedAppointmentListResponse paginatedAppointmentListResponse = new PaginatedAppointmentListResponse() {
 				{
-					setAppointments(AppointmentList);
+					setAppointments(appointmentList.stream()
+							.map(x -> HateoasResponseHelper.getAppointmentResponse(uriInfo.getBaseUri().toString(), x))
+							.collect(Collectors.toList()));
 					setMetadata(paginationMetadata);
 				}
 			};
@@ -146,6 +164,34 @@ public class AppointmentResourceImpl implements AppointmentResource {
 			return buildResponseObject(Response.Status.NO_CONTENT, null);
 		} catch (Exception ex) {
 			return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, Messages.INTERNAL_ERROR);
+		}
+	}
+
+	@Override
+	@PUT @RolesAllowed({Constants.ROLE_Caretaker})
+	@Path("{appointment-id}")
+	public Response acceptAppointment(@PathParam("appointment-id") String appointmentId, AppointmentUpdateRequest appointmentUpdateRequest)
+	{
+		if(appointmentId == null || appointmentId.length() == 0) {
+			return  buildResponseObject(Response.Status.BAD_REQUEST, Messages.APPOINTMENT_ID_REQUIRED);
+		}
+
+		if (appointmentUpdateRequest == null) {
+			return  buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUEST_BODY_REQUIRED);
+		}
+
+		try {
+			String successMsg = null;
+			if (appointmentUpdateRequest.getOperation() == AppointmentUpdateOperation.Accept) {
+				appointmentService.acceptAppointment(appointmentId);
+				successMsg = Messages.SUCCESSFUL_ACCEPTANCE;
+			}
+
+			return buildResponseObject(Response.Status.OK, successMsg);
+		} catch (ValidationException | ObjectNotFoundException e) {
+			return  buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());
+		} catch (InvalidOperationException e) {
+			return  buildResponseObject(Response.Status.PRECONDITION_FAILED, e.getMessage());
 		}
 	}
 
@@ -160,6 +206,7 @@ public class AppointmentResourceImpl implements AppointmentResource {
 	private boolean isValuePresent(int value) {
 		return value > 0;
 	}
+
 	private void validatePaginationAttributes(int pageNum, int pageSize) throws PaginationAttributeException {
 		if (pageNum < 1) {
 			throw new PaginationAttributeException(Messages.INVALID_PAGE_NUM);
@@ -174,24 +221,18 @@ public class AppointmentResourceImpl implements AppointmentResource {
 		}
 	}
 
-
-
-	@Override
-	@PUT @RolesAllowed({Constants.ROLE_Caretaker})
-	@Path("{appointment-id}")
-	public Response acceptAppointment(@PathParam("appointment-id") String appointmentId) {
-		String contextUserId = securityContext.getUserPrincipal().getName();
-		if(appointmentId==null || appointmentId.length()==0) {
-			return  buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUEST_BODY_REQUIRED);
-		}
-
+	private boolean isDateStringValid(String dateStr) {
 		try {
-			Appointment appointment = appointmentService.acceptAppointment(appointmentId, contextUserId);
-			System.out.println(appointmentId);
-			return buildResponseObject(Response.Status.OK, appointment.getStatus());
-		} catch (ValidationException | InvalidOperationException | ObjectNotFoundException e) {
-			// TODO Auto-generated catch block
-			return  buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());
+			LocalDate.parse(dateStr, DateTimeFormatter.ISO_LOCAL_DATE);
+		} catch (DateTimeParseException e) {
+			return false;
 		}
+		return true;
+	}
+
+	private <T> Response buildResponseObject(Response.Status status, T entity) {
+		return Response.status(status)
+				.entity(entity)
+				.build();
 	}
 }

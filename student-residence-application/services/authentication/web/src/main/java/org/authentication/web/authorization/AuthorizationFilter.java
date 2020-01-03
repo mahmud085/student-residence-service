@@ -3,6 +3,7 @@ package org.authentication.web.authorization;
 import org.authentication.common.Messages;
 
 import javax.annotation.Priority;
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -25,6 +26,14 @@ public class AuthorizationFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) {
+        if (requestContext.getMethod().equalsIgnoreCase("OPTIONS")) {
+            return;
+        }
+
+        if (resourceInfo.getResourceMethod().getAnnotation(PermitAll.class) != null) {
+            return;
+        }
+
         String[] rolesAllowed = resourceInfo.getResourceMethod()
                 .getAnnotation(RolesAllowed.class)
                 .value();
@@ -32,7 +41,7 @@ public class AuthorizationFilter implements ContainerRequestFilter {
         String userId = "dummy";
         String userRole = "Administrator";
 
-        if (!isRoleAllowed(userRole)) {
+        if (!isRoleAllowed(rolesAllowed, userRole)) {
             requestContext.abortWith(
                     Response.status(Response.Status.UNAUTHORIZED)
                             .entity(Messages.AUTHORIZATION_FAILED_USER_ROLE_NOT_ALLOWED)
@@ -67,7 +76,7 @@ public class AuthorizationFilter implements ContainerRequestFilter {
         });
     }
 
-    private boolean isRoleAllowed(String role) {
+    private boolean isRoleAllowed(String[] rolesAllowed, String contextUserRole) {
         return true;
     }
 }

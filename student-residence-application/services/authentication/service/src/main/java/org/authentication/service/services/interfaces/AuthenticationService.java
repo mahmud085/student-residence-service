@@ -11,9 +11,11 @@ import org.authentication.dataaccess.data.models.Authentication;
 import org.authentication.service.models.NewAppointment;
 import org.authentication.service.models.NewAuthentication;
 
+import javax.ws.rs.core.UriInfo;
 import java.time.LocalDate;
 import java.util.List;
 
 public interface AuthenticationService {
 Authentication addAuthenticatedUser(NewAuthentication newAuthentication);
+String issueToken(String login, UriInfo uriInfo);
 }

@@ -3,16 +3,18 @@ package org.contract.web.resources.implementations;
 import com.google.inject.Inject;
 import org.contract.common.Messages;
 import org.contract.dataaccess.data.models.Contract;
-import org.contract.dataaccess.respositories.interfaces.ContractRepository;
 import org.contract.service.services.interfaces.ContractService;
 import org.contract.web.Constants;
+import org.contract.web.helpers.HateoasResponseHelper;
 import org.contract.web.models.ContractListResponse;
+import org.contract.web.models.ContractResponse;
 import org.contract.web.resources.interfaces.ContractorResource;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path(Constants.RESOURCE_PATH_CONTRACTOR)
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
@@ -45,7 +47,9 @@ public class ContractorResourceImpl implements ContractorResource {
 
             ContractListResponse contractListResponse = new ContractListResponse(){
                 {
-                    setContracts(contracts);
+                    setContracts(contracts.stream()
+                            .map(x -> HateoasResponseHelper.getContractResponse(uriInfo.getBaseUri().toString(), x))
+                            .collect(Collectors.toList()));
                 }
             };
 

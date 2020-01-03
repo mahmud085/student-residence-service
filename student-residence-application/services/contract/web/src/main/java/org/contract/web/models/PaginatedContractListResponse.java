@@ -15,14 +15,14 @@ public class PaginatedContractListResponse {
     @XmlElementWrapper(name="contracts")
     @JacksonXmlProperty(localName = "contract")
     @JsonProperty("contracts")
-    private List<Contract> contracts;
+    private List<ContractResponse> contracts;
     private PaginationMetadata metadata;
 
-    public List<Contract> getContracts() {
+    public List<ContractResponse> getContracts() {
         return contracts;
     }
 
-    public void setContracts(List<Contract> contracts) {
+    public void setContracts(List<ContractResponse> contracts) {
         this.contracts = contracts;
     }
 

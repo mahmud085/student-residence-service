@@ -11,11 +11,9 @@ import org.contract.dataaccess.models.PaginatedDataList;
 import org.contract.service.models.NewContract;
 import org.contract.service.services.interfaces.ContractService;
 import org.contract.web.Constants;
+import org.contract.web.helpers.HateoasResponseHelper;
 import org.contract.web.helpers.PaginationMetadataHelper;
-import org.contract.web.models.ContractUpdateOperation;
-import org.contract.web.models.ContractUpdateRequest;
-import org.contract.web.models.PaginatedContractListResponse;
-import org.contract.web.models.PaginationMetadata;
+import org.contract.web.models.*;
 import org.contract.web.resources.interfaces.ContractResource;
 
 import javax.annotation.security.RolesAllowed;
@@ -24,6 +22,7 @@ import javax.ws.rs.core.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Path(Constants.RESOURCE_PATH_CONTRACT)
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
@@ -49,8 +48,9 @@ public class ContractResourceImpl implements ContractResource {
 
         try {
             Contract createdContract = contractService.createContract(newContract, contextUserId);
+            ContractResponse response = HateoasResponseHelper.getContractResponse(uriInfo.getBaseUri().toString(), createdContract);
 
-            return buildResponseObject(Response.Status.CREATED, createdContract);
+            return buildResponseObject(Response.Status.CREATED, response);
         } catch (ValidationException ex) {
             return  buildResponseObject(Response.Status.BAD_REQUEST, ex.getMessage());
         } catch (InvalidOperationException ex) {
@@ -69,13 +69,16 @@ public class ContractResourceImpl implements ContractResource {
 
         try {
             Contract contract = contractService.getContract(contractId);
+
             boolean isUserAuthorizedForThisResource = isAdminUser || contract.getContractorsUserId().equalsIgnoreCase(contextUserId);
 
             if (!isUserAuthorizedForThisResource) {
                 return buildResponseObject(Response.Status.UNAUTHORIZED, Messages.USER_NOT_AUTHORISED_TO_OPERATE_RESOURCE);
             }
 
-            return buildResponseObject(Response.Status.OK, contract);
+            ContractResponse response = HateoasResponseHelper.getContractResponse(uriInfo.getBaseUri().toString(), contract);
+
+            return buildResponseObject(Response.Status.OK, response);
         } catch (ObjectNotFoundException ex) {
             return buildResponseObject(Response.Status.NOT_FOUND, ex.getMessage());
         }
@@ -132,7 +135,9 @@ public class ContractResourceImpl implements ContractResource {
 
             PaginatedContractListResponse paginatedContractListResponse = new PaginatedContractListResponse() {
                 {
-                    setContracts(contractList);
+                    setContracts(contractList.stream()
+                            .map(x -> HateoasResponseHelper.getContractResponse(uriInfo.getBaseUri().toString(), x))
+                            .collect(Collectors.toList()));
                     setMetadata(paginationMetadata);
                 }
             };

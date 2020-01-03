@@ -12,8 +12,8 @@ import org.authentication.service.services.implementations.UserServiceImpl;
 import org.authentication.service.services.interfaces.AppointmentService;
 import org.authentication.service.services.interfaces.AuthenticationService;
 import org.authentication.service.services.interfaces.UserService;
-import org.authentication.web.helpers.KeyGenerator;
-import org.authentication.web.helpers.SimpleKeyGenerator;
+import org.authentication.service.helpers.KeyGenerator;
+import org.authentication.service.helpers.SimpleKeyGenerator;
 
 
 public class IoCModule extends AbstractModule {
