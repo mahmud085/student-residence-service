@@ -2,8 +2,14 @@ package org.authentication.dataaccess.data.models;
 
 import org.authentication.dataaccess.data.enums.UserType;
 
+import javax.persistence.Column;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-
+import java.time.LocalDate;
+import javax.persistence.Enumerated;
+import javax.persistence.EnumType;
 //import org.appointment.service.adapters.AppointmentPriorityAdapter;
 //import org.appointment.service.adapters.AppointmentStatusAdapter;
 //import org.appointment.service.adapters.AppointmentTypeAdapter;
