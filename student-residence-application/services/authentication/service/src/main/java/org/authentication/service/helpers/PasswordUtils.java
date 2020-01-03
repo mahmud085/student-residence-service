@@ -1,8 +1,7 @@
-package org.authentication.web.helpers;
+package org.authentication.service.helpers;
 
 import java.security.MessageDigest;
 import java.util.Base64;
-
 
 
 public class PasswordUtils {
