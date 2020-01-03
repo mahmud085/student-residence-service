@@ -1,0 +1,17 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" routerLink="/home">Student Residence</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item" *ngFor="let page of navigationPages">
+                <a class="nav-link" routerLink="{{page.url}}" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"> {{page.title}} </a>
+            </li>
+        </ul>
+        <button (click)="onClickLogout()" type="button" class="btn btn-link pull-right text-danger"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+    </div>
+</nav>
+
+<div *ngIf="blockUI" id="loading-div"></div>

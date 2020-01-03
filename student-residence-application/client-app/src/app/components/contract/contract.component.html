@@ -1,0 +1,220 @@
+<div class="container-fluid">
+    <br>
+    <div class="row">
+        <div class="col-md-2">
+            <button *ngIf="isUserAdministrator()" (click)="showCreateContractModal()" class="btn btn-primary">Create New Contract</button>
+        </div>
+        <div class="col-md-3 offset-md-7">
+            <div *ngIf="isUserAdministrator()" class="input-group">
+                <input [(ngModel)]="filterByNameText" type="search" class="form-control" placeholder="Filter by Contractor's Name">
+                <div class="input-group-append">
+                    <button (click)="onClickFilterByContractorsName()" class="input-group-text" style="cursor: pointer;"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-12 table-div">
+            <table class="table table-striped text-center">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Room</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Status</th>
+                        <th>Created On</th>
+                        <th>Action(s)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let c of contracts">
+                        <td>{{ c.contractorsName }}</td>
+                        <td>{{ c.contractorsEmail }}</td>
+                        <td>{{ c.contractorsPhone }}</td>
+                        <td>{{ c.roomNumber }}</td>
+                        <td>{{ c.startDate }}</td>
+                        <td>{{ c.endDate }}</td>
+                        <td>{{ c.status }}</td>
+                        <td>{{ c.createdOn }}</td>
+                        <td>
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <button *ngIf="isUserResident() && !isContractConfirmed(c)" (click)="onClickAcceptContract(c.contractId)" class="btn btn-primary">Confirm</button>
+                                <button *ngIf="isUserResident() && isContractConfirmed(c)" (click)="showUpdateContractModal(c.contractId, 'Extend')" class="btn btn-primary">Extend</button>
+                                <button *ngIf="isUserResident() && isContractConfirmed(c)" (click)="showUpdateContractModal(c.contractId, 'Terminate')" class="btn btn-primary">Terminate</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="createContractModal">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">New Contract</h4>
+                <button type="button" class="close" (click)="hideCreateContractModal()" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Contractor's User ID</label>
+                            <div class="input-group">
+                                <input [(ngModel)]="newContract.contractorsUserId" (focusout)="validateContractorsUserId()" [ngClass]="{'invalid-input': !createContractValidator.isContractorsUserIdValid}" type="text" class="form-control">
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Contractor's Name</label>
+                            <div class="input-group">
+                                <input [(ngModel)]="newContract.contractorsName" (focusout)="validateContractorsName()" [ngClass]="{'invalid-input': !createContractValidator.isContractorsNameValid}" type="text" class="form-control">
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Contractor's Email</label>
+                            <div class="input-group">
+                                <input [(ngModel)]="newContract.contractorsEmail" (focusout)="validateContractorsEmail()" [ngClass]="{'invalid-input': !createContractValidator.isContractorsEmailValid}" type="email" class="form-control">
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Contractor's Phone</label>
+                            <div class="input-group">
+                                <input [(ngModel)]="newContract.contractorsPhone" (focusout)="validateContractorsPhone()" [ngClass]="{'invalid-input': !createContractValidator.isContractorsPhoneValid}" type="tel" class="form-control">
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Room</label>
+                            <div class="input-group">
+                                <input [(ngModel)]="newContract.roomNumber" (focusout)="validateRoomNumber()" [ngClass]="{'invalid-input': !createContractValidator.isRoomNumberValid}" type="text" class="form-control">
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Status</label>
+                            <div class="input-group">
+                                <select [(ngModel)]="newContract.status" (focusout)="validateStatus()" [ngClass]="{'invalid-input': !createContractValidator.isStatusValid}" class="form-control">
+                                    <option *ngFor="let option of contractStatusOptions" [value]="option.value">{{ option.label }}</option>
+                                </select>
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-check"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Start</label>
+                            <div class="input-group">
+                                <input [(ngModel)]="newContract.startDate" (focusout)="validateStartDate()" [ngClass]="{'invalid-input': !createContractValidator.isStartDateValid}" type="date" class="form-control">
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>End</label>
+                            <div class="input-group">
+                                <input [(ngModel)]="newContract.endDate" (focusout)="validateEndDate()" [ngClass]="{'invalid-input': !createContractValidator.isEndDateValid}" type="date" class="form-control">
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" (click)="onClickSaveContract()">Save</button>
+                <button type="button" class="btn btn-danger" (click)="hideCreateContractModal()">Close</button>
+
+                <!-- this button is hidden, used to close from typescript -->
+                <button type="button" id="close-new-contract-modal" data-dismiss="modal" style="display: none">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="updateContractModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">{{updateContractTitle}}</h4>
+                <button type="button" class="close" (click)="hideUpdateContractModal()" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>New End Date</label>
+                            <div class="input-group">
+                                <input [(ngModel)]="contractUpdateNewEndDate" (focusout)="validateNewEndDate()" [ngClass]="{'invalid-input': !updateContractValidator.isNewEndDateValid}" type="date" class="form-control">
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" (click)="onClickUpdateContract()">Save</button>
+                <button type="button" class="btn btn-danger" (click)="hideUpdateContractModal()">Close</button>
+
+                <!-- this button is hidden, used to close from typescript -->
+                <button type="button" id="close-update-contract-modal" data-dismiss="modal" style="display: none">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="blockUI" id="loading-div"></div>
