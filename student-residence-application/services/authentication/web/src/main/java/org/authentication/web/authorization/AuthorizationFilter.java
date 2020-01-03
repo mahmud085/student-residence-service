@@ -26,8 +26,11 @@ public class AuthorizationFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) {
-        if (resourceInfo.getResourceMethod()
-                .getAnnotation(PermitAll.class) != null) {
+        if (requestContext.getMethod().equalsIgnoreCase("OPTIONS")) {
+            return;
+        }
+
+        if (resourceInfo.getResourceMethod().getAnnotation(PermitAll.class) != null) {
             return;
         }
 
@@ -38,7 +41,7 @@ public class AuthorizationFilter implements ContainerRequestFilter {
         String userId = "dummy";
         String userRole = "Administrator";
 
-        if (!isRoleAllowed(userRole)) {
+        if (!isRoleAllowed(rolesAllowed, userRole)) {
             requestContext.abortWith(
                     Response.status(Response.Status.UNAUTHORIZED)
                             .entity(Messages.AUTHORIZATION_FAILED_USER_ROLE_NOT_ALLOWED)
@@ -73,7 +76,7 @@ public class AuthorizationFilter implements ContainerRequestFilter {
         });
     }
 
-    private boolean isRoleAllowed(String role) {
+    private boolean isRoleAllowed(String[] rolesAllowed, String contextUserRole) {
         return true;
     }
 }
