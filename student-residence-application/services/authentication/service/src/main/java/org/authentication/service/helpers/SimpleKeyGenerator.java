@@ -1,8 +1,7 @@
-package org.authentication.web.helpers;
+package org.authentication.service.helpers;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
-
 
 
 public class SimpleKeyGenerator implements KeyGenerator {

@@ -1,9 +1,18 @@
 package org.authentication.dataaccess.data.models;
 
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Id;
+import javax.persistence.GenerationType;
+import javax.persistence.GeneratedValue;
+
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+@MappedSuperclass
 public class Entity {
     @JsonIgnore
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     public int getId() {

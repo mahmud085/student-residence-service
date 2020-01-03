@@ -3,6 +3,7 @@ package org.authentication.web.authorization;
 import org.authentication.common.Messages;
 
 import javax.annotation.Priority;
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -25,6 +26,11 @@ public class AuthorizationFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) {
+        if (resourceInfo.getResourceMethod()
+                .getAnnotation(PermitAll.class) != null) {
+            return;
+        }
+
         String[] rolesAllowed = resourceInfo.getResourceMethod()
                 .getAnnotation(RolesAllowed.class)
                 .value();
