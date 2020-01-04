@@ -52,7 +52,7 @@ public class AuthenticationServiceImpl implements org.authentication.service.ser
 				.setSubject(login)
 				.setIssuer(uriInfo.getAbsolutePath().toString())
 				.setIssuedAt(new Date())
-				.setExpiration(toDate(LocalDateTime.now().plusMinutes(15L)))
+				.setExpiration(toDate(LocalDateTime.now().plusHours(2)))
 				.signWith(SignatureAlgorithm.HS512, key)
 				.compact();
 		logger.info("#### generating token for a key : " + jwtToken + " - " + key);

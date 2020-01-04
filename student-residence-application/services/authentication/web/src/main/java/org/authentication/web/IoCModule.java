@@ -3,17 +3,14 @@ package org.authentication.web;
 import com.google.inject.AbstractModule;
 import org.authentication.dataaccess.respositories.implementations.AuthenticationRepositoryImpl;
 import org.authentication.dataaccess.respositories.implementations.UserRepositoryImpl;
-import org.authentication.dataaccess.respositories.interfaces.AppointmentRepository;
 import org.authentication.dataaccess.respositories.interfaces.AuthenticationRepository;
 import org.authentication.dataaccess.respositories.interfaces.UserRepository;
-import org.authentication.service.services.implementations.AppointmentServiceImpl;
-import org.authentication.service.services.implementations.AuthenticationServiceImpl;
-import org.authentication.service.services.implementations.UserServiceImpl;
-import org.authentication.service.services.interfaces.AppointmentService;
-import org.authentication.service.services.interfaces.AuthenticationService;
-import org.authentication.service.services.interfaces.UserService;
 import org.authentication.service.helpers.KeyGenerator;
 import org.authentication.service.helpers.SimpleKeyGenerator;
+import org.authentication.service.services.implementations.AuthenticationServiceImpl;
+import org.authentication.service.services.implementations.UserServiceImpl;
+import org.authentication.service.services.interfaces.AuthenticationService;
+import org.authentication.service.services.interfaces.UserService;
 
 
 public class IoCModule extends AbstractModule {
