@@ -7,8 +7,7 @@ import org.authentication.common.exceptions.ObjectNotFoundException;
 import org.authentication.common.exceptions.ValidationException;
 import org.authentication.dataaccess.data.enums.UserType;
 import org.authentication.dataaccess.data.models.User;
-import org.authentication.service.helpers.JwtHelper;
-import org.authentication.service.services.interfaces.AuthenticationService;
+import org.authentication.web.helpers.JwtHelper;
 import org.authentication.service.services.interfaces.UserService;
 
 import javax.annotation.Priority;

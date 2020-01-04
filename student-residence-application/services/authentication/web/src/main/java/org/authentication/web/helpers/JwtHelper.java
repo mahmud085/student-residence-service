@@ -1,6 +1,7 @@
-package org.authentication.service.helpers;
+package org.authentication.web.helpers;
 
 import io.jsonwebtoken.*;
+import org.authentication.common.Messages;
 import org.authentication.common.exceptions.InvalidAccessTokenException;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -28,7 +29,7 @@ public class JwtHelper {
                     .setSigningKey(getSigningKey())
                     .parseClaimsJws(token).getBody();
         } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
-            throw new InvalidAccessTokenException("Access token is invalid/expired");
+            throw new InvalidAccessTokenException(Messages.INVALID_OR_EXPIRED_ACCESS_TOKEN);
         }
     }
 

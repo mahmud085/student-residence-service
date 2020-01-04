@@ -1,5 +1,8 @@
 {
     "service": {
+        "auth": {
+            "baseUrl": "http://localhost:8080"
+        },
         "contract": {
             "baseUrl": "http://localhost:8081"
         },

@@ -38,7 +38,7 @@ public class Messages {
     public static final String INVALID_DESIRED_DATE = "Appointment desired date should be between two weeks before start or end date";
     public static final String INVALID_CONTRACTORS_USER_ID = "No User found with the specified User ID.";
     public static final String INVALID_CONTRACTORS_USER_ROLE = "Contractor is not a resident.";
-    public static final String INVALID_OR_EXPIRED_ACCESS_TOKEN = "Invalid/expired Access Token";
+    public static final String INVALID_OR_EXPIRED_ACCESS_TOKEN = "Access Token is invalid/expired. Please login again to refresh the access token.";
 
 
 

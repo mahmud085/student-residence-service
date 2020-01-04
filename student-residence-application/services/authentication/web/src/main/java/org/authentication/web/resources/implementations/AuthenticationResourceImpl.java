@@ -8,7 +8,7 @@ import org.authentication.common.exceptions.ObjectNotFoundException;
 import org.authentication.common.exceptions.ValidationException;
 import org.authentication.dataaccess.data.models.Authentication;
 import org.authentication.dataaccess.data.models.User;
-import org.authentication.service.helpers.JwtHelper;
+import org.authentication.web.helpers.JwtHelper;
 import org.authentication.service.models.AccessToken;
 import org.authentication.service.models.NewAuthentication;
 import org.authentication.service.models.LoginRequest;

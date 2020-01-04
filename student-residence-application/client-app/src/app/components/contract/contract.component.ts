@@ -69,8 +69,8 @@ export class ContractComponent implements OnInit {
 			this.blockUI = false;
 			this.contracts = paginatedContracts.contracts;
 		}, (error: any): void => {
-			this.blockUI = false;
-			alert(error.message);
+            this.blockUI = false;
+            alert(error.error);
 		});
 	}
 	
@@ -85,7 +85,7 @@ export class ContractComponent implements OnInit {
 			this.contracts = paginatedContracts.contracts;
 		}, (error: any): void => {
 			this.blockUI = false;
-			alert(error.message);
+			alert(error.error);
 		});
 	}
 
@@ -178,7 +178,7 @@ export class ContractComponent implements OnInit {
 	}
 
 	isUserAdministrator(): boolean {
-		return this._authService.userCredential.role == UserRole.Administrator;
+		return this._authService.userCredential.role == UserRole.Admin;
 	}
 
 	isUserResident(): boolean {

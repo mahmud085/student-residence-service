@@ -12,7 +12,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
 		if (this._authService.isAuthenticated()) {
 			req = req.clone({
 				headers: new HttpHeaders({					
-					'Authorization': this._authService.userCredential.accessToken
+					'Authorization': `Bearer ${this._authService.userCredential.accessToken}`
 				})
 			});
 		}
