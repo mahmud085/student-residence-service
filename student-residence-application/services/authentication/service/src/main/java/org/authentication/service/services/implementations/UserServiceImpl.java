@@ -10,6 +10,7 @@ import org.authentication.common.helpers.DateHelper;
 import org.authentication.common.helpers.ValidationHelper;
 import org.authentication.dataaccess.data.enums.AppointmentStatus;
 import org.authentication.dataaccess.data.enums.AppointmentType;
+import org.authentication.dataaccess.data.enums.UserType;
 import org.authentication.dataaccess.data.models.Appointment;
 import org.authentication.dataaccess.data.models.Authentication;
 import org.authentication.dataaccess.data.models.User;
@@ -18,6 +19,7 @@ import org.authentication.dataaccess.respositories.interfaces.AppointmentReposit
 import org.authentication.dataaccess.respositories.interfaces.UserRepository;
 import org.authentication.service.models.Contract;
 import org.authentication.service.models.NewAppointment;
+import org.authentication.service.models.RegisterUser;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -52,6 +54,20 @@ public class UserServiceImpl implements org.authentication.service.services.inte
             throw new ObjectNotFoundException(Messages.USER_NOT_FOUND);
 
         return user;
+    }
+
+    @Override
+    public User registerUser(RegisterUser newUser) throws ValidationException, InvalidOperationException, ObjectNotFoundException {
+        User userToCreate = new User() {
+            {
+                setUserId(newUser.getUserId());
+                setUserEmail(newUser.getEmail());
+                setPassword(newUser.getPassword());
+                setUserType(UserType.valueOf(newUser.getRole().toString()));
+
+            }
+        };
+        return userRepository.add(userToCreate);
     }
 
     @Override

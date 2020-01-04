@@ -32,11 +32,10 @@ public class UserRepositoryImpl implements UserRepository {
 	public User add(User obj) {
 
 		Storage storage = Storage.instance().build(org.authentication.dataaccess.helpers.Configuration.loadProperties("dbProperties.properties"));
-
-		System.out.println("Now going to add user");
 		User u = new User();
 		u.setId(obj.getId());
 		u.setPassword(obj.getPassword());
+		u.setUserEmail(obj.getUserEmail());
 		u.setUserId(obj.getUserId());
 		u.setUserName(obj.getUserName());
 		u.setUserType(obj.getUserType());
@@ -100,21 +99,6 @@ public class UserRepositoryImpl implements UserRepository {
 
 	@Override
 	public User getUserByIdPass(String userId, String password) {
-
-		//		for (User user : DataStore.user) {
-		//			if (user.getUserId().equals(userId) && user.getPassword().equals(password)) {
-		//				/*				for(Authentication authentication : DataStore.authentications){
-		//					if(authentication.getUserId().equals(userId)) {
-		//						return authentication;
-		//					}
-		//
-		//				}*/
-		//				return user;
-		//			}
-		//
-		//		}
-		//		return null;
-
 		Storage storage = Storage.instance().build(org.authentication.dataaccess.helpers.Configuration.loadProperties("dbProperties.properties"));
 		HashMap<String, String> hm = new HashMap<String, String>();
 		hm.put("userId", userId);

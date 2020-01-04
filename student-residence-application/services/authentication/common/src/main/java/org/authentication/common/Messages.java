@@ -20,6 +20,7 @@ public class Messages {
     public static final String REQUIRED_DESIRED_DATE = "Desired Date is required.";
     public static final String REQUIRED_APPOINTMENT_STATUS = "Valid Appointment Status is required";
     public static final String REQUIRED_USER_ID = "Valid User Id is required";
+    public static final String REQUIRED_USER_EMAIL = "Valid User Email is required";
     public static final String REQUIRED_USER_PASSWORD = "Valid User Password is required";
     public static final String APPOINTMENT_NOT_FOUND="Appointment Not Found With this ID";
     public static final String APPOINTMENT_ALREADY_ACCEPTED="Appointment is already accepted";
