@@ -13,7 +13,6 @@ import org.contract.dataaccess.models.PaginatedDataList;
 import org.contract.dataaccess.respositories.interfaces.ContractRepository;
 import org.contract.dataaccess.respositories.interfaces.RoomRepository;
 import org.contract.service.models.NewContract;
-import org.contract.service.models.User;
 import org.contract.service.models.UserRole;
 import org.contract.service.services.interfaces.ContractService;
 
@@ -34,15 +33,6 @@ public class ContractServiceImpl implements ContractService {
 
         ValidationHelper<NewContract> validationHelper = new ValidationHelper<>();
         validationHelper.validate(newContract);
-
-        User contractorUser = getUser(newContract.getContractorsUserId());
-        if (contractorUser == null) {
-            throw new ValidationException(Messages.INVALID_CONTRACTORS_USER_ID);
-        }
-
-        if (contractorUser.getRole() != UserRole.Resident) {
-            throw new ValidationException(Messages.INVALID_CONTRACTORS_USER_ROLE);
-        }
 
         if (roomRepository.get(newContract.getRoomNumber()) == null) {
             throw new ValidationException(Messages.INVALID_ROOM_NUMBER);
@@ -208,16 +198,5 @@ public class ContractServiceImpl implements ContractService {
 
     private LocalDate getLastDateForConfirmation(LocalDate createdOn) {
         return createdOn.plusWeeks(2);
-    }
-
-    private User getUser(String userId) {
-
-        // this is dummy data, will be fully implemented after the auth service is ready
-        return new User() {
-            {
-                setUserId(userId);
-                setRole(UserRole.Resident);
-            }
-        };
     }
 }

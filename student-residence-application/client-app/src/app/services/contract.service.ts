@@ -22,7 +22,7 @@ export class ContractService {
 		let requestUrl: string = null;
 		
 		switch (this._authService.userCredential.role) {
-			case UserRole.Administrator:
+			case UserRole.Admin:
 				requestUrl = `${ConfigService.appConfig.service.contract.baseUrl}/api/contracts`;
 				break;
 			case UserRole.Resident:

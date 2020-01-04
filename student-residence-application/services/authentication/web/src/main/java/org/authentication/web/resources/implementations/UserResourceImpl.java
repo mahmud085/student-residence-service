@@ -1,11 +1,9 @@
 package org.authentication.web.resources.implementations;
 
 import com.google.inject.Inject;
-import io.jsonwebtoken.Jwts;
 import org.authentication.common.Messages;
 import org.authentication.common.exceptions.*;
 import org.authentication.dataaccess.data.models.User;
-import org.authentication.service.models.NewUser;
 import org.authentication.service.models.RegisterUser;
 import org.authentication.service.models.UserRole;
 import org.authentication.service.services.interfaces.UserService;
@@ -13,12 +11,9 @@ import org.authentication.web.Constants;
 
 import org.authentication.web.resources.interfaces.UserResource;
 
-import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.security.Key;
-import java.util.List;
 import java.util.logging.Logger;
 
 @Path(Constants.RESOURCE_PATH_USER)
@@ -46,7 +41,7 @@ public class UserResourceImpl implements UserResource {
 
     @Override
     @GET
-    @RolesAllowed({Constants.ROLE_Resident, Constants.ROLE_Caretaker})
+    @RolesAllowed({Constants.ROLE_ADMIN})
     @Path("{user-id}")
     public Response getUserById(@PathParam("user-id") String userId) {
         if (userId == null || userId.length() == 0) {
@@ -61,13 +56,15 @@ public class UserResourceImpl implements UserResource {
         } catch (ValidationException | InvalidOperationException | ObjectNotFoundException e) {
             // TODO Auto-generated catch block
             return buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
     @Override
     @POST
-    @RolesAllowed({Constants.ROLE_ADMINISTRATOR})
-    @Path("register")
+    @RolesAllowed({Constants.ROLE_ADMIN})
     public Response createUser(RegisterUser newUser) {
         if (newUser == null ) {
             return buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUEST_BODY_REQUIRED);
@@ -80,11 +77,10 @@ public class UserResourceImpl implements UserResource {
 
             User user = userService.registerUser(newUser);
 
-            return buildResponseObject(Response.Status.OK, newUser);
+            return buildResponseObject(Response.Status.OK, user);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             return buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());
         }
     }
-
 }

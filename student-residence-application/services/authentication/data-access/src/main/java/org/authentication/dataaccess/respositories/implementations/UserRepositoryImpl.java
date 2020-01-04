@@ -1,26 +1,12 @@
 package org.authentication.dataaccess.respositories.implementations;
 
-import org.authentication.common.Messages;
-import org.authentication.common.exceptions.PaginationRangeOutOfBoundException;
-import org.authentication.common.helpers.PaginationHelper;
-import org.authentication.dataaccess.data.enums.AppointmentStatus;
-import org.authentication.dataaccess.data.enums.UserType;
-import org.authentication.dataaccess.data.models.Appointment;
-import org.authentication.dataaccess.data.models.Authentication;
 import org.authentication.dataaccess.data.models.User;
 import org.authentication.dataaccess.helpers.Configuration;
-import org.authentication.dataaccess.respositories.interfaces.AppointmentRepository;
 import org.authentication.dataaccess.respositories.interfaces.UserRepository;
-import org.authentication.dataaccess.store.DataStore;
 import org.daaaccess.Storage;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
-import java.util.stream.Collectors;
 
 public class UserRepositoryImpl implements UserRepository {
 

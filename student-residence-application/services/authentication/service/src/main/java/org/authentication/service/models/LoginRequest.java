@@ -3,10 +3,12 @@ package org.authentication.service.models;
 import org.authentication.common.Messages;
 import org.authentication.common.validation.annotations.HasValue;
 
-public class NewUser {
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "loginRequest")
+public class LoginRequest {
     @HasValue(message = Messages.REQUIRED_USER_ID)
     private String userId;
-    private String name;
     @HasValue(message = Messages.REQUIRED_USER_PASSWORD)
     private String password;
 
@@ -26,14 +28,6 @@ public class NewUser {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public UserRole getRole() {

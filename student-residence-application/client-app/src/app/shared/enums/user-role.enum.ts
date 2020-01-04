@@ -1,6 +1,6 @@
 export enum UserRole {
 	None = 'None',
-	Administrator = 'Administrator',
+	Admin = 'Admin',
 	Caretaker = 'Caretaker',
 	Resident = 'Resident'
 }

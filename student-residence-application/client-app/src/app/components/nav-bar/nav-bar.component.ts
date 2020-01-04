@@ -23,25 +23,26 @@ export class NavBarComponent implements OnInit {
 					name: 'home',
 					title: 'Home',
 					url: '/home',
-					roles:  [ UserRole.Administrator , UserRole.Caretaker, UserRole.Resident ]
+					roles:  [ UserRole.Admin, UserRole.Caretaker, UserRole.Resident ]
 				},
 				{
 					name: 'contract',
 					title: 'Contract',
 					url: '/contract',
-					roles:  [ UserRole.Administrator , UserRole.Resident ]
+					roles:  [ UserRole.Admin , UserRole.Resident ]
 				},
 				{
 					name: 'appointment',
 					title: 'Appointment',
 					url: '/appointment',
-					roles:  [ UserRole.Administrator , UserRole.Caretaker, UserRole.Resident ]
+					roles:  [ UserRole.Admin , UserRole.Caretaker, UserRole.Resident ]
 				}				
 			];
 		}
 
 	get navigationPages(): Page[] {
 		return this._navigationPages.filter((p: Page): boolean => {
+            console.log(p.name + p.roles)
 			return p.roles.indexOf(this._authService.userCredential.role) > -1;
 		});
 	}
