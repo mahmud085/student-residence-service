@@ -91,7 +91,28 @@ export class AppointmentComponent implements OnInit {
         alert(error.error);
       });
     }
-
+    onClickAcceptAppointment(appointmentId: string): void {
+      this.blockUI = true;
+      this._appointmentService.acceptAppointment(appointmentId).subscribe((msg: string): void => {			
+        this.blockUI = false;
+        alert('Appointment successfully accepted.');
+        this.loadAppointments();
+      }, (error: any): void => {
+        this.blockUI = false;
+        alert(error.error);
+      });
+    }
+    onClickCancelAppointment(appointmentId: string): void {
+      this.blockUI = true;
+      this._appointmentService.cancelAppointment(appointmentId).subscribe((msg: string): void => {			
+        this.blockUI = false;
+        alert('Appointment canceled.');
+        this.loadAppointments();
+      }, (error: any): void => {
+        this.blockUI = false;
+        alert(error.error);
+      });
+    }
 	showCreateAppointmentModal(): void {
 		$('#createAppointmentModal').modal({
 			backdrop: 'static',
@@ -101,6 +122,7 @@ export class AppointmentComponent implements OnInit {
 	}
 
 	hideCreateAppointmnetModal(): void {
+    this.resetCreateAppointmentFields();
 		$('#close-new-appointment-modal').click();
 	}
 
