@@ -1,17 +1,11 @@
 package org.authentication.dataaccess.data.models;
 
-import org.authentication.dataaccess.data.enums.UserType;
-
 import javax.persistence.Column;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.time.LocalDate;
-
-//import org.appointment.service.adapters.AppointmentPriorityAdapter;
-//import org.appointment.service.adapters.AppointmentStatusAdapter;
-//import org.appointment.service.adapters.AppointmentTypeAdapter;
+import java.time.LocalDateTime;
 
 @XmlRootElement(name = "authentication")
 @javax.persistence.Entity(name ="authentication")
@@ -25,9 +19,9 @@ public class Authentication extends Entity implements Cloneable {
 	@Column(name = "userId")
 	private String userId;
 	@Column(name = "generatedTime")
-	private LocalDate generatedTime;
+	private LocalDateTime generatedTime;
 	@Column(name = "expiryTime")
-	private LocalDate expiryTime;
+	private LocalDateTime expiryTime;
 	@Column(name = "accessToken")
 	private String accessToken;
 
@@ -39,19 +33,19 @@ public class Authentication extends Entity implements Cloneable {
 		this.userId = userId;
 	}
 
-	public LocalDate getGeneratedTime() {
+	public LocalDateTime getGeneratedTime() {
 		return generatedTime;
 	}
 
-	public void setGeneratedTime(LocalDate generatedTime) {
+	public void setGeneratedTime(LocalDateTime generatedTime) {
 		this.generatedTime = generatedTime;
 	}
 
-	public LocalDate getExpiryTime() {
+	public LocalDateTime getExpiryTime() {
 		return expiryTime;
 	}
 
-	public void setExpiryTime(LocalDate expiryTime) {
+	public void setExpiryTime(LocalDateTime expiryTime) {
 		this.expiryTime = expiryTime;
 	}
 

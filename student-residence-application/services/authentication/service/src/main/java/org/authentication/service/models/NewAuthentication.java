@@ -1,11 +1,11 @@
 package org.authentication.service.models;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class NewAuthentication {
     private String userId;
-    private LocalDate generatedTime;
-    private LocalDate expiryTime;
+    private LocalDateTime generatedTime;
+    private LocalDateTime expiryTime;
     private String accessToken;
 
     public String getUserId() {
@@ -16,19 +16,19 @@ public class NewAuthentication {
         this.userId = userId;
     }
 
-    public LocalDate getGeneratedTime() {
+    public LocalDateTime getGeneratedTime() {
         return generatedTime;
     }
 
-    public void setGeneratedTime(LocalDate generatedTime) {
+    public void setGeneratedTime(LocalDateTime generatedTime) {
         this.generatedTime = generatedTime;
     }
 
-    public LocalDate getExpiryTime() {
+    public LocalDateTime getExpiryTime() {
         return expiryTime;
     }
 
-    public void setExpiryTime(LocalDate expiryTime) {
+    public void setExpiryTime(LocalDateTime expiryTime) {
         this.expiryTime = expiryTime;
     }
 
