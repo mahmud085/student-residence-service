@@ -70,19 +70,17 @@ public class AuthenticationResourceImpl implements AuthenticationResource {
             try {
                 User user = userService.createLoginRequest(loginRequest.getUserId(), loginRequest.getPassword());
                 if (user != null) {
-                    LocalDateTime tokenExpiresAt = LocalDateTime.now().plusHours(2);
-
                     String finalToken = JwtHelper.issueToken(
                             loginRequest.getUserId(),
                             uriInfo.getAbsolutePath().toString(),
-                            Date.from(tokenExpiresAt.atZone(ZoneId.systemDefault()).toInstant()));
+                            Date.from((LocalDateTime.now().plusHours(2)).atZone(ZoneId.systemDefault()).toInstant()));
 
                     NewAuthentication currentUserAuthentication = new NewAuthentication() {
                         {
                             setUserId(user.getUserId());
                             setAccessToken(finalToken);
-                            setGeneratedTime(LocalDateTime.now());
-                            setExpiryTime(tokenExpiresAt);
+                            setGeneratedTime(LocalDate.now());
+                            setExpiryTime(LocalDate.now().plusDays(10));
 
                         }
                     };
