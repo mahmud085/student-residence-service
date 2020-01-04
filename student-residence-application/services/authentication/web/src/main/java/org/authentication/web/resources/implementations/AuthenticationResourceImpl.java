@@ -87,15 +87,17 @@ public class AuthenticationResourceImpl implements AuthenticationResource {
                     return buildResponseObject(Response.Status.OK, createdAccessToken);
                 }
 
-                return buildResponseObject(Response.Status.UNAUTHORIZED, Messages.USER_MISMATCH);
-            } catch (ValidationException | InvalidOperationException | ObjectNotFoundException e) {
+                return buildResponseObject(Response.Status.BAD_REQUEST, Messages.USER_MISMATCH);
+            } catch (ValidationException | InvalidOperationException e) {
                 // TODO Auto-generated catch block
                 return buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());
+            } catch (ObjectNotFoundException e) {
+                // TODO Auto-generated catch block
+                return buildResponseObject(Response.Status.BAD_REQUEST, Messages.USER_MISMATCH);
             }
         } catch (Exception e) {
-            return null;
+            return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
         }
-
     }
 
     @Override
@@ -115,7 +117,10 @@ public class AuthenticationResourceImpl implements AuthenticationResource {
             return buildResponseObject(Response.Status.OK, user);
         } catch (ValidationException | InvalidOperationException | ObjectNotFoundException e) {
             // TODO Auto-generated catch block
-            return buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());
+            return buildResponseObject(Response.Status.BAD_REQUEST, Messages.INVALID_OR_EXPIRED_ACCESS_TOKEN);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 

@@ -56,6 +56,9 @@ public class UserResourceImpl implements UserResource {
         } catch (ValidationException | InvalidOperationException | ObjectNotFoundException e) {
             // TODO Auto-generated catch block
             return buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -74,11 +77,10 @@ public class UserResourceImpl implements UserResource {
 
             User user = userService.registerUser(newUser);
 
-            return buildResponseObject(Response.Status.OK, newUser);
+            return buildResponseObject(Response.Status.OK, user);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             return buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());
         }
     }
-
 }
