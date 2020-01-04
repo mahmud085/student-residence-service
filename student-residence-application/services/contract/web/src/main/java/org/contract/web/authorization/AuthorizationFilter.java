@@ -58,7 +58,7 @@ public class AuthorizationFilter implements ContainerRequestFilter {
             contextUser = HttpRequestHelper.validateAccessToken(accessToken);
 
             if (contextUser == null) {
-                abort(Response.Status.BAD_REQUEST, Messages.INVALID_EXPIRED_ACCESS_TOKEN);
+                abort(Response.Status.UNAUTHORIZED, Messages.INVALID_EXPIRED_ACCESS_TOKEN);
                 return;
             }
 

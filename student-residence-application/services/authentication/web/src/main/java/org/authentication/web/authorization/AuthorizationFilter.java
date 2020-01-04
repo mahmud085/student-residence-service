@@ -78,7 +78,10 @@ public class AuthorizationFilter implements ContainerRequestFilter {
             }
 
             setSecurityContext();
-        } catch (InvalidAccessTokenException | ObjectNotFoundException | ValidationException ex) {
+        } catch (InvalidAccessTokenException | ObjectNotFoundException ex) {
+            abort(Response.Status.UNAUTHORIZED, ex.getMessage());
+            return;
+        }  catch (ValidationException ex) {
             abort(Response.Status.BAD_REQUEST, ex.getMessage());
             return;
         } catch (Exception ex) {
