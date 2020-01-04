@@ -2,11 +2,13 @@ package org.authentication.web.resources.implementations;
 
 import com.google.inject.Inject;
 import org.authentication.common.Messages;
+import org.authentication.common.exceptions.InvalidAccessTokenException;
 import org.authentication.common.exceptions.InvalidOperationException;
 import org.authentication.common.exceptions.ObjectNotFoundException;
 import org.authentication.common.exceptions.ValidationException;
 import org.authentication.dataaccess.data.models.Authentication;
 import org.authentication.dataaccess.data.models.User;
+import org.authentication.service.helpers.JwtHelper;
 import org.authentication.service.models.AccessToken;
 import org.authentication.service.models.NewAuthentication;
 import org.authentication.service.models.LoginRequest;
@@ -21,6 +23,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.logging.Logger;
 
 @Path(Constants.RESOURCE_PATH_AUTHENTICATION)
@@ -63,11 +68,13 @@ public class AuthenticationResourceImpl implements AuthenticationResource {
             }
 
             try {
-                String token = "";
                 User user = userService.createLoginRequest(loginRequest.getUserId(), loginRequest.getPassword());
                 if (user != null) {
-                    token = authenticationService.issueToken(loginRequest.getUserId(), uriInfo);
-                    String finalToken = token;
+                    String finalToken = JwtHelper.issueToken(
+                            loginRequest.getUserId(),
+                            uriInfo.getAbsolutePath().toString(),
+                            Date.from((LocalDateTime.now().plusHours(2)).atZone(ZoneId.systemDefault()).toInstant()));
+
                     NewAuthentication currentUserAuthentication = new NewAuthentication() {
                         {
                             setUserId(user.getUserId());
@@ -111,11 +118,12 @@ public class AuthenticationResourceImpl implements AuthenticationResource {
         }
 
         try {
+            JwtHelper.validateToken(accessToken);
 
             User user = userService.getUserByAccessToken(accessToken);
 
             return buildResponseObject(Response.Status.OK, user);
-        } catch (ValidationException | InvalidOperationException | ObjectNotFoundException e) {
+        } catch (InvalidAccessTokenException | ValidationException | InvalidOperationException | ObjectNotFoundException e) {
             // TODO Auto-generated catch block
             return buildResponseObject(Response.Status.BAD_REQUEST, Messages.INVALID_OR_EXPIRED_ACCESS_TOKEN);
         } catch (Exception e) {

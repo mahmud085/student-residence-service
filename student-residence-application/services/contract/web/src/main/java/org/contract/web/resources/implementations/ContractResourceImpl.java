@@ -9,9 +9,11 @@ import org.contract.common.exceptions.ValidationException;
 import org.contract.dataaccess.data.models.Contract;
 import org.contract.dataaccess.models.PaginatedDataList;
 import org.contract.service.models.NewContract;
+import org.contract.service.models.UserRole;
 import org.contract.service.services.interfaces.ContractService;
 import org.contract.web.Constants;
 import org.contract.web.helpers.HateoasResponseHelper;
+import org.contract.web.helpers.HttpRequestHelper;
 import org.contract.web.helpers.PaginationMetadataHelper;
 import org.contract.web.models.*;
 import org.contract.web.resources.interfaces.ContractResource;
@@ -38,7 +40,7 @@ public class ContractResourceImpl implements ContractResource {
     private SecurityContext securityContext;
 
     @Override
-    @POST @RolesAllowed({Constants.ROLE_ADMINISTRATOR})
+    @POST @RolesAllowed({Constants.ROLE_ADMIN})
     public Response createContract(NewContract newContract) {
         String contextUserId = securityContext.getUserPrincipal().getName();
 
@@ -47,6 +49,15 @@ public class ContractResourceImpl implements ContractResource {
         }
 
         try {
+            User contractorUser = HttpRequestHelper.getUser(newContract.getContractorsUserId(), securityContext.getAuthenticationScheme());
+            if (contractorUser == null) {
+                return buildResponseObject(Response.Status.BAD_REQUEST, Messages.INVALID_CONTRACTORS_USER_ID);
+            }
+
+            if (contractorUser.getUserType() != UserRole.Resident) {
+                return buildResponseObject(Response.Status.BAD_REQUEST, Messages.INVALID_CONTRACTORS_USER_ROLE);
+            }
+
             Contract createdContract = contractService.createContract(newContract, contextUserId);
             ContractResponse response = HateoasResponseHelper.getContractResponse(uriInfo.getBaseUri().toString(), createdContract);
 
@@ -61,11 +72,11 @@ public class ContractResourceImpl implements ContractResource {
     }
 
     @Override
-    @GET @RolesAllowed({Constants.ROLE_ADMINISTRATOR, Constants.ROLE_Resident})
+    @GET @RolesAllowed({Constants.ROLE_ADMIN, Constants.ROLE_Resident})
     @Path("{contract-id}")
     public Response getContract(@PathParam("contract-id") String contractId) {
         String contextUserId = securityContext.getUserPrincipal().getName();
-        boolean isAdminUser = securityContext.isUserInRole(Constants.ROLE_ADMINISTRATOR);
+        boolean isAdminUser = securityContext.isUserInRole(Constants.ROLE_ADMIN);
 
         try {
             Contract contract = contractService.getContract(contractId);
@@ -88,7 +99,7 @@ public class ContractResourceImpl implements ContractResource {
     }
 
     @Override
-    @GET @RolesAllowed({Constants.ROLE_ADMINISTRATOR})
+    @GET @RolesAllowed({Constants.ROLE_ADMIN})
     public Response getContracts(@QueryParam("contractorsName") String contractorsName
             , @QueryParam("pageNum") int pageNum
             , @QueryParam("pageSize") int pageSize) {
@@ -153,7 +164,6 @@ public class ContractResourceImpl implements ContractResource {
     @Path("{contract-id}")
     public Response updateContract(@PathParam("contract-id") String contractId, ContractUpdateRequest contractUpdateRequest) {
         String contextUserId = securityContext.getUserPrincipal().getName();
-        boolean isAdminUser = securityContext.isUserInRole(Constants.ROLE_ADMINISTRATOR);
 
         if (contractId == null || contractId.isEmpty()) {
             return  buildResponseObject(Response.Status.BAD_REQUEST, Messages.CONTRACT_ID_REQUIRED);
@@ -162,8 +172,7 @@ public class ContractResourceImpl implements ContractResource {
         try {
             Contract contract = contractService.getContract(contractId);
 
-            // isAdminUser should be removed from this logic
-            boolean isUserAuthorizedForThisResource = isAdminUser || contract.getContractorsUserId().equalsIgnoreCase(contextUserId);
+            boolean isUserAuthorizedForThisResource = contract.getContractorsUserId().equalsIgnoreCase(contextUserId);
 
             if (!isUserAuthorizedForThisResource) {
                 return buildResponseObject(Response.Status.UNAUTHORIZED, Messages.USER_NOT_AUTHORISED_TO_OPERATE_RESOURCE);

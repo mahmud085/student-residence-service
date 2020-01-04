@@ -41,7 +41,7 @@ public class UserResourceImpl implements UserResource {
 
     @Override
     @GET
-    @RolesAllowed({Constants.ROLE_Resident})
+    @RolesAllowed({Constants.ROLE_ADMIN})
     @Path("{user-id}")
     public Response getUserById(@PathParam("user-id") String userId) {
         if (userId == null || userId.length() == 0) {
@@ -64,7 +64,7 @@ public class UserResourceImpl implements UserResource {
 
     @Override
     @POST
-    @RolesAllowed({Constants.ROLE_ADMINISTRATOR})
+    @RolesAllowed({Constants.ROLE_ADMIN})
     public Response createUser(RegisterUser newUser) {
         if (newUser == null ) {
             return buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUEST_BODY_REQUIRED);

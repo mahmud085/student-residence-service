@@ -7,7 +7,6 @@ import org.contract.service.services.interfaces.ContractService;
 import org.contract.web.Constants;
 import org.contract.web.helpers.HateoasResponseHelper;
 import org.contract.web.models.ContractListResponse;
-import org.contract.web.models.ContractResponse;
 import org.contract.web.resources.interfaces.ContractorResource;
 
 import javax.annotation.security.RolesAllowed;
@@ -31,11 +30,11 @@ public class ContractorResourceImpl implements ContractorResource {
 
     @Override
     @GET
-    @RolesAllowed({Constants.ROLE_Resident, Constants.ROLE_ADMINISTRATOR})
+    @RolesAllowed({Constants.ROLE_Resident, Constants.ROLE_ADMIN})
     @Path("{contractors-user-id}/contracts")
     public Response getContractsOfContractor(@PathParam("contractors-user-id") String contractorsUserId) {
         String contextUserId = securityContext.getUserPrincipal().getName();
-        boolean isAdminUser = securityContext.isUserInRole(Constants.ROLE_ADMINISTRATOR);
+        boolean isAdminUser = securityContext.isUserInRole(Constants.ROLE_ADMIN);
         boolean isUserAuthorizedForThisResource = isAdminUser || contractorsUserId.equalsIgnoreCase(contextUserId);
 
         if (!isUserAuthorizedForThisResource) {
