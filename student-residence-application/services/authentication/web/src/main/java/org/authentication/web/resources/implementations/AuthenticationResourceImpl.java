@@ -9,6 +9,7 @@ import org.authentication.common.exceptions.ObjectNotFoundException;
 import org.authentication.common.exceptions.ValidationException;
 import org.authentication.dataaccess.data.models.Authentication;
 import org.authentication.dataaccess.data.models.User;
+import org.authentication.service.models.AccessToken;
 import org.authentication.service.models.NewAuthentication;
 import org.authentication.service.models.NewUser;
 import org.authentication.service.services.interfaces.AuthenticationService;
@@ -65,7 +66,7 @@ public class AuthenticationResourceImpl implements AuthenticationResource {
     @PermitAll
     @Path("login")
     public Response createLoginRequest(NewUser newUser) {
-        try{
+        try {
             logger.info("#### log : " + newUser);
             if (newUser == null) {
                 return buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUEST_BODY_REQUIRED);
@@ -87,17 +88,20 @@ public class AuthenticationResourceImpl implements AuthenticationResource {
                         }
                     };
                     Authentication storedCurrentUserAuthentication = authenticationService.addAuthenticatedUser(currentUserAuthentication);
-
+                    AccessToken createdAccesstoken = new AccessToken() {
+                        {
+                            setAccessToken(finalToken);
+                        }
+                    };
                     // Return the token on the response
-                    return buildResponseObject(Response.Status.OK, currentUserAuthentication);
+                    return buildResponseObject(Response.Status.OK, createdAccesstoken);
                 }
                 return buildResponseObject(Response.Status.OK, Messages.USER_MISMATCH);
             } catch (ValidationException | InvalidOperationException | ObjectNotFoundException e) {
                 // TODO Auto-generated catch block
                 return buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
 
@@ -109,13 +113,6 @@ public class AuthenticationResourceImpl implements AuthenticationResource {
     @Path("accessToken/{accessToken}")
 
     public Response getUserByAccessToken(@PathParam("accessToken") String accessToken) {
-/*        String authCheck = checkAuthenticationToken(headers);
-        if (authCheck.equals("401-1")) {
-            return buildResponseObject(Response.Status.UNAUTHORIZED, Messages.AUTHORIZATION_FAILED_CAUSE_NO_AUTHORIZATION_HEADER);
-        } else if (authCheck.equals("401-2")) {
-            return buildResponseObject(Response.Status.UNAUTHORIZED, Messages.INVALID_ACCESS_TOKEN);
-        }
-        String contextUserId = securityContext.getUserPrincipal().getName();*/
         if (accessToken == null || accessToken.length() == 0) {
             return buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUEST_BODY_REQUIRED);
         }
@@ -130,10 +127,6 @@ public class AuthenticationResourceImpl implements AuthenticationResource {
             return buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());
         }
     }
-
-
-
-
 
 
 }

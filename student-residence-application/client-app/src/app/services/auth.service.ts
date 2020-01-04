@@ -32,7 +32,7 @@ export class AuthService {
 					userId: 'dummy',
 					name: 'Resident User 1',
 					accessToken: 'dummy',
-					role: UserRole.Administrator				
+					role: UserRole.Caretaker				
 				}
 
 				if (loginModel.isPersistent) {
