@@ -7,6 +7,8 @@ import { AppointmentStatus } from 'src/app/shared/enums/appointment-status.enum'
 import { DropdownItem } from 'src/app/shared/models/dropdown-item.mode';
 import { AppointmentType } from 'src/app/shared/enums/appointment-type.enum';
 import { PaginatedAppointments } from 'src/app/shared/models/paginated-appointments.model';
+import { NewAppointment } from 'src/app/shared/models/new-appointment.model';
+import { AppointmentPriority } from 'src/app/shared/enums/appointment-priority.enum';
 
 @Component({
 	selector: 'app-appointment',
@@ -14,6 +16,7 @@ import { PaginatedAppointments } from 'src/app/shared/models/paginated-appointme
 	styleUrls: ['./appointment.component.css']
 })
 export class AppointmentComponent implements OnInit {
+  newAppointment: NewAppointment;
   appointments: Appointment[];
   blockUI: boolean;
   
@@ -43,9 +46,9 @@ export class AppointmentComponent implements OnInit {
 			}
 		];
 
-		Object.keys(AppointmentType).map((k: string): void => {
+		Object.keys(AppointmentPriority).map((k: string): void => {
 			options.push({
-				value: AppointmentType[k],
+				value: AppointmentPriority[k],
 				label: k
 			});
 		});
@@ -56,6 +59,7 @@ export class AppointmentComponent implements OnInit {
 	constructor(private _authService: AuthService,
 		private _appointmentService: AppointmentService) { 
       this.blockUI = false;
+      this.resetCreateAppointmentFields();
     }
 
     ngOnInit() {
@@ -71,6 +75,20 @@ export class AppointmentComponent implements OnInit {
       }, (error: any): void => {
         this.blockUI = false;
         alert(error.message);
+      });
+    }
+
+    onClickSaveAppointment(): void {
+  
+      this.blockUI = true;
+      this._appointmentService.createAppointment(this.newAppointment).subscribe((appointment: Appointment): void => {
+        this.blockUI = false;
+        this.hideCreateAppointmnetModal();
+        alert('Appointment successfully created.');
+        this.loadAppointments();
+      }, (error: any): void => {
+        this.blockUI = false;
+        alert(error.error);
       });
     }
 
@@ -96,5 +114,17 @@ export class AppointmentComponent implements OnInit {
 
 	isAppointmentAccepted(contract: Appointment):boolean {
 		return contract.status == AppointmentStatus.Accepted;
+  }
+  
+	private resetCreateAppointmentFields(): void {
+		this.newAppointment = {
+			contractId: null,
+			contractorsName: null,
+      roomNumber: null,
+      appointmentType: null,
+      issue: null,
+      priority: null,
+			desiredDate: null
+		};
 	}
 }
