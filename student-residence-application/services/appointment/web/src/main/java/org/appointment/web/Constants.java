@@ -11,4 +11,7 @@ public class Constants {
     public static final int DEFAULT_PAGE_NUM = 1;
     public static final int MAX_PAGE_SIZE = 50;
     public static final int DEFAULT_PAGE_SIZE = 20;
+
+    public static final String AUTH_SERVICE_AUTHENTICATION_RESOURCE_PATH = "authentication";
+    public static final String AUTH_SERVICE_USER_RESOURCE_PATH = "users";
 }

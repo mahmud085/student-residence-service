@@ -1,38 +1,163 @@
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12 table-div">
-            <table class="table table-striped text-center">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>Name</th>
-                        <th>Room</th>
-                        <th>Issue</th>
-                        <th>Type</th>
-                        <th>Priority</th>
-                        <th>Desired Date</th>
-                        <th>Status</th>
-                        <th>Created On</th>
-                        <th>Action(s)</th>
-                    </tr>
-                </thead>
-                <tbody>                
-                  <tr *ngFor="let a of appointments">
-                    <td>{{ a?.contractorsName }}</td>
-                    <td>{{ a.roomNumber }}</td>
-                    <td>{{ a.issue }}</td>
-                    <td>{{ a.appointmentType }}</td>
-                    <td>{{ a.priority }}</td>
-                    <td>{{ a.desiredDate }}</td>
-                    <td>{{ a.status }}</td>
-                    <td>{{ a.createdOn }}</td>
-                    <td>
-                      <div class="btn-group" role="group" aria-label="Basic example">
-                        <button *ngIf="isUserCareTaker()" class="btn btn-primary">Accept</button>
-                      </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+  <br>
+  <div class="row">
+      <div class="col-md-2">
+          <button *ngIf="isUserResident()" (click)="showCreateAppointmentModal()" class="btn btn-primary">Create New Appointment</button>
+      </div>
+      <div *ngIf="isUserCareTaker()" class="form-group col-md-2 offset-md-8">
+          <label>Filter By Desired Date</label>
+          <div class="input-group">
+              <input [(ngModel)]="filterByDesiredDate" type="date" class="form-control">
+              <div class="input-group-append">
+                  <button (click)="onClickFilterByDesiredDate()" class="input-group-text" style="cursor: pointer;"><i class="fas fa-search"></i></button>
+              </div>
+          </div>
+      </div>
+  </div>
+  <br>
+  <div class="row">
+      <div class="col-md-12 table-div">
+          <table class="table table-striped text-center">
+              <thead class="thead-dark">
+                  <tr>
+                      <th>Name</th>
+                      <th>Room</th>
+                      <th>Issue</th>
+                      <th>Type</th>
+                      <th>Priority</th>
+                      <th>Desired Date</th>
+                      <th>Status</th>
+                      <th>Created On</th>
+                      <th>Action(s)</th>
+                  </tr>
+              </thead>
+              <tbody>                
+                <tr *ngFor="let a of appointments">
+                  <td>{{ a.contractorsName }}</td>
+                  <td>{{ a.roomNumber }}</td>
+                  <td>{{ a.issue }}</td>
+                  <td>{{ a.appointmentType }}</td>
+                  <td>{{ a.priority }}</td>
+                  <td>{{ a.desiredDate }}</td>
+                  <td>{{ a.status }}</td>
+                  <td>{{ a.createdOn }}</td>
+                  <td>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                      <button *ngIf="isUserCareTaker()" (click)="onClickAcceptAppointment(a.appointmentId)" class="btn btn-primary">Accept</button>
+                      <button *ngIf="isUserCareTaker()" (click)="onClickCancelAppointment(a.appointmentId)" class="btn btn-danger">Deny</button>
+                    </div>
+                  </td>
+              </tr>
+              </tbody>
+          </table>
+      </div>
+  </div>
+  <div class="modal fade" id="createAppointmentModal">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">New Appointmnet</h4>
+                <button type="button" class="close" (click)="hideCreateAppointmnetModal()" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Contract ID</label>
+                            <div class="input-group">
+                                <input [(ngModel)]="newAppointment.contractId" (focusout)="validateContractId()" [ngClass]="{'invalid-input': !createAppointmentValidator.isContractIdValid}" type="text" class="form-control">
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-file-contract"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Contractor's Name</label>
+                            <div class="input-group">
+                                <input [(ngModel)]="newAppointment.contractorsName" type="text" class="form-control">
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Room</label>
+                            <div class="input-group">
+                                <input [(ngModel)]="newAppointment.roomNumber" type="text" class="form-control">
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Desired Date</label>
+                            <div class="input-group">
+                                <input [(ngModel)]="newAppointment.desiredDate" type="date" class="form-control">
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Type</label>
+                            <div class="input-group">
+                                <select  [(ngModel)]="newAppointment.appointmentType" class="form-control">
+                                    <option *ngFor="let option of appointmentTypeOptions" [value]="option.value">{{ option.label }}</option>
+                                </select>
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-tasks"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Priority</label>
+                            <div class="input-group">
+                                <select [(ngModel)]="newAppointment.priority" class="form-control">
+                                    <option *ngFor="let option of appointmentPriorityOptions" [value]="option.value">{{ option.label }}</option>
+                                </select>
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-flag"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Issue (Max. 200 characters)</label>
+                            <textarea [(ngModel)]="newAppointment.issue" class="form-control"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" (click)="onClickSaveAppointment()">Save</button>
+                <button type="button" class="btn btn-danger" (click)="hideCreateAppointmnetModal()">Close</button>
+
+                <!-- this button is hidden, used to close from typescript -->
+                <button type="button" id="close-new-appointment-modal" data-dismiss="modal" style="display: none">Close</button>
+            </div>
         </div>
     </div>
 </div>

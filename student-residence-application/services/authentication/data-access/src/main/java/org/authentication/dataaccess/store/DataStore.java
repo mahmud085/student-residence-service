@@ -14,7 +14,7 @@ public class DataStore {
                 {
                     setId(1);
                     setUserId("hunterbd");
-                    setUserName("Sumon");
+                    setUserName("hunter");
                     setUserType(UserType.Resident);
                     setPassword("1234");
                 }
@@ -23,8 +23,8 @@ public class DataStore {
             add(new User() {
                 {
                     setId(2);
-                    setUserId("Knowme?");
-                    setUserName("Imti");
+                    setUserId("Knowme");
+                    setUserName("Know");
                     setUserType(UserType.Caretaker);
                     setPassword("ulala");
                 }

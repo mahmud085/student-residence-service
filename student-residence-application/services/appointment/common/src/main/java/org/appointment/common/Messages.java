@@ -13,6 +13,7 @@ public class Messages {
     public static final String SUCCESSFUL_TERMINATION = "Contract successfully terminated.";
 
     public static final String SUCCESSFUL_ACCEPTANCE = "Appointment successfully accepted.";
+    public static final String SUCCESSFULLY_DENIED = "Appointment successfully denied.";
 
     public static final String REQUIRED_CONTRACTORS_NAME = "Contractor's Name is required.";
     public static final String REQUIRED_CONTRACT_ID = "Contract ID is required.";
@@ -24,6 +25,7 @@ public class Messages {
     public static final String REQUIRED_APPOINTMENT_STATUS = "Valid Appointment Status is required";
     public static final String APPOINTMENT_NOT_FOUND="Appointment Not Found With this ID";
     public static final String APPOINTMENT_ALREADY_ACCEPTED="Appointment is already accepted";
+    public static final String APPOINTMENT_ALREADY_DENIED="Appointment is already denied";
     public static final String APPOINTMENT_DATE_EXPIRED="You need to accept appointment before desired date";
 
     public static final String INVALID_PAGE_NUM = "Invalid 'pageNum' value.";
@@ -37,7 +39,7 @@ public class Messages {
     public static final String INVALID_CONTRACTORS_USER_ID = "No User found with the specified User ID.";
     public static final String INVALID_CONTRACTORS_USER_ROLE = "Contractor is not a resident.";
     public static final String INVALID_DESIRED_DATE_STRING = "Desired Date is not valid.";
-    
+    public static final String INVALID_EXPIRED_ACCESS_TOKEN = "Access Token is invalid/expired. Please login again to refresh the access token.";
 
 
     public static final String AUTHORIZATION_FAILED_USER_ROLE_NOT_ALLOWED = "This user's role is not allowed to perform this action.";

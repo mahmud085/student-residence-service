@@ -19,4 +19,5 @@ public interface AppointmentService {
     List<Appointment> getAllAppointments(LocalDate desiredDate);
     PaginatedDataList<Appointment> getAllAppointments(LocalDate desiredDate, int pageNum, int pageSize) throws PaginationRangeOutOfBoundException;
     Appointment acceptAppointment(String appointmentId) throws ValidationException, InvalidOperationException, ObjectNotFoundException;
+    Appointment denyAppointment(String appointmentId) throws ValidationException, InvalidOperationException, ObjectNotFoundException;
 }
