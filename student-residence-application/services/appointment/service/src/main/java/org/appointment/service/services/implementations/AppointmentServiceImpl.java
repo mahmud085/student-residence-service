@@ -16,6 +16,7 @@ import org.appointment.dataaccess.models.PaginatedDataList;
 import org.appointment.dataaccess.respositories.interfaces.AppointmentRepository;
 import org.appointment.service.models.Contract;
 import org.appointment.service.models.NewAppointment;
+import org.appointment.service.services.interfaces.AppointmentService;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvider;
@@ -28,7 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-public class AppointmentServiceImpl implements org.appointment.service.services.interfaces.AppointmentService {
+public class AppointmentServiceImpl implements AppointmentService {
 	@Inject
 	private AppointmentRepository appointmentRepository;
 
@@ -43,58 +44,46 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 		validationHelper.validate(newAppointment);
 
 		try {
-			//Contract contract = getContract(contractId);
-			
-			Contract contract = new Contract();
-			contract.setContractId("45678");
-			contract.setContractorsEmail("koushikjay66");
-			contract.setContractorsName("bulbuli");
-			contract.setContractorsPhone("123456787");
-			contract.setContractorsUserId("koushikja66");
-			contract.setContractStatus("Confirmed");
-			contract.setStartDate(LocalDate.of(2020, 01, 10));
-			contract.setEndDate(LocalDate.of(2020, 3, 4));
-			contract.setRoomNumber("67890");
-			contract.setCreatedOn(LocalDate.now());
-//
-//			if (!contract.getRoomNumber().equals(newAppointment.getRoomNumber())) {
-//
-//				throw new ValidationException(Messages.INVALID_ROOM_NUMBER);
-//			}
-//
-//			if (newAppointment.getAppointmentType() == AppointmentType.MoveIn) {
-//
-//				if (!contract.getContractStatus().equals("Confirmed")) {
-//					throw new InvalidOperationException(Messages.INVALID_CONTRACT);
-//				}
-//
-//				LocalDate twoWeeksBefore = contract.getStartDate().minusWeeks(2);
-//
-//				if (newAppointment.getDesiredDate().isBefore(twoWeeksBefore)) {
-//
-//					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
-//				}
-//				if (newAppointment.getDesiredDate().isAfter(contract.getStartDate())) {
-//
-//					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
-//				}
-//
-//			}
-//
-//			if (newAppointment.getAppointmentType() == AppointmentType.MoveOut) {
-//
-//				LocalDate twoWeeksBefore = contract.getEndDate().minusWeeks(2);
-//
-//				if (newAppointment.getDesiredDate().isBefore(twoWeeksBefore)) {
-//					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
-//				}
-//				if (newAppointment.getDesiredDate().isAfter(contract.getEndDate())) {
-//					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
-//				}
-//			}
-//
-//			if(newAppointment.getDesiredDate().isBefore(LocalDate.now()))
-//				throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
+			Contract contract = getContract(contractId);
+
+			if (!contract.getRoomNumber().equals(newAppointment.getRoomNumber())) {
+
+				throw new ValidationException(Messages.INVALID_ROOM_NUMBER);
+			}
+
+			if (newAppointment.getAppointmentType() == AppointmentType.MoveIn) {
+
+				if (!contract.getContractStatus().equals("Confirmed")) {
+					throw new InvalidOperationException(Messages.INVALID_CONTRACT);
+				}
+
+				LocalDate twoWeeksBefore = contract.getStartDate().minusWeeks(2);
+
+				if (newAppointment.getDesiredDate().isBefore(twoWeeksBefore)) {
+
+					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
+				}
+				if (newAppointment.getDesiredDate().isAfter(contract.getStartDate())) {
+
+					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
+				}
+
+			}
+
+			if (newAppointment.getAppointmentType() == AppointmentType.MoveOut) {
+
+				LocalDate twoWeeksBefore = contract.getEndDate().minusWeeks(2);
+
+				if (newAppointment.getDesiredDate().isBefore(twoWeeksBefore)) {
+					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
+				}
+				if (newAppointment.getDesiredDate().isAfter(contract.getEndDate())) {
+					throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
+				}
+			}
+
+			if(newAppointment.getDesiredDate().isBefore(LocalDate.now()))
+				throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
 
 			Appointment appointment = new Appointment() {
 				{
@@ -153,7 +142,6 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 		return appointmentRepository.getAll(desiredDate, pageNum, pageSize);
 	}
 
-
 	@Override
 	public Appointment acceptAppointment(String appointmentId) throws ObjectNotFoundException , InvalidOperationException {
 		Appointment appointment = appointmentRepository.getById(appointmentId);
@@ -173,6 +161,7 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 		return appointment;
 	}
 
+	@Override
 	public Appointment denyAppointment(String appointmentId) throws ObjectNotFoundException , InvalidOperationException {
 		Appointment appointment = appointmentRepository.getById(appointmentId);
 
@@ -188,6 +177,11 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
 
 		return appointment;
+	}
+
+	@Override
+	public List<Appointment> getAppointmentsByContractor(String contractorsUserID) {
+		return appointmentRepository.getAll(contractorsUserID);
 	}
 
 	private Contract getContract(String contractId) throws ObjectNotFoundException {

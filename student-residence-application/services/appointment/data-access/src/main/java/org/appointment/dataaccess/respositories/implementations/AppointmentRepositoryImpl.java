@@ -119,6 +119,14 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 	}
 
 	@Override
+	public List<Appointment> getAll(String createdByUserId) {
+		return getAll()
+				.stream()
+				.filter(x -> x.getCreatedBy().equalsIgnoreCase(createdByUserId))
+				.collect(Collectors.toList());
+	}
+
+	@Override
 	public PaginatedDataList<Appointment> getAll(int pageNum, int pageSize) throws PaginationRangeOutOfBoundException {
 		List<Appointment> appointmentList = getAll();
 
