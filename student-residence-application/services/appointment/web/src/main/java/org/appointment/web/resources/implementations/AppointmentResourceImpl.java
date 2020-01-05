@@ -171,6 +171,7 @@ public class AppointmentResourceImpl implements AppointmentResource {
 	@Path("{appointment-id}")
 	public Response updateAppointment(@PathParam("appointment-id") String appointmentId, AppointmentUpdateRequest appointmentUpdateRequest)
 	{
+		boolean isCaretakerUser = securityContext.isUserInRole(Constants.ROLE_CARETAKER);
 		if(appointmentId == null || appointmentId.length() == 0) {
 			return  buildResponseObject(Response.Status.BAD_REQUEST, Messages.APPOINTMENT_ID_REQUIRED);
 		}
@@ -181,6 +182,14 @@ public class AppointmentResourceImpl implements AppointmentResource {
 
 		try {
 			String successMsg = null;
+			Appointment appointment = appointmentService.getAppointment(appointmentId);
+
+			boolean isUserAuthorizedForThisResource = isCaretakerUser;
+
+			if (!isUserAuthorizedForThisResource) {
+				return buildResponseObject(Response.Status.UNAUTHORIZED, Messages.USER_NOT_AUTHORISED_TO_OPERATE_RESOURCE);
+			}
+
 			if (appointmentUpdateRequest.getOperation() == AppointmentUpdateOperation.Accept) {
 				appointmentService.acceptAppointment(appointmentId);
 				successMsg = Messages.SUCCESSFUL_ACCEPTANCE;

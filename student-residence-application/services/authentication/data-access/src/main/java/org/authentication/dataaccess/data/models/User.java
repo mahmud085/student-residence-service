@@ -3,9 +3,14 @@ package org.authentication.dataaccess.data.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.authentication.dataaccess.data.enums.UserType;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-
+import java.time.LocalDate;
+import javax.persistence.Enumerated;
+import javax.persistence.EnumType;
 //import org.appointment.service.adapters.AppointmentPriorityAdapter;
 //import org.appointment.service.adapters.AppointmentStatusAdapter;
 //import org.appointment.service.adapters.AppointmentTypeAdapter;
@@ -14,14 +19,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 @javax.persistence.Entity(name = "user")
 @Table(name = "user")
 @NamedQueries({
-	
+
 	 @NamedQuery(name = "user.findByUserIdPassword" ,query = "SELECT u FROM user u where u.userId=:userId AND u.password=:password")
 	,@NamedQuery(name = "user.getAll" ,query = "SELECT u FROM user u")
 	, @NamedQuery(name = "user.findByUserId" ,query = "SELECT u FROM user u where u.userId=:userId")
 })
 
 public class User extends Entity implements Cloneable {
-	
+
 	@Column(name = "userId")
 	private String userId;
 	@Column(name="userName")

@@ -39,7 +39,7 @@ public class Messages {
     public static final String INVALID_CONTRACTORS_USER_ID = "No User found with the specified User ID.";
     public static final String INVALID_CONTRACTORS_USER_ROLE = "Contractor is not a resident.";
     public static final String INVALID_DESIRED_DATE_STRING = "Desired Date is not valid.";
-    
+    public static final String INVALID_EXPIRED_ACCESS_TOKEN = "Access Token is invalid/expired. Please login again to refresh the access token.";
 
 
     public static final String AUTHORIZATION_FAILED_USER_ROLE_NOT_ALLOWED = "This user's role is not allowed to perform this action.";
