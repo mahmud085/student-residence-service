@@ -19,6 +19,7 @@ export class AppointmentComponent implements OnInit {
   newAppointment: NewAppointment;
   appointments: Appointment[];
   blockUI: boolean;
+  filterByDesiredDate: Date;
   createAppointmentValidator: any;
   
 	get appointmentTypeOptions(): DropdownItem[] {
@@ -80,6 +81,17 @@ export class AppointmentComponent implements OnInit {
     });
   }
 
+	onClickFilterByDesiredDate(): void {
+		this.blockUI = true;
+		this._appointmentService.getFilteredAppointments(this.filterByDesiredDate).subscribe((paginatedAppointments: PaginatedAppointments): void => {
+			this.blockUI = false;
+			this.appointments = paginatedAppointments.appointment;
+		}, (error: any): void => {
+			this.blockUI = false;
+			alert(error.error);
+		});
+  }
+  
   onClickSaveAppointment(): void {
     this.validateCreateAppointmentFields();
     

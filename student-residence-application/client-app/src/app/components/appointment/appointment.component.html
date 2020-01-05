@@ -4,12 +4,12 @@
       <div class="col-md-2">
           <button *ngIf="isUserResident()" (click)="showCreateAppointmentModal()" class="btn btn-primary">Create New Appointment</button>
       </div>
-      <div class="form-group col-md-2 offset-md-8">
+      <div *ngIf="isUserCareTaker()" class="form-group col-md-2 offset-md-8">
           <label>Filter By Desired Date</label>
-          <div *ngIf="isUserCareTaker()" class="input-group">
-              <input type="date" class="form-control">
+          <div class="input-group">
+              <input [(ngModel)]="filterByDesiredDate" type="date" class="form-control">
               <div class="input-group-append">
-                  <button class="input-group-text" style="cursor: pointer;"><i class="fas fa-search"></i></button>
+                  <button (click)="onClickFilterByDesiredDate()" class="input-group-text" style="cursor: pointer;"><i class="fas fa-search"></i></button>
               </div>
           </div>
       </div>

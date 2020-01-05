@@ -42,7 +42,7 @@ export class NavBarComponent implements OnInit {
 
 	get navigationPages(): Page[] {
 		return this._navigationPages.filter((p: Page): boolean => {
-            console.log(p.name + p.roles)
+           // console.log(p.name + p.roles)
 			return p.roles.indexOf(this._authService.userCredential.role) > -1;
 		});
 	}

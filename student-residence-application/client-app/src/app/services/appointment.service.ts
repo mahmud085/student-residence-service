@@ -20,7 +20,6 @@ export class AppointmentService {
     
   getAppointments(): Observable<PaginatedAppointments> {
 		let requestUrl: string = null;
-		console.log('AppointmentService ',this._authService.userCredential.role)
 		switch (this._authService.userCredential.role) {
 			case UserRole.Caretaker || UserRole.Admin:
         requestUrl = `${ConfigService.appConfig.service.appointment.baseUrl}/api/appointments`;
@@ -28,7 +27,6 @@ export class AppointmentService {
         case UserRole.Resident:
           requestUrl = `${ConfigService.appConfig.service.appointment.baseUrl}/api/appointments`;
 		}
-    console.log('AppointmentService ',requestUrl)
 		return this._httpClient.get<PaginatedAppointments>(requestUrl);
   }
 
@@ -36,6 +34,12 @@ export class AppointmentService {
 		let requestUrl: string = `${ConfigService.appConfig.service.appointment.baseUrl}/api/appointments`
 
 		return this._httpClient.post<Appointment>(requestUrl, newAppointment);
+  }
+  
+  getFilteredAppointments(filterByDesiredDate: Date): Observable<PaginatedAppointments> {
+		let requestUrl: string = `${ConfigService.appConfig.service.appointment.baseUrl}/api/appointments?desiredDate=${filterByDesiredDate}`;		
+
+		return this._httpClient.get<PaginatedAppointments>(requestUrl);
   }
   
   acceptAppointment(appointmentId: string): Observable<string> {
