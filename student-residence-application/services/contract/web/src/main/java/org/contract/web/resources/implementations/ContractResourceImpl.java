@@ -72,7 +72,7 @@ public class ContractResourceImpl implements ContractResource {
     }
 
     @Override
-    @GET @RolesAllowed({Constants.ROLE_ADMIN, Constants.ROLE_Resident})
+    @GET @RolesAllowed({Constants.ROLE_ADMIN, Constants.ROLE_RESIDENT})
     @Path("{contract-id}")
     public Response getContract(@PathParam("contract-id") String contractId) {
         String contextUserId = securityContext.getUserPrincipal().getName();
@@ -160,7 +160,7 @@ public class ContractResourceImpl implements ContractResource {
     }
 
     @Override
-    @PUT @RolesAllowed({Constants.ROLE_Resident})
+    @PUT @RolesAllowed({Constants.ROLE_RESIDENT})
     @Path("{contract-id}")
     public Response updateContract(@PathParam("contract-id") String contractId, ContractUpdateRequest contractUpdateRequest) {
         String contextUserId = securityContext.getUserPrincipal().getName();
