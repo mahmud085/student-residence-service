@@ -4,8 +4,11 @@ import { Appointment } from '../shared/models/appointment.model';
 import { ConfigService } from './config.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { PaginatedAppointments } from '../shared/models/paginated-appointments.model';
+import { NewAppointment } from '../shared/models/new-appointment.model';
 import { AuthService } from './auth.service';
 import { UserRole } from '../shared/enums/user-role.enum';
+import { UpdateAppointment } from '../shared/models/update-appointment.model';
+import { AppointmentUpdateOperation } from '../shared/enums/appointment-update-operation.enum';
 
 @Injectable({
 	providedIn: 'root'
@@ -19,13 +22,43 @@ export class AppointmentService {
 		let requestUrl: string = null;
 		console.log('AppointmentService ',this._authService.userCredential.role)
 		switch (this._authService.userCredential.role) {
-			case UserRole.Caretaker:
+			case UserRole.Caretaker || UserRole.Admin:
         requestUrl = `${ConfigService.appConfig.service.appointment.baseUrl}/api/appointments`;
         break;
-        case UserRole.Administrator:
+        case UserRole.Resident:
           requestUrl = `${ConfigService.appConfig.service.appointment.baseUrl}/api/appointments`;
 		}
     console.log('AppointmentService ',requestUrl)
 		return this._httpClient.get<PaginatedAppointments>(requestUrl);
+  }
+
+  createAppointment(newAppointment: NewAppointment): Observable<Appointment> {
+		let requestUrl: string = `${ConfigService.appConfig.service.appointment.baseUrl}/api/appointments`
+
+		return this._httpClient.post<Appointment>(requestUrl, newAppointment);
+  }
+  
+  acceptAppointment(appointmentId: string): Observable<string> {
+		let acceptAppointmentRequest: UpdateAppointment = {
+			operation: AppointmentUpdateOperation.Accepted
+		};
+
+		let requestUrl: string = `${ConfigService.appConfig.service.appointment.baseUrl}/api/appointments/${appointmentId}`;
+
+		return this._httpClient.put<string>(requestUrl, acceptAppointmentRequest, {
+			responseType: 'text' as 'json'
+		});
+  }
+  
+  cancelAppointment(appointmentId: string): Observable<string> {
+		let cancelAppointmentRequest: UpdateAppointment = {
+			operation: AppointmentUpdateOperation.Denied
+		};
+
+		let requestUrl: string = `${ConfigService.appConfig.service.appointment.baseUrl}/api/appointments/${appointmentId}`;
+
+		return this._httpClient.put<string>(requestUrl, cancelAppointmentRequest, {
+			responseType: 'text' as 'json'
+		});
 	}
 }

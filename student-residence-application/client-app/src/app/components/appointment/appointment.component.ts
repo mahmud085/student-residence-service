@@ -7,6 +7,8 @@ import { AppointmentStatus } from 'src/app/shared/enums/appointment-status.enum'
 import { DropdownItem } from 'src/app/shared/models/dropdown-item.mode';
 import { AppointmentType } from 'src/app/shared/enums/appointment-type.enum';
 import { PaginatedAppointments } from 'src/app/shared/models/paginated-appointments.model';
+import { NewAppointment } from 'src/app/shared/models/new-appointment.model';
+import { AppointmentPriority } from 'src/app/shared/enums/appointment-priority.enum';
 
 @Component({
 	selector: 'app-appointment',
@@ -14,34 +16,8 @@ import { PaginatedAppointments } from 'src/app/shared/models/paginated-appointme
 	styleUrls: ['./appointment.component.css']
 })
 export class AppointmentComponent implements OnInit {
-  characters: any[] = [
-    {
-    actor_name: 'Peter Dinklage',
-    character_name: 'Tyrion Lannister',
-    gender: 'Male',
-        status: 'Alive'
-    },
-    {
-    actor_name: 'Sean Bean',
-    character_name: 'Ned Stark',
-    gender: 'Male',
-    status: 'Dead'
-    },
-    {
-    actor_name: 'Emilia Clark',
-    character_name: 'Khaleesi',
-    gender: 'Female',
-    status: 'Alive'
-    },
-    {
-    actor_name: 'Catelyn Stark',
-    character_name: 'Michelle Fairley',
-    gender: 'Female',
-    status: 'Dead'
-    }
-  ];
+  newAppointment: NewAppointment;
   appointments: Appointment[];
-  hello: 'Hi hello';
   blockUI: boolean;
   
 	get appointmentTypeOptions(): DropdownItem[] {
@@ -70,9 +46,9 @@ export class AppointmentComponent implements OnInit {
 			}
 		];
 
-		Object.keys(AppointmentType).map((k: string): void => {
+		Object.keys(AppointmentPriority).map((k: string): void => {
 			options.push({
-				value: AppointmentType[k],
+				value: AppointmentPriority[k],
 				label: k
 			});
 		});
@@ -83,6 +59,7 @@ export class AppointmentComponent implements OnInit {
 	constructor(private _authService: AuthService,
 		private _appointmentService: AppointmentService) { 
       this.blockUI = false;
+      this.resetCreateAppointmentFields();
     }
 
     ngOnInit() {
@@ -101,6 +78,41 @@ export class AppointmentComponent implements OnInit {
       });
     }
 
+    onClickSaveAppointment(): void {
+  
+      this.blockUI = true;
+      this._appointmentService.createAppointment(this.newAppointment).subscribe((appointment: Appointment): void => {
+        this.blockUI = false;
+        this.hideCreateAppointmnetModal();
+        alert('Appointment successfully created.');
+        this.loadAppointments();
+      }, (error: any): void => {
+        this.blockUI = false;
+        alert(error.error);
+      });
+    }
+    onClickAcceptAppointment(appointmentId: string): void {
+      this.blockUI = true;
+      this._appointmentService.acceptAppointment(appointmentId).subscribe((msg: string): void => {			
+        this.blockUI = false;
+        alert('Appointment successfully accepted.');
+        this.loadAppointments();
+      }, (error: any): void => {
+        this.blockUI = false;
+        alert(error.error);
+      });
+    }
+    onClickCancelAppointment(appointmentId: string): void {
+      this.blockUI = true;
+      this._appointmentService.cancelAppointment(appointmentId).subscribe((msg: string): void => {			
+        this.blockUI = false;
+        alert('Appointment canceled.');
+        this.loadAppointments();
+      }, (error: any): void => {
+        this.blockUI = false;
+        alert(error.error);
+      });
+    }
 	showCreateAppointmentModal(): void {
 		$('#createAppointmentModal').modal({
 			backdrop: 'static',
@@ -110,6 +122,7 @@ export class AppointmentComponent implements OnInit {
 	}
 
 	hideCreateAppointmnetModal(): void {
+    this.resetCreateAppointmentFields();
 		$('#close-new-appointment-modal').click();
 	}
 
@@ -123,5 +136,17 @@ export class AppointmentComponent implements OnInit {
 
 	isAppointmentAccepted(contract: Appointment):boolean {
 		return contract.status == AppointmentStatus.Accepted;
+  }
+  
+	private resetCreateAppointmentFields(): void {
+		this.newAppointment = {
+			contractId: null,
+			contractorsName: null,
+      roomNumber: null,
+      appointmentType: null,
+      issue: null,
+      priority: null,
+			desiredDate: null
+		};
 	}
 }
