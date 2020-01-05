@@ -19,6 +19,7 @@ export class AppointmentComponent implements OnInit {
   newAppointment: NewAppointment;
   appointments: Appointment[];
   blockUI: boolean;
+  createAppointmentValidator: any;
   
 	get appointmentTypeOptions(): DropdownItem[] {
 		let options: DropdownItem[] = [
@@ -57,62 +58,68 @@ export class AppointmentComponent implements OnInit {
 	}
 
 	constructor(private _authService: AuthService,
-		private _appointmentService: AppointmentService) { 
+  private _appointmentService: AppointmentService) { 
+    this.blockUI = false;
+
+    this.resetCreateAppointmentFields();
+    this.resetCreateAppointmentValidator();
+  }
+
+  ngOnInit() {
+    this.loadAppointments();
+  }
+
+  loadAppointments(): void {
+    this.blockUI = true;
+    this._appointmentService.getAppointments().subscribe((paginatedAppointments: PaginatedAppointments): void => {
       this.blockUI = false;
-      this.resetCreateAppointmentFields();
-    }
+      this.appointments = paginatedAppointments.appointment;
+    }, (error: any): void => {
+      this.blockUI = false;
+      alert(error.message);
+    });
+  }
 
-    ngOnInit() {
+  onClickSaveAppointment(): void {
+    this.validateCreateAppointmentFields();
+    
+    this.blockUI = true;
+    this._appointmentService.createAppointment(this.newAppointment).subscribe((appointment: Appointment): void => {
+      this.blockUI = false;
+      this.hideCreateAppointmnetModal();
+      alert('Appointment successfully created.');
       this.loadAppointments();
-    }
-  
-    loadAppointments(): void {
-      this.blockUI = true;
-      this._appointmentService.getAppointments().subscribe((paginatedAppointments: PaginatedAppointments): void => {
-        this.blockUI = false;
-        this.appointments = paginatedAppointments.appointment;
-        console.log('Appointments : ', this.appointments[0]);
-      }, (error: any): void => {
-        this.blockUI = false;
-        alert(error.message);
-      });
-    }
+    }, (error: any): void => {
+      this.blockUI = false;
+      alert(error.error);
+    });
+  }
 
-    onClickSaveAppointment(): void {
-  
-      this.blockUI = true;
-      this._appointmentService.createAppointment(this.newAppointment).subscribe((appointment: Appointment): void => {
-        this.blockUI = false;
-        this.hideCreateAppointmnetModal();
-        alert('Appointment successfully created.');
-        this.loadAppointments();
-      }, (error: any): void => {
-        this.blockUI = false;
-        alert(error.error);
-      });
-    }
-    onClickAcceptAppointment(appointmentId: string): void {
-      this.blockUI = true;
-      this._appointmentService.acceptAppointment(appointmentId).subscribe((msg: string): void => {			
-        this.blockUI = false;
-        alert('Appointment successfully accepted.');
-        this.loadAppointments();
-      }, (error: any): void => {
-        this.blockUI = false;
-        alert(error.error);
-      });
-    }
-    onClickCancelAppointment(appointmentId: string): void {
-      this.blockUI = true;
-      this._appointmentService.cancelAppointment(appointmentId).subscribe((msg: string): void => {			
-        this.blockUI = false;
-        alert('Appointment canceled.');
-        this.loadAppointments();
-      }, (error: any): void => {
-        this.blockUI = false;
-        alert(error.error);
-      });
-    }
+  onClickAcceptAppointment(appointmentId: string): void {
+    this.blockUI = true;
+    this._appointmentService.acceptAppointment(appointmentId).subscribe((msg: string): void => {			
+      this.blockUI = false;
+      alert('Appointment successfully accepted.');
+      this.loadAppointments();
+    }, (error: any): void => {
+      this.blockUI = false;
+      console.log('Error accept ', error);
+      alert(error.message);
+    });
+  }
+
+  onClickCancelAppointment(appointmentId: string): void {
+    this.blockUI = true;
+    this._appointmentService.cancelAppointment(appointmentId).subscribe((msg: string): void => {			
+      this.blockUI = false;
+      alert('Appointment canceled.');
+      this.loadAppointments();
+    }, (error: any): void => {
+      this.blockUI = false;
+      alert(error.message);
+    });
+  }
+
 	showCreateAppointmentModal(): void {
 		$('#createAppointmentModal').modal({
 			backdrop: 'static',
@@ -123,6 +130,7 @@ export class AppointmentComponent implements OnInit {
 
 	hideCreateAppointmnetModal(): void {
     this.resetCreateAppointmentFields();
+    this.resetCreateAppointmentValidator();
 		$('#close-new-appointment-modal').click();
 	}
 
@@ -148,5 +156,99 @@ export class AppointmentComponent implements OnInit {
       priority: null,
 			desiredDate: null
 		};
+  }
+  
+  private resetCreateAppointmentValidator(): void {
+		this.createAppointmentValidator = {
+			isContractIdValid: true,
+			isContractorsNameValid: true,
+			isAppointmentTypeValid: true,
+			isAppointmentDesiredDateValid: true,
+			isRoomNumberValid: true,
+			isIssueValid: true,
+			isAppointmentPriorityValid: true
+		}
+  }
+  
+  private validateCreateAppointmentFields(): void {
+		this.validateContractId();
+		this.validateContractorsName();
+		this.validateRoomNumber();
+		this.validateAppointmentType();
+		this.validateDesiredDate();
+    this.validateIssue();
+    this.validatePriority();
+  }
+  
+  private validateContractId(): void {
+		if (this.isNullOrEmpty(this.newAppointment.contractId)) {
+			this.createAppointmentValidator.isContractIdValid = false;
+		} else {
+			this.createAppointmentValidator.isContractIdValid = true;
+		}
+	}
+
+	private validateContractorsName(): void {
+		if (this.isNullOrEmpty(this.newAppointment.contractorsName)) {
+			this.createAppointmentValidator.isContractorsNameValid = false;
+		} else {
+			this.createAppointmentValidator.isContractorsNameValid = true;
+		}
+	}
+
+	private validateAppointmentType(): void {
+		if (this.isNullOrEmpty(this.newAppointment.appointmentType)) {
+			this.createAppointmentValidator.isAppointmentTypeValid = false;
+		} else {
+			this.createAppointmentValidator.isAppointmentTypeValid = true;
+		}
+	}
+
+	private validateDesiredDate(): void {
+		if (this.isNullOrEmpty(this.newAppointment.desiredDate)) {
+			this.createAppointmentValidator.isAppointmentDesiredDateValid = false;
+		} else {
+			this.createAppointmentValidator.isAppointmentDesiredDateValid = true;
+		}
+	}
+
+	private validateRoomNumber(): void {
+		if (this.isNullOrEmpty(this.newAppointment.roomNumber)) {
+			this.createAppointmentValidator.isRoomNumberValid = false;
+		} else {
+			this.createAppointmentValidator.isRoomNumberValid = true;
+		}
+	}
+
+	private validateIssue(): void {
+		if (this.isNullOrEmpty(this.newAppointment.issue)) {
+			this.createAppointmentValidator.isIssueValid = false;
+		} else {
+			this.createAppointmentValidator.isIssueValid = true;
+		}
+	}
+
+	private validatePriority(): void {
+		if (this.isNullOrEmpty(this.newAppointment.priority)) {
+			this.createAppointmentValidator.isAppointmentPriorityValid = false;
+		} else {
+			this.createAppointmentValidator.isAppointmentPriorityValid = true;
+		}
+	}
+
+  private isNullOrEmpty(val: string): boolean {
+		return val == null || val == '';
+	}
+
+	private areAllPropertiesTrue(obj: any): boolean {
+		for (var key in obj) {
+			if (obj.hasOwnProperty(key)) {
+				if (obj[key] != true) {
+					return false;
+				}
+			}
+		}
+
+		return true;
 	}
 }

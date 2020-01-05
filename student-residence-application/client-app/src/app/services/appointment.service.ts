@@ -40,7 +40,7 @@ export class AppointmentService {
   
   acceptAppointment(appointmentId: string): Observable<string> {
 		let acceptAppointmentRequest: UpdateAppointment = {
-			operation: AppointmentUpdateOperation.Accepted
+			operation: AppointmentUpdateOperation.Accept
 		};
 
 		let requestUrl: string = `${ConfigService.appConfig.service.appointment.baseUrl}/api/appointments/${appointmentId}`;
@@ -52,7 +52,7 @@ export class AppointmentService {
   
   cancelAppointment(appointmentId: string): Observable<string> {
 		let cancelAppointmentRequest: UpdateAppointment = {
-			operation: AppointmentUpdateOperation.Denied
+			operation: AppointmentUpdateOperation.Deny
 		};
 
 		let requestUrl: string = `${ConfigService.appConfig.service.appointment.baseUrl}/api/appointments/${appointmentId}`;

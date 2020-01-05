@@ -169,7 +169,7 @@ public class AppointmentResourceImpl implements AppointmentResource {
 	@Override
 	@PUT @RolesAllowed({Constants.ROLE_CARETAKER})
 	@Path("{appointment-id}")
-	public Response acceptAppointment(@PathParam("appointment-id") String appointmentId, AppointmentUpdateRequest appointmentUpdateRequest)
+	public Response updateAppointment(@PathParam("appointment-id") String appointmentId, AppointmentUpdateRequest appointmentUpdateRequest)
 	{
 		if(appointmentId == null || appointmentId.length() == 0) {
 			return  buildResponseObject(Response.Status.BAD_REQUEST, Messages.APPOINTMENT_ID_REQUIRED);
@@ -186,6 +186,10 @@ public class AppointmentResourceImpl implements AppointmentResource {
 				successMsg = Messages.SUCCESSFUL_ACCEPTANCE;
 			}
 
+			if (appointmentUpdateRequest.getOperation() == AppointmentUpdateOperation.Deny) {
+				appointmentService.denyAppointment(appointmentId);
+				successMsg = Messages.SUCCESSFULLY_DENIED;
+			}
 			return buildResponseObject(Response.Status.OK, successMsg);
 		} catch (ValidationException | ObjectNotFoundException e) {
 			return  buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());

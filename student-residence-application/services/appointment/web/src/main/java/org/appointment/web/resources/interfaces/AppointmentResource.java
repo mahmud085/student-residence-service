@@ -8,12 +8,7 @@ import javax.ws.rs.core.Response;
 
 public interface AppointmentResource {
     Response createAppointment(NewAppointment newAppointment);
-    
-    /**
-     * 
-     */
-    
     Response getAppointment(String appointmentId);
     Response getAppointments(String desiredDate, int pageNum, int pageSize);
-    Response acceptAppointment(@PathParam("appointment-id") String appointmentId, AppointmentUpdateRequest appointmentUpdateRequest);
+    Response updateAppointment(@PathParam("appointment-id") String appointmentId, AppointmentUpdateRequest appointmentUpdateRequest);
 }

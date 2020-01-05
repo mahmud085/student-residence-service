@@ -52,10 +52,10 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 			contract.setContractorsPhone("123456787");
 			contract.setContractorsUserId("koushikja66");
 			contract.setContractStatus("Confirmed");
-			contract.setCreatedOn(LocalDate.of(2018, 12, 31));
+			contract.setStartDate(LocalDate.of(2020, 01, 10));
 			contract.setEndDate(LocalDate.of(2020, 3, 4));
 			contract.setRoomNumber("67890");
-			contract.setStartDate(LocalDate.now());
+			contract.setCreatedOn(LocalDate.now());
 //
 //			if (!contract.getRoomNumber().equals(newAppointment.getRoomNumber())) {
 //
@@ -167,6 +167,23 @@ public class AppointmentServiceImpl implements org.appointment.service.services.
 			throw new InvalidOperationException(Messages.APPOINTMENT_DATE_EXPIRED);
 
 		appointment = appointmentRepository.updateAppointmentStatus(appointmentId, AppointmentStatus.Accepted);
+		if(appointment == null)
+			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
+
+		return appointment;
+	}
+
+	public Appointment denyAppointment(String appointmentId) throws ObjectNotFoundException , InvalidOperationException {
+		Appointment appointment = appointmentRepository.getById(appointmentId);
+
+		if(appointment == null)
+			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
+		if(appointment.getStatus()== AppointmentStatus.Denied)
+			throw new InvalidOperationException(Messages.APPOINTMENT_ALREADY_DENIED);
+		if(!LocalDate.now().isBefore(appointment.getDesiredDate()))
+			throw new InvalidOperationException(Messages.APPOINTMENT_DATE_EXPIRED);
+
+		appointment = appointmentRepository.updateAppointmentStatus(appointmentId, AppointmentStatus.Denied);
 		if(appointment == null)
 			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
 

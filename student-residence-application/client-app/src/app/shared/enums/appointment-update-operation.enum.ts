@@ -1,4 +1,4 @@
 export enum AppointmentUpdateOperation {
-	Accepted = "Accepted",
-  Denied = "Denied"
+	Accept = "Accept",
+  Deny = "Deny"
 }
