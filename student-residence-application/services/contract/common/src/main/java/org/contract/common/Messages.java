@@ -25,8 +25,9 @@ public class Messages {
     public static final String INVALID_PHONE = "Valid Phone Number is required.";
     public static final String INVALID_END_DATE = "Valid End Date is required.";
     public static final String INVALID_ROOM_NUMBER = "Valid Room Number is required.";
-    public static final String INVALID_CONTRACTORS_USER_ID = "No User found with the specified User ID.";
+    public static final String INVALID_CONTRACTORS_USER_ID = "No User found with the specified Contractor's User ID.";
     public static final String INVALID_CONTRACTORS_USER_ROLE = "Contractor is not a resident.";
+    public static final String INVALID_EXPIRED_ACCESS_TOKEN = "Access Token is invalid/expired. Please login again to refresh the access token.";
 
     public static final String CONTRACT_CREATION_START_DATE_IN_PAST = "The contract cannot start on past date.";
     public static final String CONTRACT_CREATION_START_DATE_TOO_EARLY = "The contract must start after the confirmation period (2 weeks after the creation) ends.";

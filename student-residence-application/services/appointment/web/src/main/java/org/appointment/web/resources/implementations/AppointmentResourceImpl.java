@@ -17,7 +17,6 @@ import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
-import java.io.Console;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -40,7 +39,7 @@ public class AppointmentResourceImpl implements AppointmentResource {
 	private SecurityContext securityContext;
 
 	@Override
-	@POST @RolesAllowed({Constants.ROLE_Resident})
+	@POST @RolesAllowed({Constants.ROLE_RESIDENT})
 	public Response createAppointment(NewAppointment newAppointment) {
 		String contextUserId = securityContext.getUserPrincipal().getName();
 
@@ -62,12 +61,12 @@ public class AppointmentResourceImpl implements AppointmentResource {
 		}
 	}
 
-	@GET @RolesAllowed({Constants.ROLE_ADMINISTRATOR, Constants.ROLE_Resident, Constants.ROLE_Caretaker})
+	@GET @RolesAllowed({Constants.ROLE_ADMIN, Constants.ROLE_RESIDENT, Constants.ROLE_CARETAKER})
 	@Path("{appointment-id}")
 	public Response getAppointment(@PathParam("appointment-id") String appointmentId) {
 		String contextUserId = securityContext.getUserPrincipal().getName();
-		boolean isAdminUser = securityContext.isUserInRole(Constants.ROLE_ADMINISTRATOR);
-		boolean isCaretakerUser = securityContext.isUserInRole(Constants.ROLE_Caretaker);
+		boolean isAdminUser = securityContext.isUserInRole(Constants.ROLE_ADMIN);
+		boolean isCaretakerUser = securityContext.isUserInRole(Constants.ROLE_CARETAKER);
 
 		if(appointmentId == null || appointmentId.length() == 0) {
 			return  buildResponseObject(Response.Status.BAD_REQUEST, Messages.APPOINTMENT_ID_REQUIRED);
@@ -96,7 +95,7 @@ public class AppointmentResourceImpl implements AppointmentResource {
 	}
 
 	@Override
-	@GET @RolesAllowed({Constants.ROLE_ADMINISTRATOR, Constants.ROLE_Caretaker})
+	@GET @RolesAllowed({Constants.ROLE_ADMIN, Constants.ROLE_CARETAKER})
 	public Response getAppointments(@QueryParam("desiredDate") String desiredDate
 			, @QueryParam("pageNum") int pageNum
 			, @QueryParam("pageSize") int pageSize) {
@@ -168,9 +167,9 @@ public class AppointmentResourceImpl implements AppointmentResource {
 	}
 
 	@Override
-	@PUT @RolesAllowed({Constants.ROLE_Caretaker})
+	@PUT @RolesAllowed({Constants.ROLE_CARETAKER})
 	@Path("{appointment-id}")
-	public Response acceptAppointment(@PathParam("appointment-id") String appointmentId, AppointmentUpdateRequest appointmentUpdateRequest)
+	public Response updateAppointment(@PathParam("appointment-id") String appointmentId, AppointmentUpdateRequest appointmentUpdateRequest)
 	{
 		if(appointmentId == null || appointmentId.length() == 0) {
 			return  buildResponseObject(Response.Status.BAD_REQUEST, Messages.APPOINTMENT_ID_REQUIRED);
@@ -187,6 +186,10 @@ public class AppointmentResourceImpl implements AppointmentResource {
 				successMsg = Messages.SUCCESSFUL_ACCEPTANCE;
 			}
 
+			if (appointmentUpdateRequest.getOperation() == AppointmentUpdateOperation.Deny) {
+				appointmentService.denyAppointment(appointmentId);
+				successMsg = Messages.SUCCESSFULLY_DENIED;
+			}
 			return buildResponseObject(Response.Status.OK, successMsg);
 		} catch (ValidationException | ObjectNotFoundException e) {
 			return  buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());

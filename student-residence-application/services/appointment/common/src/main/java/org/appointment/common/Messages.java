@@ -13,6 +13,7 @@ public class Messages {
     public static final String SUCCESSFUL_TERMINATION = "Contract successfully terminated.";
 
     public static final String SUCCESSFUL_ACCEPTANCE = "Appointment successfully accepted.";
+    public static final String SUCCESSFULLY_DENIED = "Appointment successfully denied.";
 
     public static final String REQUIRED_CONTRACTORS_NAME = "Contractor's Name is required.";
     public static final String REQUIRED_CONTRACT_ID = "Contract ID is required.";
@@ -24,6 +25,7 @@ public class Messages {
     public static final String REQUIRED_APPOINTMENT_STATUS = "Valid Appointment Status is required";
     public static final String APPOINTMENT_NOT_FOUND="Appointment Not Found With this ID";
     public static final String APPOINTMENT_ALREADY_ACCEPTED="Appointment is already accepted";
+    public static final String APPOINTMENT_ALREADY_DENIED="Appointment is already denied";
     public static final String APPOINTMENT_DATE_EXPIRED="You need to accept appointment before desired date";
 
     public static final String INVALID_PAGE_NUM = "Invalid 'pageNum' value.";

@@ -1,14 +1,9 @@
 package org.authentication.dataaccess.store;
 
-import org.authentication.dataaccess.data.enums.AppointmentPriority;
-import org.authentication.dataaccess.data.enums.AppointmentStatus;
-import org.authentication.dataaccess.data.enums.AppointmentType;
 import org.authentication.dataaccess.data.enums.UserType;
-import org.authentication.dataaccess.data.models.Appointment;
 import org.authentication.dataaccess.data.models.Authentication;
 import org.authentication.dataaccess.data.models.User;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 

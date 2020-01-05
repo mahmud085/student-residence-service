@@ -1,5 +1,6 @@
 package org.authentication.dataaccess.data.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.authentication.dataaccess.data.enums.UserType;
 
 import javax.persistence.Column;
@@ -30,6 +31,7 @@ public class User extends Entity implements Cloneable {
 	private String userId;
 	@Column(name="userName")
 	private String userName;
+	@JsonIgnore
 	@Column(name="password")
 	private String password;
 	@Column(name="userEmail")

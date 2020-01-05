@@ -20,6 +20,7 @@ public class Messages {
     public static final String REQUIRED_DESIRED_DATE = "Desired Date is required.";
     public static final String REQUIRED_APPOINTMENT_STATUS = "Valid Appointment Status is required";
     public static final String REQUIRED_USER_ID = "Valid User Id is required";
+    public static final String REQUIRED_USER_EMAIL = "Valid User Email is required";
     public static final String REQUIRED_USER_PASSWORD = "Valid User Password is required";
     public static final String APPOINTMENT_NOT_FOUND="Appointment Not Found With this ID";
     public static final String APPOINTMENT_ALREADY_ACCEPTED="Appointment is already accepted";
@@ -37,7 +38,7 @@ public class Messages {
     public static final String INVALID_DESIRED_DATE = "Appointment desired date should be between two weeks before start or end date";
     public static final String INVALID_CONTRACTORS_USER_ID = "No User found with the specified User ID.";
     public static final String INVALID_CONTRACTORS_USER_ROLE = "Contractor is not a resident.";
-    public static final String INVALID_ACCESS_TOKEN = "Invalid Access Token";
+    public static final String INVALID_OR_EXPIRED_ACCESS_TOKEN = "Access Token is invalid/expired. Please login again to refresh the access token.";
 
 
 

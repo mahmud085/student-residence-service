@@ -59,7 +59,10 @@ export class LoginComponent implements OnInit {
 			} else {
 				this.redirectToReturnUrl();
 			}
-		}, (error: any): void => { });
+		}, (error: any): void => {
+            this.blockUI = false;
+            alert(error.error);
+        });
 	}
 
 	validateInputs(): void {

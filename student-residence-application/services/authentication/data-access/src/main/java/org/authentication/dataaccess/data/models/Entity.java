@@ -10,8 +10,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @MappedSuperclass
 public class Entity {
-    @JsonIgnore
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
