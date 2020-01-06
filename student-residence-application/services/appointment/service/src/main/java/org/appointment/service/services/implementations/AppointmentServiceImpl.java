@@ -125,15 +125,19 @@ public class AppointmentServiceImpl implements AppointmentService {
 	public Appointment acceptAppointment(String appointmentId) throws InvalidOperationException, ObjectNotFoundException, OperationAlreadyExecutedException {
 		Appointment appointment = appointmentRepository.getById(appointmentId);
 
-		if(appointment == null) {
+		if (appointment == null) {
 			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
 		}
 
-		if(appointment.getStatus()== AppointmentStatus.Accepted) {
+		if (appointment.getStatus()== AppointmentStatus.Accepted) {
 			throw new OperationAlreadyExecutedException(Messages.APPOINTMENT_ALREADY_ACCEPTED);
 		}
 
-		if(!LocalDate.now().isBefore(appointment.getDesiredDate())) {
+		if (appointment.getStatus() == AppointmentStatus.Denied) {
+			throw new InvalidOperationException(Messages.APPOINTMENT_ALREADY_DENIED);
+		}
+
+		if (!LocalDate.now().isBefore(appointment.getDesiredDate())) {
 			throw new InvalidOperationException(Messages.APPOINTMENT_DATE_EXPIRED);
 		}
 
@@ -146,15 +150,19 @@ public class AppointmentServiceImpl implements AppointmentService {
 	public Appointment denyAppointment(String appointmentId) throws InvalidOperationException, ObjectNotFoundException, OperationAlreadyExecutedException {
 		Appointment appointment = appointmentRepository.getById(appointmentId);
 
-		if(appointment == null) {
+		if (appointment == null) {
 			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
 		}
 
-		if(appointment.getStatus()== AppointmentStatus.Denied) {
+		if (appointment.getStatus()== AppointmentStatus.Denied) {
 			throw new OperationAlreadyExecutedException(Messages.APPOINTMENT_ALREADY_DENIED);
 		}
 
-		if(!LocalDate.now().isBefore(appointment.getDesiredDate())) {
+		if (appointment.getStatus() == AppointmentStatus.Accepted) {
+			throw new InvalidOperationException(Messages.APPOINTMENT_ALREADY_ACCEPTED);
+		}
+
+		if (!LocalDate.now().isBefore(appointment.getDesiredDate())) {
 			throw new InvalidOperationException(Messages.APPOINTMENT_DATE_EXPIRED);
 		}
 
