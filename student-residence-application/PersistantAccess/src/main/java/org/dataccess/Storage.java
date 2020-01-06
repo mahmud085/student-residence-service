@@ -1,7 +1,6 @@
-package org.daaaccess;
+package org.dataccess;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -9,16 +8,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.metamodel.Type.PersistenceType;
-import javax.transaction.TransactionRequiredException;
+import javax.persistence.*;
 
 
 /**
@@ -148,11 +138,6 @@ public final class Storage {
 		return q.getResultList();
 	}
 
-
-
-
-
-
 	/**
 	 * Get all mentioned Properties needed for javax.JDBC.
 	 * @param properties
@@ -171,4 +156,49 @@ public final class Storage {
 		return prop;
 	}
 
+	public <T> T executeForSingle(String namedQuery, Map<String, Object> paramList) {
+		Query query = buildNamedQuery(namedQuery, paramList);
+
+		return (T) query.getSingleResult();
+	}
+
+	public <T> List<T> executeForMultiple(String namedQuery, Map<String, Object> paramList) {
+		Query query = buildNamedQuery(namedQuery, paramList);
+
+		return query.getResultList();
+	}
+
+	public <T> List<T> executeForMultiple(String namedQuery, Map<String, Object> paramList, int pageNum, int pageSize) {
+		Query query = buildNamedQuery(namedQuery, paramList);
+		query.setFirstResult((pageNum - 1) * pageSize);
+		query.setMaxResults(pageSize);
+
+		return query.getResultList();
+	}
+
+	public int executeUpdate(String namedQuery , Map<String, Object> paramList) {
+		Query query = buildNamedQuery(namedQuery, paramList);
+
+		emanager.getTransaction().begin();
+
+		int updateResult = query.executeUpdate();
+
+		emanager.getTransaction().commit();
+
+		return updateResult;
+	}
+
+	private Query buildNamedQuery(String namedQuery, Map<String, Object> paramList) {
+		Query query = emanager.createNamedQuery(namedQuery);
+
+		if (paramList == null) {
+			return query;
+		}
+
+		for (Entry<String, Object> entry : paramList.entrySet()) {
+			query.setParameter(entry.getKey(), entry.getValue());
+		}
+
+		return query;
+	}
 }

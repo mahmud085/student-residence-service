@@ -107,7 +107,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	}
 
 	@Override
-	public PaginatedDataList<Appointment> getAllAppointments(int pageNum, int pageSize) throws PaginationRangeOutOfBoundException {
+	public PaginatedDataList<Appointment> getAllAppointments(int pageNum, int pageSize) {
 		return appointmentRepository.getAll(pageNum, pageSize);
 	}
 
@@ -117,7 +117,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	}
 
 	@Override
-	public PaginatedDataList<Appointment> getAllAppointments(LocalDate desiredDate, int pageNum, int pageSize) throws PaginationRangeOutOfBoundException {
+	public PaginatedDataList<Appointment> getAllAppointments(LocalDate desiredDate, int pageNum, int pageSize) {
 		return appointmentRepository.getAll(desiredDate, pageNum, pageSize);
 	}
 
@@ -125,21 +125,23 @@ public class AppointmentServiceImpl implements AppointmentService {
 	public Appointment acceptAppointment(String appointmentId) throws InvalidOperationException, ObjectNotFoundException, OperationAlreadyExecutedException {
 		Appointment appointment = appointmentRepository.getById(appointmentId);
 
-		if(appointment == null) {
+		if (appointment == null) {
 			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
 		}
 
-		if(appointment.getStatus()== AppointmentStatus.Accepted) {
+		if (appointment.getStatus()== AppointmentStatus.Accepted) {
 			throw new OperationAlreadyExecutedException(Messages.APPOINTMENT_ALREADY_ACCEPTED);
 		}
 
-		if(!LocalDate.now().isBefore(appointment.getDesiredDate())) {
+		if (appointment.getStatus() == AppointmentStatus.Denied) {
+			throw new InvalidOperationException(Messages.APPOINTMENT_ALREADY_DENIED);
+		}
+
+		if (!LocalDate.now().isBefore(appointment.getDesiredDate())) {
 			throw new InvalidOperationException(Messages.APPOINTMENT_DATE_EXPIRED);
 		}
 
-		appointment = appointmentRepository.updateAppointmentStatus(appointmentId, AppointmentStatus.Accepted);
-		if(appointment == null)
-			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
+		appointmentRepository.updateAppointmentStatus(appointmentId, AppointmentStatus.Accepted);
 
 		return appointment;
 	}
@@ -148,21 +150,23 @@ public class AppointmentServiceImpl implements AppointmentService {
 	public Appointment denyAppointment(String appointmentId) throws InvalidOperationException, ObjectNotFoundException, OperationAlreadyExecutedException {
 		Appointment appointment = appointmentRepository.getById(appointmentId);
 
-		if(appointment == null) {
+		if (appointment == null) {
 			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
 		}
 
-		if(appointment.getStatus()== AppointmentStatus.Denied) {
+		if (appointment.getStatus()== AppointmentStatus.Denied) {
 			throw new OperationAlreadyExecutedException(Messages.APPOINTMENT_ALREADY_DENIED);
 		}
 
-		if(!LocalDate.now().isBefore(appointment.getDesiredDate())) {
+		if (appointment.getStatus() == AppointmentStatus.Accepted) {
+			throw new InvalidOperationException(Messages.APPOINTMENT_ALREADY_ACCEPTED);
+		}
+
+		if (!LocalDate.now().isBefore(appointment.getDesiredDate())) {
 			throw new InvalidOperationException(Messages.APPOINTMENT_DATE_EXPIRED);
 		}
 
-		appointment = appointmentRepository.updateAppointmentStatus(appointmentId, AppointmentStatus.Denied);
-		if(appointment == null)
-			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
+		appointmentRepository.updateAppointmentStatus(appointmentId, AppointmentStatus.Denied);
 
 		return appointment;
 	}
