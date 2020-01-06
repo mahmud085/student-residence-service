@@ -188,7 +188,6 @@ public class AppointmentResourceImpl implements AppointmentResource {
 
 		try {
 			String successMsg = null;
-			Appointment appointment = appointmentService.getAppointment(appointmentId);
 
 			boolean isUserAuthorizedForThisResource = isCaretakerUser;
 

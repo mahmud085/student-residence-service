@@ -36,7 +36,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 		if (newAppointment.getAppointmentType() == AppointmentType.MoveIn) {
 
-			if (!contract.getContractStatus().equals("Confirmed")) {
+			if (!contract.getStatus().equals("Confirmed")) {
 				throw new InvalidOperationException(Messages.INVALID_CONTRACT);
 			}
 
