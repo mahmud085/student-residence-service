@@ -1,6 +1,7 @@
 package org.contract.service.services.interfaces;
 
 import org.contract.common.exceptions.ObjectNotFoundException;
+import org.contract.common.exceptions.OperationAlreadyExecutedException;
 import org.contract.dataaccess.data.models.Contract;
 import org.contract.dataaccess.models.PaginatedDataList;
 import org.contract.common.exceptions.InvalidOperationException;
@@ -18,7 +19,7 @@ public interface ContractService {
     PaginatedDataList<Contract> getContracts(int pageNum, int pageSize);
     List<Contract> getContracts(String contractorsNameFilter);
     PaginatedDataList<Contract> getContracts(String contractorsNameFilter, int pageNum, int pageSize);
-    void confirmContract(String contractId) throws ObjectNotFoundException, InvalidOperationException;
+    void confirmContract(String contractId) throws ObjectNotFoundException, InvalidOperationException, OperationAlreadyExecutedException;
     void extendContract(String contractId, LocalDate newEndDate) throws ObjectNotFoundException, ValidationException,  InvalidOperationException;
     void terminateContract(String contractId, LocalDate newEndDate) throws ObjectNotFoundException, ValidationException, InvalidOperationException;
 }

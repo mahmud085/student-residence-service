@@ -40,9 +40,12 @@ public class Messages {
     public static final String INVALID_CONTRACTORS_USER_ROLE = "Contractor is not a resident.";
     public static final String INVALID_DESIRED_DATE_STRING = "Desired Date is not valid.";
     public static final String INVALID_EXPIRED_ACCESS_TOKEN = "Access Token is invalid/expired. Please login again to refresh the access token.";
+    public static final String INVALID_ISSUE_LENGTH = "Issue can be maximum 200 characters long.";
 
 
     public static final String AUTHORIZATION_FAILED_USER_ROLE_NOT_ALLOWED = "This user's role is not allowed to perform this action.";
 
     public static final String PAGINATION_RANGE_EXCEEDS = "Pagination attributes exceeds data range.";
+
+    public  static final String UNAUTHORIZED_USER_FOR_CONTRACT_FOR_APPOINTMENT_CREATION = "This user is not authorized to create Appointment with this Contract ID.";
 }

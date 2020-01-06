@@ -14,4 +14,8 @@ public class ConfigHelper {
     public static String getAuthServiceUrl() {
         return PROPERTIES.getProperty("authServiceUrl");
     }
+
+    public static String getContractServiceUrl() {
+        return PROPERTIES.getProperty("contractServiceUrl");
+    }
 }

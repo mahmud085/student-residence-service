@@ -15,4 +15,5 @@ public class Constants {
 
     public static final String AUTH_SERVICE_AUTHENTICATION_RESOURCE_PATH = "authentication";
     public static final String AUTH_SERVICE_USER_RESOURCE_PATH = "users";
+    public static final String CONTRACT_SERVICE_CONTRACT_RESOURCE_PATH = "contracts";
 }

@@ -2,10 +2,7 @@ package org.contract.web.resources.implementations;
 
 import com.google.inject.Inject;
 import org.contract.common.Messages;
-import org.contract.common.exceptions.InvalidOperationException;
-import org.contract.common.exceptions.ObjectNotFoundException;
-import org.contract.common.exceptions.PaginationAttributeException;
-import org.contract.common.exceptions.ValidationException;
+import org.contract.common.exceptions.*;
 import org.contract.dataaccess.data.models.Contract;
 import org.contract.dataaccess.models.PaginatedDataList;
 import org.contract.service.models.NewContract;
@@ -209,6 +206,8 @@ public class ContractResourceImpl implements ContractResource {
                     successMsg = Messages.SUCCESSFUL_TERMINATION;
                 }
             }
+        } catch (OperationAlreadyExecutedException ex) {
+            return buildResponseObject(Response.Status.OK, ex.getMessage());
         } catch (ObjectNotFoundException ex) {
             return buildResponseObject(Response.Status.NOT_FOUND, ex.getMessage());
         } catch (ValidationException ex) {

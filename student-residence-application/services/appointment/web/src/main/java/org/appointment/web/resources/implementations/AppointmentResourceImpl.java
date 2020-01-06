@@ -5,10 +5,12 @@ import org.appointment.common.Messages;
 import org.appointment.common.exceptions.*;
 import org.appointment.dataaccess.data.models.Appointment;
 import org.appointment.dataaccess.models.PaginatedDataList;
+import org.appointment.service.models.Contract;
 import org.appointment.service.models.NewAppointment;
 import org.appointment.service.services.interfaces.AppointmentService;
 import org.appointment.web.Constants;
 import org.appointment.web.helpers.HateoasResponseHelper;
+import org.appointment.web.helpers.HttpRequestHelper;
 import org.appointment.web.helpers.PaginationMetadataHelper;
 import org.appointment.web.models.*;
 import org.appointment.web.resources.interfaces.AppointmentResource;
@@ -48,14 +50,21 @@ public class AppointmentResourceImpl implements AppointmentResource {
 		}
 
 		try {
-			Appointment createdAppointment = appointmentService.createAppointment(newAppointment, contextUserId);
+			Contract contract = HttpRequestHelper.getContract(newAppointment.getContractId(), securityContext.getAuthenticationScheme());
+			if (contract == null) {
+				throw new ObjectNotFoundException(Messages.CONTRACT_NOT_FOUND_WITH_ID);
+			}
+
+			Appointment createdAppointment = appointmentService.createAppointment(newAppointment, contract, contextUserId);
 			AppointmentResponse response = HateoasResponseHelper.getAppointmentResponse(uriInfo.getBaseUri().toString(), createdAppointment);
 
 			return buildResponseObject(Response.Status.CREATED, response);
-		} catch (ValidationException ex) {
+		} catch (ValidationException | ObjectNotFoundException ex) {
 			return  buildResponseObject(Response.Status.BAD_REQUEST, ex.getMessage());
 		} catch (InvalidOperationException e) {
 			return  buildResponseObject(Response.Status.PRECONDITION_FAILED, e.getMessage());
+		} catch (UnauthorizedException ex) {
+			return buildResponseObject(Response.Status.UNAUTHORIZED, ex.getMessage());
 		} catch (Exception ex) {
 			return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, Messages.INTERNAL_ERROR);
 		}
@@ -86,12 +95,9 @@ public class AppointmentResourceImpl implements AppointmentResource {
 			return buildResponseObject(Response.Status.OK, response);
 		} catch (ObjectNotFoundException e) {
 			return  buildResponseObject(Response.Status.NOT_FOUND, e.getMessage());
-		} catch (ValidationException e) {
-			return  buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());
-		} catch (InvalidOperationException e) {
-			return  buildResponseObject(Response.Status.PRECONDITION_FAILED, e.getMessage());
+		} catch (Exception e) {
+			return  buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, Messages.INTERNAL_ERROR);
 		}
-
 	}
 
 	@Override
@@ -200,10 +206,14 @@ public class AppointmentResourceImpl implements AppointmentResource {
 				successMsg = Messages.SUCCESSFULLY_DENIED;
 			}
 			return buildResponseObject(Response.Status.OK, successMsg);
-		} catch (ValidationException | ObjectNotFoundException e) {
-			return  buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());
+		} catch (OperationAlreadyExecutedException ex) {
+			return buildResponseObject(Response.Status.OK, ex.getMessage());
+		} catch (ObjectNotFoundException ex) {
+			return buildResponseObject(Response.Status.BAD_REQUEST, ex.getMessage());
 		} catch (InvalidOperationException e) {
-			return  buildResponseObject(Response.Status.PRECONDITION_FAILED, e.getMessage());
+			return buildResponseObject(Response.Status.PRECONDITION_FAILED, e.getMessage());
+		} catch (Exception ex) {
+			return  buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, Messages.INTERNAL_ERROR);
 		}
 	}
 
