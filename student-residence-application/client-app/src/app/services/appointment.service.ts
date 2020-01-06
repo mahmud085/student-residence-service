@@ -19,13 +19,16 @@ export class AppointmentService {
     private _httpClient: HttpClient) { }
     
   getAppointments(): Observable<PaginatedAppointments> {
-		let requestUrl: string = null;
+    let requestUrl: string = null;
+    let userId: string = null;
 		switch (this._authService.userCredential.role) {
 			case UserRole.Caretaker || UserRole.Admin:
         requestUrl = `${ConfigService.appConfig.service.appointment.baseUrl}/api/appointments`;
         break;
-        case UserRole.Resident:
-          requestUrl = `${ConfigService.appConfig.service.appointment.baseUrl}/api/appointments`;
+      case UserRole.Resident:
+        userId = this._authService.userCredential.userId;
+        requestUrl = `${ConfigService.appConfig.service.appointment.baseUrl}/api/contractors/${userId}/appointments`;
+        break;
 		}
 		return this._httpClient.get<PaginatedAppointments>(requestUrl);
   }

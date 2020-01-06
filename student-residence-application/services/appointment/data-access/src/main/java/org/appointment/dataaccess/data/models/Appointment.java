@@ -29,6 +29,7 @@ import java.time.LocalDate;
 	    , @NamedQuery(name ="appointment.findByContract", query = "select a from appointment a where a.contractId = :contractId")
         , @NamedQuery(name ="appointment.findAllByDesiredDate", query = "select a from appointment a where a.desiredDate = :desiredDate")
         , @NamedQuery(name ="appointment.acceptAppointment", query = "update appointment a set a.status= :status where a.appointmentId = :appointmentId")
+        , @NamedQuery(name ="appointment.denyAppointment", query = "update appointment a set a.status= :status where a.appointmentId = :appointmentId")
         , @NamedQuery(name ="appointment.findAllByCreatedBy", query = "select a from appointment a where a.createdBy = :createdByUserId")
         , @NamedQuery(name ="appointment.getCount", query = "select count(a.id) from appointment a")
         , @NamedQuery(name ="appointment.getCountFilterByDesiredDate", query = "select count(a.id) from appointment a where a.desiredDate = :desiredDate")

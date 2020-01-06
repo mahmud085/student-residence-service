@@ -114,10 +114,18 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 		paramList.put("status", status);
 
 		Storage storage = Storage.instance().build(org.appointment.dataaccess.helpers.Configuration.loadProperties("dbProperties.properties"));
-		int updateResult = storage.executeUpdate("appointment.acceptAppointment", paramList);
-
-		if (updateResult == 0) {
-			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
+		if(status.toString() == "Accepted") {
+			int updateResult = storage.executeUpdate("appointment.acceptAppointment", paramList);
+			if (updateResult == 0) {
+				throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
+			}
 		}
+		else if(status.toString() == ("Denied")) {
+			int updateResult = storage.executeUpdate("appointment.denyAppointment", paramList);
+			if (updateResult == 0) {
+				throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
+			}
+		}
+
 	}
 }
