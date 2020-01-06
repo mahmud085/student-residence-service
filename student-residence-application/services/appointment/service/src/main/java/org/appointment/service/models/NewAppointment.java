@@ -9,6 +9,7 @@ import org.appointment.dataaccess.data.enums.AppointmentType;
 import org.appointment.service.adapters.AppointmentPriorityAdapter;
 import org.appointment.service.adapters.AppointmentStatusAdapter;
 import org.appointment.service.adapters.AppointmentTypeAdapter;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.*;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,6 +32,7 @@ public class NewAppointment {
     private AppointmentType appointmentType;
 
     @HasValue(message = Messages.REQUIRED_ISSUE)
+    @Length(max = 200, message = Messages.INVALID_ISSUE_LENGTH)
     private String issue;
 
     @NotNull(message = Messages.REQUIRED_APPOINTMENT_PRIORITY)

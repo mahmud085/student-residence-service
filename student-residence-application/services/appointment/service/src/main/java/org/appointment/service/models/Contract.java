@@ -15,7 +15,7 @@ public class Contract {
     private LocalDate startDate;
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate endDate;
-    private String contractStatus;
+    private String status;
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate createdOn;
 
@@ -85,12 +85,12 @@ public class Contract {
     }
 
 
-    public String getContractStatus() {
-        return contractStatus;
+    public String getStatus() {
+        return status;
     }
 
-    public void setContractStatus(String contractStatus) {
-        this.contractStatus = contractStatus;
+    public void setStatus(String status) {
+        this.status = status;
     }
     public LocalDate getCreatedOn() {
         return createdOn;

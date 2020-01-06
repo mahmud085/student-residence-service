@@ -30,7 +30,7 @@ public class ContractorResourceImpl implements ContractorResource {
 
     @Override
     @GET
-    @RolesAllowed({Constants.ROLE_Resident, Constants.ROLE_ADMIN})
+    @RolesAllowed({Constants.ROLE_RESIDENT, Constants.ROLE_ADMIN})
     @Path("{contractors-user-id}/contracts")
     public Response getContractsOfContractor(@PathParam("contractors-user-id") String contractorsUserId) {
         String contextUserId = securityContext.getUserPrincipal().getName();

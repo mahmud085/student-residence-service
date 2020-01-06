@@ -15,4 +15,5 @@ public interface AppointmentRepository extends GenericRepository<Appointment> {
     PaginatedDataList<Appointment> getAll(LocalDate desiredDateFilter, int pageNum, int pageSize) throws PaginationRangeOutOfBoundException;
     Appointment getById(String appointmentId);
     Appointment updateAppointmentStatus(String appointmentId, AppointmentStatus status);
+    List<Appointment> getAll(String createdByUserId);
 }

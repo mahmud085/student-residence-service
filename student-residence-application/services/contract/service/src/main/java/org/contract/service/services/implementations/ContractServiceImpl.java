@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import org.contract.common.Messages;
 import org.contract.common.exceptions.InvalidOperationException;
 import org.contract.common.exceptions.ObjectNotFoundException;
+import org.contract.common.exceptions.OperationAlreadyExecutedException;
 import org.contract.common.exceptions.ValidationException;
 import org.contract.common.helpers.DateHelper;
 import org.contract.common.helpers.ValidationHelper;
@@ -110,7 +111,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public void confirmContract(String contractId) throws ObjectNotFoundException, InvalidOperationException {
+    public void confirmContract(String contractId) throws ObjectNotFoundException, InvalidOperationException, OperationAlreadyExecutedException {
         Contract contract = contractRepository.get(contractId);
 
         if (contract == null) {
@@ -118,7 +119,7 @@ public class ContractServiceImpl implements ContractService {
         }
 
         if (contract.getStatus() == ContractStatus.Confirmed) {
-            return;
+            throw new OperationAlreadyExecutedException(Messages.CONTRACT_ALREADY_CONFIRMED);
         }
 
         LocalDate currentDate = LocalDate.now();

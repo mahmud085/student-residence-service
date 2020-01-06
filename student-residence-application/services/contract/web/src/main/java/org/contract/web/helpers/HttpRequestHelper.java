@@ -1,14 +1,14 @@
 package org.contract.web.helpers;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import org.contract.web.Constants;
 import org.contract.web.models.User;
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -31,7 +31,7 @@ public class HttpRequestHelper {
             }
 
             return null;
-        } catch (Exception e) {
+        } catch (ProcessingException e) {
             throw new Exception("Error validating access token.");
         }
     }
@@ -51,7 +51,7 @@ public class HttpRequestHelper {
             }
 
             return null;
-        } catch (Exception e) {
+        } catch (ProcessingException e) {
             throw new Exception("Error retrieving user.");
         }
     }
