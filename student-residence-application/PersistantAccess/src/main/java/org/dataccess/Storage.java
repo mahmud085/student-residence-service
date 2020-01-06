@@ -1,7 +1,6 @@
-package org.daaaccess;
+package org.dataccess;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -10,8 +9,6 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.persistence.*;
-import javax.persistence.metamodel.Type.PersistenceType;
-import javax.transaction.TransactionRequiredException;
 
 
 /**

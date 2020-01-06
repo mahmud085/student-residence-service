@@ -4,9 +4,10 @@ import org.appointment.common.Messages;
 import org.appointment.common.exceptions.ObjectNotFoundException;
 import org.appointment.dataaccess.data.enums.AppointmentStatus;
 import org.appointment.dataaccess.data.models.Appointment;
+import org.appointment.dataaccess.helpers.Configuration;
 import org.appointment.dataaccess.models.PaginatedDataList;
 import org.appointment.dataaccess.respositories.interfaces.AppointmentRepository;
-import org.daaaccess.Storage;
+import org.dataccess.Storage;
 
 import javax.persistence.NoResultException;
 import java.time.LocalDate;
@@ -40,7 +41,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
 	@Override
 	public Appointment getById(String appointmentId) throws ObjectNotFoundException {
-		Storage storage = Storage.instance().build(org.appointment.dataaccess.helpers.Configuration.loadProperties("dbProperties.properties"));
+		Storage storage = Storage.instance().build(Configuration.loadProperties("dbProperties.properties"));
 
 		Map<String, Object> paramList = new HashMap<>();
 		paramList.put("appointmentId", appointmentId);
@@ -54,14 +55,14 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
 	@Override
 	public List<Appointment> getAll() {
-		Storage storage = Storage.instance().build(org.appointment.dataaccess.helpers.Configuration.loadProperties("dbProperties.properties"));
+		Storage storage = Storage.instance().build(Configuration.loadProperties("dbProperties.properties"));
 
 		return storage.executeForMultiple("appointment.findAll", null);
 	}
 
 	@Override
 	public List<Appointment> getAll(String createdByUserId) {
-		Storage storage = Storage.instance().build(org.appointment.dataaccess.helpers.Configuration.loadProperties("dbProperties.properties"));
+		Storage storage = Storage.instance().build(Configuration.loadProperties("dbProperties.properties"));
 
 		Map<String, Object> paramList = new HashMap<>();
 		paramList.put("createdByUserId", createdByUserId);
@@ -71,7 +72,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
 	@Override
 	public List<Appointment> getAll(LocalDate desiredDateFilter) {
-		Storage storage = Storage.instance().build(org.appointment.dataaccess.helpers.Configuration.loadProperties("dbProperties.properties"));
+		Storage storage = Storage.instance().build(Configuration.loadProperties("dbProperties.properties"));
 
 		Map<String, Object> paramList = new HashMap<>();
 		paramList.put("desiredDate", desiredDateFilter);
@@ -81,7 +82,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
 	@Override
 	public PaginatedDataList<Appointment> getAll(int pageNum, int pageSize) {
-		Storage storage = Storage.instance().build(org.appointment.dataaccess.helpers.Configuration.loadProperties("dbProperties.properties"));
+		Storage storage = Storage.instance().build(Configuration.loadProperties("dbProperties.properties"));
 
 		return new PaginatedDataList() {
 			{
@@ -93,7 +94,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
 	@Override
 	public PaginatedDataList<Appointment> getAll(LocalDate desiredDateFilter, int pageNum, int pageSize) {
-		Storage storage = Storage.instance().build(org.appointment.dataaccess.helpers.Configuration.loadProperties("dbProperties.properties"));
+		Storage storage = Storage.instance().build(Configuration.loadProperties("dbProperties.properties"));
 
 		Map<String, Object> paramList = new HashMap<>();
 		paramList.put("desiredDate", desiredDateFilter);
