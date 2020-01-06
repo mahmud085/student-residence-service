@@ -24,11 +24,14 @@ import java.time.LocalDate;
 @javax.persistence.Entity(name="appointment")
 @Table(name = "appointment")
 @NamedQueries({
-	
-	  @NamedQuery( name = "appointment.findAll", query = "SELECT a FROM appointment a")
-	 ,@NamedQuery(name ="appointment.getAppointmentById" , query = "SELECT a FROM appointment a where a.appointmentId like :appointmentId ")
-	 ,@NamedQuery(name ="appointment.acceptAppointment" , query = "UPDATE appointment a SET a.status= :status WHERE a.appointmentId=:appointmentId")
-	 ,@NamedQuery(name ="appointment.findByContract" , query = "SELECT a from appointment a where a.contractId=:contractId")
+	    @NamedQuery( name = "appointment.findAll", query = "select a from appointment a")
+	    , @NamedQuery(name ="appointment.getAppointmentById", query = "select a from appointment a where a.appointmentId like :appointmentId ")
+	    , @NamedQuery(name ="appointment.findByContract", query = "select a from appointment a where a.contractId = :contractId")
+        , @NamedQuery(name ="appointment.findAllByDesiredDate", query = "select a from appointment a where a.desiredDate = :desiredDate")
+        , @NamedQuery(name ="appointment.acceptAppointment", query = "update appointment a set a.status= :status where a.appointmentId = :appointmentId")
+        , @NamedQuery(name ="appointment.findAllByCreatedBy", query = "select a from appointment a where a.createdBy = :createdByUserId")
+        , @NamedQuery(name ="appointment.getCount", query = "select count(a.id) from appointment a")
+        , @NamedQuery(name ="appointment.getCountFilterByDesiredDate", query = "select count(a.id) from appointment a where a.desiredDate = :desiredDate")
 })
 public class Appointment extends Entity implements Cloneable  {
 	

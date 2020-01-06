@@ -165,8 +165,6 @@ public class AppointmentResourceImpl implements AppointmentResource {
 			};
 
 			return buildResponseObject(Response.Status.OK, paginatedAppointmentListResponse);
-		} catch (PaginationRangeOutOfBoundException ex) {
-			return buildResponseObject(Response.Status.NO_CONTENT, null);
 		} catch (Exception ex) {
 			return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, Messages.INTERNAL_ERROR);
 		}

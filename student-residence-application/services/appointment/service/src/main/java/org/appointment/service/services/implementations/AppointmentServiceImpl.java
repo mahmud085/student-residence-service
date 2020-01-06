@@ -107,7 +107,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	}
 
 	@Override
-	public PaginatedDataList<Appointment> getAllAppointments(int pageNum, int pageSize) throws PaginationRangeOutOfBoundException {
+	public PaginatedDataList<Appointment> getAllAppointments(int pageNum, int pageSize) {
 		return appointmentRepository.getAll(pageNum, pageSize);
 	}
 
@@ -117,7 +117,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	}
 
 	@Override
-	public PaginatedDataList<Appointment> getAllAppointments(LocalDate desiredDate, int pageNum, int pageSize) throws PaginationRangeOutOfBoundException {
+	public PaginatedDataList<Appointment> getAllAppointments(LocalDate desiredDate, int pageNum, int pageSize) {
 		return appointmentRepository.getAll(desiredDate, pageNum, pageSize);
 	}
 
@@ -137,9 +137,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 			throw new InvalidOperationException(Messages.APPOINTMENT_DATE_EXPIRED);
 		}
 
-		appointment = appointmentRepository.updateAppointmentStatus(appointmentId, AppointmentStatus.Accepted);
-		if(appointment == null)
-			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
+		appointmentRepository.updateAppointmentStatus(appointmentId, AppointmentStatus.Accepted);
 
 		return appointment;
 	}
@@ -160,9 +158,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 			throw new InvalidOperationException(Messages.APPOINTMENT_DATE_EXPIRED);
 		}
 
-		appointment = appointmentRepository.updateAppointmentStatus(appointmentId, AppointmentStatus.Denied);
-		if(appointment == null)
-			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
+		appointmentRepository.updateAppointmentStatus(appointmentId, AppointmentStatus.Denied);
 
 		return appointment;
 	}
