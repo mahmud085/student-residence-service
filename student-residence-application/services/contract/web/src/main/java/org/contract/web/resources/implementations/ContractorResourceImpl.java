@@ -3,10 +3,13 @@ package org.contract.web.resources.implementations;
 import com.google.inject.Inject;
 import org.contract.common.Messages;
 import org.contract.dataaccess.data.models.Contract;
+import org.contract.service.models.UserRole;
 import org.contract.service.services.interfaces.ContractService;
 import org.contract.web.Constants;
 import org.contract.web.helpers.HateoasResponseHelper;
+import org.contract.web.helpers.HttpRequestHelper;
 import org.contract.web.models.ContractListResponse;
+import org.contract.web.models.User;
 import org.contract.web.resources.interfaces.ContractorResource;
 
 import javax.annotation.security.RolesAllowed;
@@ -42,6 +45,15 @@ public class ContractorResourceImpl implements ContractorResource {
         }
 
         try {
+            User contractor = HttpRequestHelper.getUser(contractorsUserId, securityContext.getAuthenticationScheme());
+            if (contractor == null) {
+                return buildResponseObject(Response.Status.NOT_FOUND, Messages.INVALID_CONTRACTORS_USER_ID);
+            }
+
+            if (contractor.getUserType() != UserRole.Resident) {
+                return buildResponseObject(Response.Status.BAD_REQUEST, Messages.INVALID_CONTRACTORS_USER_ROLE);
+            }
+
             List<Contract> contracts = contractService.getContractsByContractor(contractorsUserId);
 
             ContractListResponse contractListResponse = new ContractListResponse(){

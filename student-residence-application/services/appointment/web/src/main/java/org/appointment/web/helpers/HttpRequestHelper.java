@@ -39,6 +39,26 @@ public class HttpRequestHelper {
         }
     }
 
+    public static User getUser(String userId, String authHeaderValue) throws Exception {
+        try {
+            String resourcePath = String.format("%s/%s/{userId}", ConfigHelper.getAuthServiceUrl(), Constants.AUTH_SERVICE_USER_RESOURCE_PATH);
+
+            Response response = client.target(resourcePath)
+                    .resolveTemplate("userId", userId)
+                    .request(MediaType.APPLICATION_JSON_TYPE)
+                    .header("Authorization", authHeaderValue)
+                    .get();
+
+            if (response.getStatus() == 200) {
+                return response.readEntity(User.class);
+            }
+
+            return null;
+        } catch (ProcessingException e) {
+            throw new Exception("Error retrieving user.");
+        }
+    }
+
     public static Contract getContract(String contractId, String authHeaderValue) throws Exception {
         try {
             String resourcePath = String.format("%s/%s/{contractId}", ConfigHelper.getContractServiceUrl(), Constants.CONTRACT_SERVICE_CONTRACT_RESOURCE_PATH);

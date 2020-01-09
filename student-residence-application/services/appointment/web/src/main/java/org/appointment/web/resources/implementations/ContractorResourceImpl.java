@@ -6,7 +6,10 @@ import org.appointment.dataaccess.data.models.Appointment;
 import org.appointment.service.services.interfaces.AppointmentService;
 import org.appointment.web.Constants;
 import org.appointment.web.helpers.HateoasResponseHelper;
+import org.appointment.web.helpers.HttpRequestHelper;
 import org.appointment.web.models.AppointmentListResponse;
+import org.appointment.web.models.User;
+import org.appointment.web.models.UserRole;
 import org.appointment.web.resources.interfaces.ContractorResource;
 
 import javax.annotation.security.RolesAllowed;
@@ -43,6 +46,15 @@ public class ContractorResourceImpl implements ContractorResource {
         }
 
         try {
+            User contractor = HttpRequestHelper.getUser(contractorsUserId, securityContext.getAuthenticationScheme());
+            if (contractor == null) {
+                return buildResponseObject(Response.Status.NOT_FOUND, Messages.INVALID_CONTRACTORS_USER_ID);
+            }
+
+            if (contractor.getUserType() != UserRole.Resident) {
+                return buildResponseObject(Response.Status.BAD_REQUEST, Messages.INVALID_CONTRACTORS_USER_ROLE);
+            }
+
             List<Appointment> appointments = appointmentService.getAppointmentsByContractor(contractorsUserId);
 
             AppointmentListResponse appointmentListResponse = new AppointmentListResponse(){

@@ -1,7 +1,5 @@
 package org.appointment.web.models;
 
-import org.appointment.service.models.UserRole;
-
 public class User {
     private String userId;
     private String userName;

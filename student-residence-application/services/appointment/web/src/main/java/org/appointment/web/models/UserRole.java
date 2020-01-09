@@ -1,4 +1,4 @@
-package org.appointment.service.models;
+package org.appointment.web.models;
 
 public enum UserRole {
     Admin,

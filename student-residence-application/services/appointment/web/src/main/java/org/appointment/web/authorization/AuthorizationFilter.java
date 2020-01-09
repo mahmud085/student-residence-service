@@ -2,9 +2,9 @@ package org.appointment.web.authorization;
 
 import org.appointment.common.Messages;
 import org.appointment.common.exceptions.ValidationException;
-import org.appointment.service.models.UserRole;
 import org.appointment.web.helpers.HttpRequestHelper;
 import org.appointment.web.models.User;
+import org.appointment.web.models.UserRole;
 
 import javax.annotation.Priority;
 import javax.annotation.security.PermitAll;
