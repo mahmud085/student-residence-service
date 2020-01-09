@@ -1,45 +1,45 @@
 openapi: 3.0.0
 
 info:
-  title: Contract Service
+  title: Appointment Service
   version: 1.0.0 
 
 servers:
-  - url: http://{contract-service-base-uri}/api
+  - url: http://{appointment-service-base-uri}/api
 
 tags:
-  - name: contracts
-    description: Methods for contract resources
+  - name: appointments
+    description: Methods for appointment resources
   - name: contractors
     description: Methods for contractor resources
 
 paths:
-  /contracts:
+  /appointments:
     post:
       tags:
-        - contracts
-      summary: Adds a new contract
-      description: Method to add a new contract. Users only with Admin role can invoke this method.
+        - appointments
+      summary: Adds a new appointment
+      description: Method to add a new appointment. Users only with Resident role can invoke this method. Move In appointment can only be created with the desired date not before than two (2) weeks before the contract start date. Move Out appointment can only be created with the desired date not before than two (2) weeks before the contract end date.
       requestBody:
-        description: Contract object that needs to be added
+        description: Appointment object that needs to be added
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BaseContract'
+              $ref: '#/components/schemas/BaseAppointment'
           application/xml:
             schema:
-              $ref: '#/components/schemas/BaseContract'
+              $ref: '#/components/schemas/BaseAppointment'
       responses:
         200:
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ContractResponse'
+                $ref: '#/components/schemas/AppointmentResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/ContractResponse'
+                $ref: '#/components/schemas/AppointmentResponse'
         400:
           $ref: '#/components/responses/ValidationFailedError'
         401:
@@ -53,16 +53,17 @@ paths:
 
     get:
       tags:
-        - contracts
-      summary: Retrieves contracts
-      description: Method to retrieve multiple contracts. Use allowed query parameters to filter and pagination. Users only with Admin role can invoke this method.
+        - appointments
+      summary: Retrieves appointments
+      description: Method to retrieve multiple appointments. Use allowed query parameters to filter and pagination. Users only with Admin and Caretaker roles can invoke this method.
       parameters:
         - in: query
-          name: contractorsName
-          description: Contractors name to filter by
+          name: desiredDate
+          description: Desired Date to filter by
           required: false
           schema:
             type: string
+            format: date
         - in: query
           name: pageNum
           description: Page number for the pagination.
@@ -88,10 +89,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedContracts'
+                $ref: '#/components/schemas/PaginatedAppointments'
             application/xml:
               schema:
-                $ref: '#/components/schemas/PaginatedContracts'
+                $ref: '#/components/schemas/PaginatedAppointments'
         401:
           $ref: '#/components/responses/AuthorizationError'
         500:
@@ -99,16 +100,16 @@ paths:
       security:
         - bearerAuth: []
   
-  /contracts/{contract-id}:
+  /appointments/{appointment-id}:
     get:
       tags:
-        - contracts
-      summary: Retrieves a contract
-      description: Method to retrieve a particular contract. Users only with Admin and Resident roles can invoke this method. Resident users can retreive only their contracts. If a resident users invokes the method to retreive other resident user's contrct then an unaothorized error response (HTTP response code 500) will be thrown.
+        - appointments
+      summary: Retrieves a appointment
+      description: Method to retrieve a particular appointment. Users with Admin, Caretaker and Resident roles can invoke this method. Resident users can retreive only their appointments. If a resident users invokes the method to retreive other resident user's appointments then an unaothorized error response (HTTP response code 500) will be thrown.
       parameters:
         - in: path
-          name: contract-id
-          description: ID of the contract to be retreived
+          name: appointment-id
+          description: ID of the appointment to be retreived
           required: true
           schema:
             type: string
@@ -118,10 +119,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ContractResponse'
+                $ref: '#/components/schemas/AppointmentResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/ContractResponse'
+                $ref: '#/components/schemas/AppointmentResponse'
         404:
           $ref: '#/components/responses/AuthorizationError'
         401:
@@ -133,13 +134,13 @@ paths:
         
     put:
       tags:
-        - contracts
-      summary: Updates a contract to confirm, extend or terminate
-      description: Method to confirm/extend/terminate a particular contract. Users only with Resident role can invoke this method. Resident users can confirm/extend/confirm only their contracts. A contract can only be confirmed no later than two (2) weeks after it's creation. A cotract can only be extended/terminateed no later than three (3) months before it's current end date. Maximum extention period is six (6) months.
+        - appointments
+      summary: Updates a appointment to accept or deny
+      description: Method to accept or deny a particular appointment. Users only with Caretaker role can invoke this method. A appointment can only be accepted or denied before the desired date.
       parameters:
         - in: path
-          name: contract-id
-          description: Contract ID
+          name: appointment-id
+          description: Appointment ID
           required: true
           schema:
             type: string
@@ -148,15 +149,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateContractRequest'
+              $ref: '#/components/schemas/UpdateAppointmentRequest'
           application/xml:
             schema:
-              $ref: '#/components/schemas/UpdateContractRequest'
+              $ref: '#/components/schemas/UpdateAppointmentRequest'
       responses:
         200:
           description: Successful operation
-        400:
-          $ref: '#/components/responses/ValidationFailedError'
         401:
           $ref: '#/components/responses/AuthorizationError'
         404:
@@ -168,16 +167,16 @@ paths:
       security:
         - bearerAuth: []
         
-  /contractors/{contractors-user-id}/contracts:
+  /contractors/{contractors-user-id}/appointments:
     get:
       tags:
         - contractors
-      summary: Retrieves contracts of a contractor
-      description: Method to retrieve contracts of a particular contractor. Users only with Admin and Resident roles can invoke this method. Resident users can retreive only their contracts. If a resident users invokes the method to retreive other resident user's contrct then an unaothorized error response (HTTP response code 500) will be thrown.
+      summary: Retrieves appointments of a contractor
+      description: Method to retrieve appointments of a particular contractor. Users with Admin, Caretaker and Resident roles can invoke this method. Resident users can retreive only their appointments. If a resident users invokes the method to retreive other resident user's appointment then an unaothorized error response (HTTP response code 500) will be thrown.
       parameters:
         - in: path
           name: contractors-user-id
-          description: ID of the resident user of whom the contracts to be retreived
+          description: ID of the resident user of whom the appointments to be retreived
           required: true
           schema:
             type: string
@@ -187,10 +186,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ContractListResponse'
+                $ref: '#/components/schemas/AppointmentListResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/ContractListResponse'
+                $ref: '#/components/schemas/AppointmentListResponse'
         400:
           $ref: '#/components/responses/ValidationFailedError'
         404:
@@ -210,53 +209,59 @@ components:
       bearerFormat: JWT
 
   schemas:
-    BaseContract:
-      type: object
-      properties:
-        contractorsUserId:
-          type: string
-          description: A valid resident user id is required
-        contractorsName:
-          type: string
-        contractorsEmail:
-          type: string
-          description: A valid email is required
-        contractorsPhone:
-          type: string
-          description: A valid phome number is required
-        roomNumber:
-          type: string
-        startDate:
-          type: string
-          format: date
-        endDate:
-          type: string
-          format: date
-        status:
-          type: string
-          enum:
-            - Confirmed
-            - Unconfirmed
-      required:
-        - contractorsUserId
-        - contractorsName
-        - contractorsEmail
-        - contractorsPhone
-        - roomNumber
-        - startDate
-        - endDate
-        - status
-      xml:
-        name: contract
-        
-    ContractResponse:
-      allOf:
-        - $ref: '#/components/schemas/BaseContract'
-        - type: object
+    BaseAppointment:
       type: object
       properties:
         contractId:
           type: string
+          description: A valid contract user id is required
+        contractorsName:
+          type: string
+        roomNumber:
+          type: string
+        appointmentType:
+          type: string
+          enum:
+            - MoveIn
+            - MoveOut
+            - Miscellaneous
+        issue:
+          type: string
+          maxLength: 200
+        desiredDate:
+          type: string
+          format: date
+        priority:
+          type: string
+          enum:
+            - Low
+            - Normal
+            - High
+      required:
+        - contractId
+        - contractorsName
+        - roomNumber
+        - appointmentType
+        - issue
+        - desiredDate
+        - priority
+      xml:
+        name: appointment
+        
+    AppointmentResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseAppointment'
+        - type: object
+      type: object
+      properties:
+        appointmentId:
+          type: string
+        status:
+          type: string
+          enum:
+            - Received
+            - Accepted
+            - Denied
         creadtedBy:
           type: string
         createdOn:
@@ -271,27 +276,27 @@ components:
               rel:
                 type: string
       xml:
-        name: contract
+        name: appointment
         
-    ContractListResponse:
+    AppointmentListResponse:
       type: object
       properties:
-        contracts:
+        appointments:
           type: array
           items:
-            $ref: '#/components/schemas/ContractResponse'
+            $ref: '#/components/schemas/AppointmentResponse'
           xml:
             wrapped: true
       xml:
         name: response
         
-    PaginatedContracts:
+    PaginatedAppointments:
       type: object
       properties:
-        contracts:
+        appointments:
           type: array
           items:
-            $ref: '#/components/schemas/ContractResponse'
+            $ref: '#/components/schemas/AppointmentResponse'
           xml:
             wrapped: true
         metadata:
@@ -308,19 +313,14 @@ components:
       xml:
         name: response
 
-    UpdateContractRequest:
+    UpdateAppointmentRequest:
       type: object
       properties:
         operation:
           type: string
           enum:
-            - Confirm
-            - Extend
-            - Terminate
-        newEndDate:
-          type: string
-          format: date
-          description: Required only for Extend and Terminate operation.
+            - Accept
+            - Deny
       required:
         - operation
       xml:
