@@ -50,7 +50,7 @@ public class UserResourceImpl implements UserResource {
 
             return buildResponseObject(Response.Status.OK, user);
         } catch (ObjectNotFoundException e) {
-            return buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());
+            return buildResponseObject(Response.Status.NOT_FOUND, e.getMessage());
         } catch (Exception e) {
             return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
         }

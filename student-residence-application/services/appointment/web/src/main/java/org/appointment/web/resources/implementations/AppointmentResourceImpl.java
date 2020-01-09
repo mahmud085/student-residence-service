@@ -206,7 +206,7 @@ public class AppointmentResourceImpl implements AppointmentResource {
 		} catch (OperationAlreadyExecutedException ex) {
 			return buildResponseObject(Response.Status.OK, ex.getMessage());
 		} catch (ObjectNotFoundException ex) {
-			return buildResponseObject(Response.Status.BAD_REQUEST, ex.getMessage());
+			return buildResponseObject(Response.Status.NOT_FOUND, ex.getMessage());
 		} catch (InvalidOperationException e) {
 			return buildResponseObject(Response.Status.PRECONDITION_FAILED, e.getMessage());
 		} catch (Exception ex) {

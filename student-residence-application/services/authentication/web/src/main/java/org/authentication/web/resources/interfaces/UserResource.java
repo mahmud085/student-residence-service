@@ -7,6 +7,4 @@ import javax.ws.rs.core.Response;
 public interface UserResource {
     Response getUser(String userId);
     Response createUser(RegisterUser newUser);
-
-
 }
