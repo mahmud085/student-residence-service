@@ -48,27 +48,6 @@ public class UserRepositoryImpl implements UserRepository {
 	}
 
 	@Override
-	public User getUserIdByAccessToken(String accessToken) {
-		Storage storage = Storage.instance().build(Configuration.loadProperties("dbProperties.properties"));
-
-		HashMap<String, String> hm = new HashMap<String, String>();
-		hm.put("accessToken", accessToken);
-		System.out.println("Here is Access Token");
-		String userId= storage.execute("authentication.getByUserId",hm).toString();
-		userId= userId.replaceAll("\\p{P}","");
-		System.out.println(userId);
-		HashMap<String, String> hm1 = new HashMap<String, String>();
-		hm1.put("userId", userId);
-		System.out.println("Here is getUserById");
-		List<User> userlist=(List<User>)storage.execute("user.findByUserId", hm1);
-		if(userlist.size()==0)
-			return null;
-
-		return userlist.get(0);
-
-	}
-
-	@Override
 	public User getUserByIdPass(String userId, String password) {
 		Storage storage = Storage.instance().build(Configuration.loadProperties("dbProperties.properties"));
 		HashMap<String, String> hm = new HashMap<String, String>();

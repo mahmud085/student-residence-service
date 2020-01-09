@@ -2,19 +2,17 @@ package org.authentication.web.resources.implementations;
 
 import com.google.inject.Inject;
 import org.authentication.common.Messages;
-import org.authentication.common.exceptions.*;
+import org.authentication.common.exceptions.ObjectNotFoundException;
 import org.authentication.dataaccess.data.models.User;
 import org.authentication.service.models.RegisterUser;
 import org.authentication.service.models.UserRole;
 import org.authentication.service.services.interfaces.UserService;
 import org.authentication.web.Constants;
-
 import org.authentication.web.resources.interfaces.UserResource;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.util.logging.Logger;
 
 @Path(Constants.RESOURCE_PATH_USER)
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
@@ -22,22 +20,12 @@ import java.util.logging.Logger;
 public class UserResourceImpl implements UserResource {
     @Inject
     private UserService userService;
-    @Inject
-    private Logger logger;
 
     @Context
     private UriInfo uriInfo;
 
     @Context
     private SecurityContext securityContext;
-
-
-    private <T> Response buildResponseObject(Response.Status status, T entity) {
-        return Response.status(status)
-                .entity(entity)
-                .build();
-    }
-
 
     @Override
     @GET
@@ -53,11 +41,9 @@ public class UserResourceImpl implements UserResource {
             User user = userService.getUser(userId);
 
             return buildResponseObject(Response.Status.OK, user);
-        } catch (ValidationException | InvalidOperationException | ObjectNotFoundException e) {
-            // TODO Auto-generated catch block
+        } catch (ObjectNotFoundException e) {
             return buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             return buildResponseObject(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
@@ -79,8 +65,13 @@ public class UserResourceImpl implements UserResource {
 
             return buildResponseObject(Response.Status.OK, user);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             return buildResponseObject(Response.Status.BAD_REQUEST, e.getMessage());
         }
+    }
+
+    private <T> Response buildResponseObject(Response.Status status, T entity) {
+        return Response.status(status)
+                .entity(entity)
+                .build();
     }
 }
