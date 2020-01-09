@@ -29,15 +29,23 @@ public class UserResourceImpl implements UserResource {
 
     @Override
     @GET
-    @RolesAllowed({Constants.ROLE_ADMIN})
+    @RolesAllowed({Constants.ROLE_ADMIN, Constants.ROLE_CARETAKER, Constants.ROLE_RESIDENT})
     @Path("{user-id}")
-    public Response getUserById(@PathParam("user-id") String userId) {
+    public Response getUser(@PathParam("user-id") String userId) {
         if (userId == null || userId.length() == 0) {
             return buildResponseObject(Response.Status.BAD_REQUEST, Messages.REQUEST_BODY_REQUIRED);
         }
 
-        try {
+        String contextUserId = securityContext.getUserPrincipal().getName();
+        boolean isAdminUser = securityContext.isUserInRole(Constants.ROLE_ADMIN);
+        boolean isCaretaker = securityContext.isUserInRole(Constants.ROLE_CARETAKER);
+        boolean isUserAuthorizedForThisResource = isAdminUser || isCaretaker || userId.equalsIgnoreCase(contextUserId);
 
+        if (!isUserAuthorizedForThisResource) {
+            return buildResponseObject(Response.Status.UNAUTHORIZED, Messages.USER_NOT_AUTHORISED_TO_OPERATE_RESOURCE);
+        }
+
+        try {
             User user = userService.getUser(userId);
 
             return buildResponseObject(Response.Status.OK, user);

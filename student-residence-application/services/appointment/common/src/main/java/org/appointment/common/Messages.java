@@ -35,4 +35,7 @@ public class Messages {
     public static final String AUTHORIZATION_FAILED_USER_ROLE_NOT_ALLOWED = "This user's role is not allowed to perform this action.";
 
     public  static final String UNAUTHORIZED_USER_FOR_CONTRACT_FOR_APPOINTMENT_CREATION = "This user is not authorized to create Appointment with this Contract ID.";
+
+    public static final String INVALID_CONTRACTORS_USER_ID = "No User found with the specified Contractor's User ID.";
+    public static final String INVALID_CONTRACTORS_USER_ROLE = "The user with Contractor's User ID is not a resident user.";
 }
