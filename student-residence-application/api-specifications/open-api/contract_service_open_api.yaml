@@ -104,7 +104,7 @@ paths:
       tags:
         - contracts
       summary: Retrieves a contract
-      description: Method to retrieve a particular contract. Users only with Admin and Resident roles can invoke this method. Resident users can retreive only their contracts. If a resident users invokes the method to retreive other resident user's contrct then an unaothorized error response (HTTP response code 500) will be thrown.
+      description: Method to retrieve a particular contract. Users only with Admin and Resident roles can invoke this method. Resident users can retreive only their contracts. If a resident user invokes the method to retreive other resident user's contrct then an unaothorized error response (HTTP response code 401) will be thrown.
       parameters:
         - in: path
           name: contract-id
@@ -122,9 +122,9 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/ContractResponse'
-        404:
-          $ref: '#/components/responses/AuthorizationError'
         401:
+          $ref: '#/components/responses/AuthorizationError'
+        404:
           $ref: '#/components/responses/ResourceNotFoundError'
         500:
           $ref: '#/components/responses/InternalServerError'
@@ -173,7 +173,7 @@ paths:
       tags:
         - contractors
       summary: Retrieves contracts of a contractor
-      description: Method to retrieve contracts of a particular contractor. Users only with Admin and Resident roles can invoke this method. Resident users can retreive only their contracts. If a resident users invokes the method to retreive other resident user's contrct then an unaothorized error response (HTTP response code 500) will be thrown.
+      description: Method to retrieve contracts of a particular contractor. Users only with Admin and Resident roles can invoke this method. Resident users can retreive only their contracts. If a resident user invokes the method to retreive other resident user's contrct then an unaothorized error response (HTTP response code 401) will be thrown.
       parameters:
         - in: path
           name: contractors-user-id
@@ -193,9 +193,9 @@ paths:
                 $ref: '#/components/schemas/ContractListResponse'
         400:
           $ref: '#/components/responses/ValidationFailedError'
-        404:
-          $ref: '#/components/responses/AuthorizationError'
         401:
+          $ref: '#/components/responses/AuthorizationError'
+        404:
           $ref: '#/components/responses/ResourceNotFoundError'
         500:
           $ref: '#/components/responses/InternalServerError'
