@@ -9,6 +9,7 @@ public class Messages {
     public static final String USER_NOT_FOUND="User Not Found With this ID.";
     public static final String USER_MISMATCH="User Not Found With this ID and Password.";
 
+    public static final String INVALID_ACCESS_TOKEN = "Access Token is invalid.";
     public static final String INVALID_OR_EXPIRED_ACCESS_TOKEN = "Access Token is invalid/expired. Please login again to refresh the access token.";
 
     public static final String AUTHORIZATION_FAILED_USER_ROLE_NOT_ALLOWED = "This user's role is not allowed to perform this action.";

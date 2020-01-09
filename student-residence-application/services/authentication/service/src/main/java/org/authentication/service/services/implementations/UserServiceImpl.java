@@ -2,28 +2,31 @@ package org.authentication.service.services.implementations;
 
 import com.google.inject.Inject;
 import org.authentication.common.Messages;
-import org.authentication.common.exceptions.InvalidOperationException;
 import org.authentication.common.exceptions.ObjectNotFoundException;
-import org.authentication.common.exceptions.ValidationException;
 import org.authentication.dataaccess.data.enums.UserType;
+import org.authentication.dataaccess.data.models.Authentication;
 import org.authentication.dataaccess.data.models.User;
+import org.authentication.dataaccess.respositories.interfaces.AuthenticationRepository;
 import org.authentication.dataaccess.respositories.interfaces.UserRepository;
 import org.authentication.service.models.RegisterUser;
+import org.authentication.service.services.interfaces.UserService;
 
-import javax.ws.rs.client.Client;
-import java.util.logging.Logger;
+public class UserServiceImpl implements UserService {
+    @Inject
+    private AuthenticationRepository authenticationRepository;
 
-
-public class UserServiceImpl implements org.authentication.service.services.interfaces.UserService {
     @Inject
     private UserRepository userRepository;
 
-    private Client client;
-    private Logger logger;
-
     @Override
-    public User getUserByAccessToken(String accessToken) throws ValidationException, InvalidOperationException, ObjectNotFoundException {
-		User user = userRepository.getUserIdByAccessToken(accessToken);
+    public User getUserByAccessToken(String accessToken) throws ObjectNotFoundException {
+        Authentication authentication = authenticationRepository.getByAccessToken(accessToken);
+
+        if (authentication == null)
+            throw new ObjectNotFoundException(Messages.INVALID_ACCESS_TOKEN);
+
+		User user = userRepository.getUserById(authentication.getUserId());
+
 		if (user == null)
 			throw new ObjectNotFoundException(Messages.USER_NOT_FOUND);
 
@@ -31,7 +34,7 @@ public class UserServiceImpl implements org.authentication.service.services.inte
     }
 
     @Override
-    public User getUser(String userId) throws ValidationException, InvalidOperationException, ObjectNotFoundException {
+    public User getUser(String userId) throws ObjectNotFoundException {
         User user = userRepository.getUserById(userId);
         if (user == null)
             throw new ObjectNotFoundException(Messages.USER_NOT_FOUND);
@@ -40,7 +43,7 @@ public class UserServiceImpl implements org.authentication.service.services.inte
     }
 
     @Override
-    public User registerUser(RegisterUser newUser) throws ValidationException, InvalidOperationException, ObjectNotFoundException {
+    public User registerUser(RegisterUser newUser) {
         User userToCreate = new User() {
             {
                 setUserId(newUser.getUserId());
@@ -54,7 +57,7 @@ public class UserServiceImpl implements org.authentication.service.services.inte
     }
 
     @Override
-    public User createLoginRequest(String userId, String password) throws ValidationException, InvalidOperationException, ObjectNotFoundException {
+    public User createLoginRequest(String userId, String password) throws ObjectNotFoundException {
     	System.out.println("Entered Here");
     	User user = userRepository.getUserByIdPass(userId, password);
         if (user == null)

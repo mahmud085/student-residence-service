@@ -6,10 +6,6 @@ import org.authentication.dataaccess.respositories.interfaces.AuthenticationRepo
 import org.authentication.service.models.NewAuthentication;
 import org.authentication.service.services.interfaces.AuthenticationService;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
-
 public class AuthenticationServiceImpl implements AuthenticationService {
 	@Inject
 	private AuthenticationRepository authenticationRepository;
@@ -26,9 +22,5 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			}
 		};
 		return authenticationRepository.add(authentication);
-	}
-
-	private Date toDate(LocalDateTime localDateTime) {
-		return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
 	}
 }
