@@ -14,7 +14,6 @@ import org.contract.dataaccess.models.PaginatedDataList;
 import org.contract.dataaccess.respositories.interfaces.ContractRepository;
 import org.contract.dataaccess.respositories.interfaces.RoomRepository;
 import org.contract.service.models.NewContract;
-import org.contract.service.models.UserRole;
 import org.contract.service.services.interfaces.ContractService;
 
 import java.time.LocalDate;
@@ -44,7 +43,7 @@ public class ContractServiceImpl implements ContractService {
         }
 
         if (!newContract.getEndDate().isAfter(newContract.getStartDate())) {
-            throw new InvalidOperationException(Messages.INVALID_END_DATE);
+            throw new ValidationException(Messages.INVALID_END_DATE);
         }
 
         if (newContract.getStatus() == ContractStatus.Unconfirmed && !newContract.getStartDate().isAfter(getLastDateForConfirmation(createdOn))) {
@@ -188,7 +187,7 @@ public class ContractServiceImpl implements ContractService {
         }
 
         // Business logic
-        LocalDate dateThreeMonthsBeforeNewEndDate = contract.getEndDate().minusMonths(3);
+        LocalDate dateThreeMonthsBeforeNewEndDate = newEndDate.minusMonths(3);
         if (currentDate.isAfter(dateThreeMonthsBeforeNewEndDate)) {
             throw new InvalidOperationException(Messages.CONTRACT_TERMINATION_INVALID_OPERATION_DATE);
         }

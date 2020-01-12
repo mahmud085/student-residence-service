@@ -1,7 +1,10 @@
 package org.contract.dataaccess.respositories.implementations;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.contract.common.Messages;
 import org.contract.common.exceptions.ObjectNotFoundException;
+import org.contract.dataaccess.context.DBManagerFactory;
 import org.contract.dataaccess.data.enums.ContractStatus;
 import org.contract.dataaccess.data.models.Contract;
 import org.contract.dataaccess.models.PaginatedDataList;
@@ -13,15 +16,13 @@ import java.util.List;
 
 public class ContractRepositoryImpl implements ContractRepository {
 
-    private EntityManagerFactory entityManagerFactory;
-
-    public ContractRepositoryImpl() {
-        entityManagerFactory = Persistence.createEntityManagerFactory( "contract_service_jpa" );
-    }
+    @Inject
+    @Named("ContractDB")
+    DBManagerFactory contractDBManagerFactory;
 
     @Override
     public Contract add(Contract contract) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityManager entityManager = contractDBManagerFactory.createEntityManager();
 
         entityManager.getTransaction().begin();
 
@@ -41,7 +42,7 @@ public class ContractRepositoryImpl implements ContractRepository {
     @Override
     public Contract get(String contractId) {
         try {
-            Query query = entityManagerFactory.createEntityManager().createNamedQuery("Contract.findSingleByContractId");
+            Query query = contractDBManagerFactory.createEntityManager().createNamedQuery("Contract.findSingleByContractId");
             query.setParameter("contractId", contractId);
 
             return (Contract) query.getSingleResult();
@@ -52,7 +53,7 @@ public class ContractRepositoryImpl implements ContractRepository {
 
     @Override
     public List<Contract> getAll() {
-        Query query = entityManagerFactory.createEntityManager().createNamedQuery("Contract.getAll");
+        Query query = contractDBManagerFactory.createEntityManager().createNamedQuery("Contract.getAll");
 
         return query.getResultList();
     }
@@ -60,7 +61,7 @@ public class ContractRepositoryImpl implements ContractRepository {
     @Override
     public void update(Contract contract) throws ObjectNotFoundException {
         try {
-            EntityManager entityManager = entityManagerFactory.createEntityManager();
+            EntityManager entityManager = contractDBManagerFactory.createEntityManager();
 
             entityManager.getTransaction().begin();
 
@@ -81,7 +82,7 @@ public class ContractRepositoryImpl implements ContractRepository {
         LocalDate earliestPossibleCreatedOnForPending = LocalDate.now().minusWeeks(2);
 
         try {
-            Query query = entityManagerFactory.createEntityManager().createNamedQuery("Contract.findActiveContractForRoomByDates");
+            Query query = contractDBManagerFactory.createEntityManager().createNamedQuery("Contract.findActiveContractForRoomByDates");
             query.setParameter("roomNumber", roomNumber);
             query.setParameter("startDate", startDate);
             query.setParameter("endDate", endDate);
@@ -96,7 +97,7 @@ public class ContractRepositoryImpl implements ContractRepository {
 
     @Override
     public List<Contract> getAllByContractorsUserId(String contractorsUserId) {
-        Query query = entityManagerFactory.createEntityManager().createNamedQuery("Contract.findMultipleByContractorsUserId");
+        Query query = contractDBManagerFactory.createEntityManager().createNamedQuery("Contract.findMultipleByContractorsUserId");
         query.setParameter("contractorsUserId", contractorsUserId);
 
         return query.getResultList();
@@ -104,8 +105,8 @@ public class ContractRepositoryImpl implements ContractRepository {
 
     @Override
     public PaginatedDataList<Contract> getAll(int pageNum, int pageSize) {
-        Query countQuery = entityManagerFactory.createEntityManager().createNamedQuery("Contract.getCount");
-        Query retrieveQuery = entityManagerFactory.createEntityManager().createNamedQuery("Contract.getAll");
+        Query countQuery = contractDBManagerFactory.createEntityManager().createNamedQuery("Contract.getCount");
+        Query retrieveQuery = contractDBManagerFactory.createEntityManager().createNamedQuery("Contract.getAll");
         retrieveQuery.setFirstResult((pageNum - 1) * pageSize);
         retrieveQuery.setMaxResults(pageSize);
 
@@ -119,7 +120,7 @@ public class ContractRepositoryImpl implements ContractRepository {
 
     @Override
     public List<Contract> getAll(String contractorsNameFilter) {
-        Query query = entityManagerFactory.createEntityManager().createNamedQuery("Contract.filterByContractorsName");
+        Query query = contractDBManagerFactory.createEntityManager().createNamedQuery("Contract.filterByContractorsName");
         query.setParameter("contractorsNameFilterText", contractorsNameFilter);
 
         return query.getResultList();
@@ -127,10 +128,10 @@ public class ContractRepositoryImpl implements ContractRepository {
 
     @Override
     public PaginatedDataList<Contract> getAll(String contractorsNameFilter, int pageNum, int pageSize) {
-        Query countQuery = entityManagerFactory.createEntityManager().createNamedQuery("Contract.getCountFilterByContractorsName");
+        Query countQuery = contractDBManagerFactory.createEntityManager().createNamedQuery("Contract.getCountFilterByContractorsName");
         countQuery.setParameter("contractorsNameFilterText", contractorsNameFilter);
 
-        Query retrieveQuery = entityManagerFactory.createEntityManager().createNamedQuery("Contract.filterByContractorsName");
+        Query retrieveQuery = contractDBManagerFactory.createEntityManager().createNamedQuery("Contract.filterByContractorsName");
         retrieveQuery.setParameter("contractorsNameFilterText", contractorsNameFilter);
         retrieveQuery.setFirstResult((pageNum - 1) * pageSize);
         retrieveQuery.setMaxResults(pageSize);
