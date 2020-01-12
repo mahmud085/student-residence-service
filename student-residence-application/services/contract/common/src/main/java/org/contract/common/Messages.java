@@ -37,7 +37,7 @@ public class Messages {
     public static final String CONTRACT_EXTENSION_INVALID_OPERATION_DATE = "A contract can only be extended before 3 months of it's current end date.";
     public static final String CONTRACT_EXTENSION_INVALID_EXTENSION_PERIOD = "A contract can only be extended for 6 months.";
     public static final String CONTRACT_TERMINATION_NOT_YET_CONFIRMED = "An unconfirmed contract cannot be terminated.";
-    public static final String CONTRACT_TERMINATION_INVALID_OPERATION_DATE = "A contract can only be terminated before 3 months of it's current end date.";
+    public static final String CONTRACT_TERMINATION_INVALID_OPERATION_DATE = "A contract can only be terminated before 3 months of the new end date.";
 
     public static final String AUTHORIZATION_FAILED_USER_ROLE_NOT_ALLOWED = "This user's role is not allowed to perform this action.";
 

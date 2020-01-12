@@ -19,6 +19,7 @@
             <table class="table table-striped text-center">
                 <thead class="thead-dark">
                     <tr>
+                        <th>ID</th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
@@ -32,6 +33,7 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let c of contracts">
+                        <td>{{ c.contractId }}</td>
                         <td>{{ c.contractorsName }}</td>
                         <td>{{ c.contractorsEmail }}</td>
                         <td>{{ c.contractorsPhone }}</td>
@@ -44,7 +46,7 @@
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <button *ngIf="isUserResident() && !isContractConfirmed(c)" (click)="onClickAcceptContract(c.contractId)" class="btn btn-primary">Confirm</button>
                                 <button *ngIf="isUserResident() && isContractConfirmed(c)" (click)="showUpdateContractModal(c.contractId, 'Extend')" class="btn btn-primary">Extend</button>
-                                <button *ngIf="isUserResident() && isContractConfirmed(c)" (click)="showUpdateContractModal(c.contractId, 'Terminate')" class="btn btn-primary">Terminate</button>
+                                <button *ngIf="isUserResident() && isContractConfirmed(c)" (click)="showUpdateContractModal(c.contractId, 'Terminate')" class="btn btn-danger">Terminate</button>
                             </div>
                         </td>
                     </tr>
