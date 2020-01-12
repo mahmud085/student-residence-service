@@ -1,0 +1,160 @@
+FORMAT: 1A
+HOST: http://authentication-service-base-uri/api
+
+# Authentication Service
+## Authentication
+This API uses JSON Web Tokens for its authentication.
+
+The parameters that are needed to be sent for this type of authentication are as follows:
++ `JWTHeaderName`
++ `JWTAcquireURL`
++ `JWTDestroyURL`
+
+# Group users
+
+Methods for user resources
+
+## Users By User Id [/users/{user_id}]
+
++ Parameters
+    + user_id (string, required)
+
+        ID of the user to be retreived
+
+
+### Retrieves a user [GET]
+Method to retrieve a particular user profile. Users with Admin, Caretaker and Resident roles can invoke this method. Resident users can retreive only their profiles. If a resident users invokes the method to retreive other resident user's profile then an unaothorized error response (HTTP response code 401) will be thrown.
+
++ Response 200 (application/json)
+
+        Successful operation
+
+    + Attributes (User)
+
+
+
++ Response 401 
+
+        Missing/invalid/expired access token or role not valid for the operation.
+
+
+
+
++ Response 404 
+
+        No resource found with the specified ID.
+
+
+
+
++ Response 500 
+
+        Internal server error.
+
+
+
+
+
+
+# Group authentication
+
+Methods for authentication
+
+## Authentication Login [/authentication/login]
+
+### Logs in a user. [POST]
+Method for logging in.
+
++ Request (application/json)
+
+    + Attributes (LoginRequest)
+
+
+
++ Response 200 (application/json)
+
+        Successful operation
+
+    + Attributes (LoginResponse)
+
+
+
++ Response 400 
+
+        Validation failed.
+
+
+
+
++ Response 500 
+
+        Internal server error.
+
+
+
+
+
+## Authentication AccessToken Validation [/authentication/accessToken/{access_token}/validation]
+
++ Parameters
+    + access_token (string, required)
+
+        Access token to validate
+
+
+### Validates an access token [GET]
+Method to validate an access token.
+
++ Response 200 (application/json)
+
+        Successful operation
+
+    + Attributes (User)
+
+
+
++ Response 400 
+
+        Validation failed.
+
+
+
+
++ Response 500 
+
+        Internal server error.
+
+
+
+
+
+
+# Data Structures
+
+## User (object)
+
+
+### Properties
++ `userId` (string, optional) 
++ `userName` (string, optional) 
++ `userEmail` (string, optional) 
++ `userType` (enum[string], optional) 
+    + `Admin`
+    + `Caretaker`
+    + `Resident`
+
+
+## LoginRequest (object)
+
+
+### Properties
++ `userId` (string, required) 
++ `password` (string, required) 
+
+
+## LoginResponse (object)
+
+
+### Properties
++ `accessToken` (string, optional) 
+
