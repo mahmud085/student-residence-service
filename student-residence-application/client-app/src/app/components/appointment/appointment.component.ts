@@ -77,7 +77,7 @@ export class AppointmentComponent implements OnInit {
       this.appointments = paginatedAppointments.appointment;
     }, (error: any): void => {
       this.blockUI = false;
-      alert(error.message);
+      alert(error.status + " " + error.error);
     });
   }
 
@@ -88,7 +88,7 @@ export class AppointmentComponent implements OnInit {
 			this.appointments = paginatedAppointments.appointment;
 		}, (error: any): void => {
 			this.blockUI = false;
-			alert(error.error);
+			alert(error.status + " " + error.error);
 		});
   }
   

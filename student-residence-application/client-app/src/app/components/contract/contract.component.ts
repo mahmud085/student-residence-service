@@ -70,7 +70,7 @@ export class ContractComponent implements OnInit {
 			this.contracts = paginatedContracts.contracts;
 		}, (error: any): void => {
             this.blockUI = false;
-            alert(error.error);
+            alert(error.status + " " + error.error);
 		});
 	}
 	
@@ -85,7 +85,7 @@ export class ContractComponent implements OnInit {
 			this.contracts = paginatedContracts.contracts;
 		}, (error: any): void => {
 			this.blockUI = false;
-			alert(error.error);
+			alert(error.status + " " + error.error);
 		});
 	}
 
