@@ -89,7 +89,6 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 	@Override
 	public Appointment getAppointment(String appointmentId) throws ObjectNotFoundException {
-		System.out.println("Get By IDDDD");
 		Appointment appointment=appointmentRepository.getById(appointmentId);
 		if(appointment==null)
 			throw new ObjectNotFoundException(Messages.APPOINTMENT_NOT_FOUND);
@@ -133,10 +132,6 @@ public class AppointmentServiceImpl implements AppointmentService {
 			throw new OperationAlreadyExecutedException(Messages.APPOINTMENT_ALREADY_ACCEPTED);
 		}
 
-		if (appointment.getStatus() == AppointmentStatus.Denied) {
-			throw new InvalidOperationException(Messages.APPOINTMENT_ALREADY_DENIED);
-		}
-
 		if (!LocalDate.now().isBefore(appointment.getDesiredDate())) {
 			throw new InvalidOperationException(Messages.APPOINTMENT_DATE_EXPIRED);
 		}
@@ -156,10 +151,6 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 		if (appointment.getStatus()== AppointmentStatus.Denied) {
 			throw new OperationAlreadyExecutedException(Messages.APPOINTMENT_ALREADY_DENIED);
-		}
-
-		if (appointment.getStatus() == AppointmentStatus.Accepted) {
-			throw new InvalidOperationException(Messages.APPOINTMENT_ALREADY_ACCEPTED);
 		}
 
 		if (!LocalDate.now().isBefore(appointment.getDesiredDate())) {
