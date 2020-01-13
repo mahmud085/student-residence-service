@@ -22,7 +22,10 @@ export class AppointmentService {
     let requestUrl: string = null;
     let userId: string = null;
 		switch (this._authService.userCredential.role) {
-			case UserRole.Caretaker || UserRole.Admin:
+			case UserRole.Caretaker:
+        requestUrl = `${ConfigService.appConfig.service.appointment.baseUrl}/api/appointments`;
+        break;
+      case UserRole.Admin:
         requestUrl = `${ConfigService.appConfig.service.appointment.baseUrl}/api/appointments`;
         break;
       case UserRole.Resident:
