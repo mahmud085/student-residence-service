@@ -171,7 +171,7 @@ public class AppointmentResourceImpl implements AppointmentResource {
 	}
 
 	@Override
-	@PUT @RolesAllowed({Constants.ROLE_CARETAKER})
+	@PATCH @RolesAllowed({Constants.ROLE_CARETAKER})
 	@Path("{appointment-id}")
 	public Response updateAppointment(@PathParam("appointment-id") String appointmentId, AppointmentUpdateRequest appointmentUpdateRequest)
 	{

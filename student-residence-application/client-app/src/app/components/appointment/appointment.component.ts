@@ -77,7 +77,7 @@ export class AppointmentComponent implements OnInit {
       this.appointments = paginatedAppointments.appointment;
     }, (error: any): void => {
       this.blockUI = false;
-      alert(error.status + " " + error.error);
+      alert(error.message);
     });
   }
 
@@ -88,7 +88,7 @@ export class AppointmentComponent implements OnInit {
 			this.appointments = paginatedAppointments.appointment;
 		}, (error: any): void => {
 			this.blockUI = false;
-			alert(error.status + " " + error.error);
+			alert(error.error);
 		});
   }
   
@@ -103,7 +103,7 @@ export class AppointmentComponent implements OnInit {
       this.loadAppointments();
     }, (error: any): void => {
       this.blockUI = false;
-      alert(error.status + " " + error.error);
+      alert(error.error);
     });
   }
 
@@ -111,12 +111,12 @@ export class AppointmentComponent implements OnInit {
     this.blockUI = true;
     this._appointmentService.acceptAppointment(appointmentId).subscribe((msg: string): void => {			
       this.blockUI = false;
-      alert('Appointment successfully accepted.');
+      alert('Appointment successfully confirmed.');
       this.loadAppointments();
     }, (error: any): void => {
       this.blockUI = false;
       console.log('Error accept ', error);
-      alert(error.status + " " + error.error);
+      alert(error.message);
     });
   }
 
@@ -128,7 +128,7 @@ export class AppointmentComponent implements OnInit {
       this.loadAppointments();
     }, (error: any): void => {
       this.blockUI = false;
-      alert(error.status + " " + error.error);
+      alert(error.message);
     });
   }
 

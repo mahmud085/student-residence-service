@@ -157,7 +157,7 @@ public class ContractResourceImpl implements ContractResource {
     }
 
     @Override
-    @PUT @RolesAllowed({Constants.ROLE_RESIDENT})
+    @PATCH @RolesAllowed({Constants.ROLE_RESIDENT})
     @Path("{contract-id}")
     public Response updateContract(@PathParam("contract-id") String contractId, ContractUpdateRequest contractUpdateRequest) {
         String contextUserId = securityContext.getUserPrincipal().getName();

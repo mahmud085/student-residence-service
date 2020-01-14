@@ -52,7 +52,7 @@ export class ContractService {
 
 		let requestUrl: string = `${ConfigService.appConfig.service.contract.baseUrl}/api/contracts/${contractId}`;
 
-		return this._httpClient.put<string>(requestUrl, confirmContractRequest, {
+		return this._httpClient.patch<string>(requestUrl, confirmContractRequest, {
 			responseType: 'text' as 'json'
 		});
 	}
@@ -65,7 +65,7 @@ export class ContractService {
 
 		let requestUrl: string = `${ConfigService.appConfig.service.contract.baseUrl}/api/contracts/${contractId}`;
 
-		return this._httpClient.put<string>(requestUrl, confirmContractRequest, {
+		return this._httpClient.patch<string>(requestUrl, confirmContractRequest, {
 			responseType: 'text' as 'json'
 		});
 	}
@@ -78,7 +78,7 @@ export class ContractService {
 
 		let requestUrl: string = `${ConfigService.appConfig.service.contract.baseUrl}/api/contracts/${contractId}`;
 
-		return this._httpClient.put<string>(requestUrl, confirmContractRequest, {
+		return this._httpClient.patch<string>(requestUrl, confirmContractRequest, {
 			responseType: 'text' as 'json'
 		});
 	}
