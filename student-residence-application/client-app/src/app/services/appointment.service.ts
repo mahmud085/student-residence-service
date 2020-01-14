@@ -55,7 +55,7 @@ export class AppointmentService {
 
 		let requestUrl: string = `${ConfigService.appConfig.service.appointment.baseUrl}/api/appointments/${appointmentId}`;
 
-		return this._httpClient.put<string>(requestUrl, acceptAppointmentRequest, {
+		return this._httpClient.patch<string>(requestUrl, acceptAppointmentRequest, {
 			responseType: 'text' as 'json'
 		});
   }
@@ -67,7 +67,7 @@ export class AppointmentService {
 
 		let requestUrl: string = `${ConfigService.appConfig.service.appointment.baseUrl}/api/appointments/${appointmentId}`;
 
-		return this._httpClient.put<string>(requestUrl, cancelAppointmentRequest, {
+		return this._httpClient.patch<string>(requestUrl, cancelAppointmentRequest, {
 			responseType: 'text' as 'json'
 		});
 	}

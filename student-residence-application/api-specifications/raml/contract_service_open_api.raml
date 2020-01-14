@@ -191,7 +191,7 @@ types:
           description: Internal server error.
       securedBy:
         - bearerAuth
-    put:
+    patch:
       description: Method to confirm/extend/terminate a particular contract. Users only with Resident role can invoke this method. Resident users can confirm/extend/confirm only their contracts. A contract can only be confirmed no later than two (2) weeks after it's creation. A cotract can only be extended/terminateed no later than three (3) months before it's current end date. Maximum extention period is six (6) months.
       body:
         application/json:

@@ -70,7 +70,7 @@ export class ContractComponent implements OnInit {
 			this.contracts = paginatedContracts.contracts;
 		}, (error: any): void => {
             this.blockUI = false;
-            alert(error.status + " " + error.error);
+            alert(error.error);
 		});
 	}
 	
@@ -85,7 +85,7 @@ export class ContractComponent implements OnInit {
 			this.contracts = paginatedContracts.contracts;
 		}, (error: any): void => {
 			this.blockUI = false;
-			alert(error.status + " " + error.error);
+			alert(error.error);
 		});
 	}
 
@@ -104,7 +104,7 @@ export class ContractComponent implements OnInit {
 			this.loadContracts();
 		}, (error: any): void => {
 			this.blockUI = false;
-			alert(error.status + " " + error.error);
+			alert(error.error);
 		});
 	}
 
@@ -116,7 +116,7 @@ export class ContractComponent implements OnInit {
 			this.loadContracts();
 		}, (error: any): void => {
 			this.blockUI = false;
-			alert(error.status + " " + error.error);
+			alert(error.error);
 		});
 	}
 
@@ -198,7 +198,7 @@ export class ContractComponent implements OnInit {
 			this.loadContracts();
 		}, (error: any): void => {
 			this.blockUI = false;
-      alert(error.status + " " + error.error);
+			alert(error.error);
 		});
 	}
 
@@ -211,7 +211,7 @@ export class ContractComponent implements OnInit {
 			this.loadContracts();
 		}, (error: any): void => {
 			this.blockUI = false;
-			alert(error.status + " " + error.error);
+			alert(error.error);
 		});
 	}
 

@@ -119,7 +119,7 @@ public class AppointmentResourceImpl implements AppointmentResource {
 		Map<String, String> queryParams = isDesiredDateFilterPresent
 				? new HashMap<String, String>() {{ put("desiredDate", desiredDate); }}
 				: null;
-		String endpointPath = String.format("%s%s/%s", uriInfo.getBaseUri(), Constants.RESOURCE_PATH_APPOINTMENTS, Constants.RESOURCE_PATH_GET_APPOINTMENTS);
+		String endpointPath = String.format("%s%s", uriInfo.getBaseUri(), Constants.RESOURCE_PATH_APPOINTMENTS);
 
 		if (isPaginationRequested) {
 			pageNum = pageNum == 0 ? Constants.DEFAULT_PAGE_NUM : pageNum;
@@ -171,7 +171,7 @@ public class AppointmentResourceImpl implements AppointmentResource {
 	}
 
 	@Override
-	@PUT @RolesAllowed({Constants.ROLE_CARETAKER})
+	@PATCH @RolesAllowed({Constants.ROLE_CARETAKER})
 	@Path("{appointment-id}")
 	public Response updateAppointment(@PathParam("appointment-id") String appointmentId, AppointmentUpdateRequest appointmentUpdateRequest)
 	{

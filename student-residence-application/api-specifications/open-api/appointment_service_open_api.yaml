@@ -132,7 +132,7 @@ paths:
       security:
         - bearerAuth: []
         
-    put:
+    patch:
       tags:
         - appointments
       summary: Updates a appointment to accept or deny
