@@ -1,0 +1,147 @@
+#%RAML 1.0
+title: Authorization Service
+version: 1.0.0
+baseUri:
+  value: http://{authentication-service-base-uri}/api
+
+mediaType: [application/json, application/xml]
+      
+/users:
+  /{user-id}:
+    uriParameters:
+      user-id: string
+    get:
+      description: Method to retrieve a particular user profile. Users with Admin, Caretaker and Resident roles can invoke this method. Resident users can retreive only their profiles. If a resident users invokes the method to retreive other resident user's profile then an unaothorized error response (HTTP response code 401) will be thrown.
+      headers:
+        Authorization: null
+      responses:
+        200:
+          description: successful operation
+          body:
+            application/json:
+              type: User
+            application/xml:
+              type: User
+        401:
+          body:
+            application/json:
+              example: |
+                {"message": "Missing/invalid/expired access token or role not valid for the operation."}
+            application/xml:
+              example: |
+                {"message": "Missing/invalid/expired access token or role not valid for the operation."}
+        404:
+          body:
+            application/json:
+              example: |
+                {"message": "No resource found with the specified ID."}
+            application/xml:
+              example: |
+                {"message": "No resource found with the specified ID."}
+        500:
+          body:
+            application/json:
+              example: |
+                {"message": "Internal server error."}
+            application/xml:
+              example: |
+                {"message": "Internal server error."}
+/authentication:  
+  /login:
+    post:
+      description: Method for logging in.
+      body:
+        application/json:
+          type: LoginRequest
+        application/xml:
+          type: LoginRequest
+      responses:
+        200:
+          description: successful operation
+          body:
+            application/json:
+              type: LoginResponse
+            application/xml:
+              type: LoginResponse
+        400:
+          body:
+            application/json:
+              example: |
+                {"message": "Validation failed."}
+        500:
+          body:
+            application/json:
+              example: |
+                {"message": "Internal server error."}
+            application/xml:
+              example: |
+                {"message": "Internal server error."}
+
+
+  /accessToken/{access-token}/validation:
+    uriParameters:
+      access-token: string
+    get:
+      description:  Method to validate an access token.
+      responses:
+        200:
+          description: successful operation
+          body:
+            application/json:
+              type: User
+            application/xml:
+              type: User
+        400:
+          body:
+            application/json:
+              example: |
+                {"message": "Validation failed."}
+        500:
+          body:
+            application/json:
+              example: |
+                {"message": "Internal server error."}
+            application/xml:
+              example: |
+                {"message": "Internal server error."} 
+                
+types:
+  User:
+    type: object
+    properties:
+      userId:
+        type: string
+      userName:
+        type: string
+      userEmail:
+        type: string
+      userType:
+        type: array
+        items:
+          enum:
+            - Admin
+            - Caretaker
+            - Resident
+    xml:
+      name: User
+
+  LoginRequest:
+    description: Login Credentials
+    type: object
+    properties:
+      userId:
+        type: string
+        required: true
+      password:
+        type: string
+        required: true
+    xml:
+      name: LoginRequest
+
+  LoginResponse:
+    type: object
+    properties:
+      accessToken: string
+    xml:
+      name: LoginResponse
+
