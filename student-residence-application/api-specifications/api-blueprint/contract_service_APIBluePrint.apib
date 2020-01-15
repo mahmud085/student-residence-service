@@ -139,7 +139,7 @@ Method to retrieve a particular contract. Users only with Admin and Resident rol
 
 
 
-### Updates a contract to confirm extend or terminate [PATCH]
+### Updates a contract to confirm extend or terminate [PUT]
 Method to confirm/extend/terminate a particular contract. Users only with Resident role can invoke this method. Resident users can confirm/extend/confirm only their contracts. A contract can only be confirmed no later than two (2) weeks after it's creation. A cotract can only be extended/terminateed no later than three (3) months before it's current end date. Maximum extention period is six (6) months.
 
 + Request (application/json)
@@ -264,10 +264,10 @@ Method to retrieve contracts of a particular contractor. Users only with Admin a
 
 
 ### Properties
-+ `contractId` (string, optional) 
-+ `creadtedBy` (string, optional) 
-+ `createdOn` (string, optional) 
-+ `links` (array[Link], optional) 
++ `contractId` (string, required) 
++ `creadtedBy` (string, required) 
++ `createdOn` (string, required) 
++ `links` (array[Link], required) 
 + `contractorsUserId` (string, required) - A valid resident user id is required
 + `contractorsName` (string, required) 
 + `contractorsEmail` (string, required) - A valid email is required

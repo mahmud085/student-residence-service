@@ -73,7 +73,7 @@ Method to retrieve multiple appointments. Use allowed query parameters to filter
     + pageSize (number, optional) -
 
         Page size for the pagination.
-
+        
         + Default: 20 (only if pageNum is present)
 
 + Response 200 (application/json)
@@ -260,14 +260,14 @@ Method to retrieve appointments of a particular contractor. Users with Admin, Ca
 
 
 ### Properties
-+ `appointmentId` (string, optional) 
-+ `status` (enum[string], optional) 
++ `appointmentId` (string, required) 
++ `status` (enum[string], required) 
     + `Received`
     + `Accepted`
     + `Denied`
-+ `creadtedBy` (string, optional) 
-+ `createdOn` (string, optional) 
-+ `links` (array[Link], optional) 
++ `creadtedBy` (string, required) 
++ `createdOn` (string, required) 
++ `links` (array[Link], required) 
 + `contractId` (string, required) - A valid contract user id is required
 + `contractorsName` (string, required) 
 + `roomNumber` (string, required) 
