@@ -49,8 +49,8 @@ export class AuthService {
                         accessToken: loginResponse.accessToken,
                         role: user.userType
                     }
-
-                    if (loginModel.isPersistent) {
+                    
+                    if (isPersistent) {
                         window.localStorage.setItem('credential', JSON.stringify(this.credential));
                     } else {
                         window.sessionStorage.setItem('credential', JSON.stringify(this.credential));
