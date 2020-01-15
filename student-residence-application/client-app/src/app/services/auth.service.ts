@@ -49,7 +49,7 @@ export class AuthService {
                     	if (loginModel.isPersistent) {
                             window.localStorage.setItem('credential', JSON.stringify(this.credential));
                         } else {
-                            window.localStorage.setItem('credential', JSON.stringify(this.credential));
+                            window.sessionStorage.setItem('credential', JSON.stringify(this.credential));
                         }
 
                     observer.next();
