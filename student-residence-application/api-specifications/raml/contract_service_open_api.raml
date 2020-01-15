@@ -5,8 +5,14 @@ baseUri: http://{contract-service-base-uri}/api
 mediaType: [application/json, application/xml]
 securitySchemes:
    bearerAuth:
-     type: Pass Through
+     type: x-custom
      description: JWT authentication
+     describedBy:
+        headers:
+          Authorization:
+            description: X-AuthToken
+            type: string
+            required: true
      
 types:
   BaseContract:
@@ -42,27 +48,35 @@ types:
             - confirmed
             - unconfirmed
     xml:
-      name: NewContract
-
-  ContractResponse:
+      name: BaseContract
+      
+  ContractInformation:
     type: object
     properties:
-      baseContract: BaseContract
       contractId:
-        type: string
+         type: string
       createdBy:
-        type: string
+         type: string
       createdOn:
-        type: date-only    
+         type: date-only    
       links:
-        type: array
-        items:
-          properties:
-            self:
-              type: object
-              properties:
-                href:
-                  type: string
+         type: array
+         items:
+           properties:
+             self:
+               type: object
+               properties:
+                 href:
+                   type: string
+    xml:
+      name: ContractInformation
+      
+  ContractResponse:
+    type: object
+    properties:    
+      contracts:      
+        - BaseContract
+        - ContractInformation  
     xml:
       name: ContractResponse
       
@@ -77,29 +91,33 @@ types:
           wrapped: true  
     xml:
       name: ContractListResponse
-
-  PaginatedContracts:
+      
+  MetaData:
     type: object
-    properties: 
-      contracts: 
-        type: array
-        items:
-          - ContractResponse
-        xml:
-          wrapped: true
-      metadata:
-        type: object
-        properties: 
-          previous: 
-            type: string
-          next:
-            type: string
-          first:
-            type: string
-          last:
-            type: string
+    properties:
+      previous: 
+        type: string
+      next:
+        type: string
+      first:
+        type: string
+      last:
+        type: string
     xml:
-      name: PaginatedContracts                      
+      name: MetaData        
+  
+  PaginatedContracts:
+     type: object
+     properties:
+        contracts:
+          - BaseContract
+          - ContractInformation  
+        metadata:
+          - MetaData  
+     xml:
+      name: PaginatedContracts
+      
+               
   UpdateContractRequest:
     type: object
     properties: 
@@ -109,6 +127,9 @@ types:
         enum:
           - Accept
           - Deny
+      newEndDate:
+        type: date-only
+        description: Required only for Extend and Terminate operation.    
     xml:
       name: UpdateContractRequest   
 
@@ -146,12 +167,12 @@ types:
         required: false
         type: string
       pageNum:
-        description: Page number for the pagination.
+        description: Page number for the pagination. (default only if pageNum is present)
         required: false
         type: integer
         default: 1 #only if pageNum is present
       pageSize:
-        description: Page size for the pagination.
+        description: Page size for the pagination. (default only if pageSize is present)
         required: false
         type: integer
         default: 20 #only if pageSize is present

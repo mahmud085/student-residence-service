@@ -5,15 +5,23 @@ baseUri:
   value: http://{authentication-service-base-uri}/api
 
 mediaType: [application/json, application/xml]
-      
+securitySchemes:
+   bearerAuth:
+     type: x-custom
+     description: JWT authentication
+     describedBy:
+        headers:
+          Authorization:
+            description: X-AuthToken
+            type: string
+            required: true   
+     
 /users:
   /{user-id}:
     uriParameters:
       user-id: string
     get:
       description: Method to retrieve a particular user profile. Users with Admin, Caretaker and Resident roles can invoke this method. Resident users can retreive only their profiles. If a resident users invokes the method to retreive other resident user's profile then an unaothorized error response (HTTP response code 401) will be thrown.
-      headers:
-        Authorization: null
       responses:
         200:
           description: successful operation
@@ -46,6 +54,8 @@ mediaType: [application/json, application/xml]
             application/xml:
               example: |
                 {"message": "Internal server error."}
+      securedBy:
+         - bearerAuth        
 /authentication:  
   /login:
     post:
