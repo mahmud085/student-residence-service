@@ -6,8 +6,7 @@ services:
       context: database/
     ports:
       - "3306:3306"
-    networks:
-      - tuntuni
+    network_mode: host
 
   authentication:
     build:
@@ -17,8 +16,7 @@ services:
       - "8080:8080"
     depends_on:
       - db
-    networks:
-      - tuntuni
+    network_mode: host
 
   contract:
     build:
@@ -29,8 +27,7 @@ services:
     depends_on:
       - db
       - authentication
-    networks:
-      - tuntuni
+    network_mode: host
 
   appointment:
     build:
@@ -42,22 +39,16 @@ services:
       - db
       - authentication
       - contract
-    networks:
-      - tuntuni
+    network_mode: host
 
   clientapp:
     build:
       context: client-app/
     ports:
-      - "80:4200"
+      - "4200:4200"
     depends_on:
       - db
       - authentication
       - contract
-    networks:
-      - tuntuni
-
-networks:
-
-  tuntuni:
-    driver: bridge
+      - appointment
+    network_mode: host
