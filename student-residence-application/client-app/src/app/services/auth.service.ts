@@ -15,7 +15,11 @@ export class AuthService {
 	private credential: UserCredential;
 
 	get userCredential(): UserCredential {
-		let credential: string | null = window.localStorage.getItem('credential');
+        let credential: string | null = window.localStorage.getItem('credential');
+        
+        if (credential == null) {
+            credential = window.sessionStorage.getItem('credential');
+        }
 
 		if (credential != null) {
 			return JSON.parse(credential) as UserCredential;
@@ -46,11 +50,11 @@ export class AuthService {
                         role: user.userType
                     }
 
-                    	if (loginModel.isPersistent) {
-                            window.localStorage.setItem('credential', JSON.stringify(this.credential));
-                        } else {
-                            window.sessionStorage.setItem('credential', JSON.stringify(this.credential));
-                        }
+                    if (loginModel.isPersistent) {
+                        window.localStorage.setItem('credential', JSON.stringify(this.credential));
+                    } else {
+                        window.sessionStorage.setItem('credential', JSON.stringify(this.credential));
+                    }
 
                     observer.next();
                 }, (error: any): void => {
