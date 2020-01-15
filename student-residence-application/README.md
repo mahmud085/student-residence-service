@@ -14,19 +14,19 @@ Update the following file.
 /client-app/src/assets/config/config.json
 ```
 
-Edit the base URLs of the services and replace the IP address with the IP address of the docker installed in your local machine. Do not change the protocol or the port.
+Edit the base URLs of the services and replace the IP address with the IP address of the docker installed in your local machine. Do not change the protocol or the port. The existing IP address is the default cocker host IP.
 
 ```
 {
     "service": {
         "auth": {
-            "baseUrl": "http://{docker-ip-address}:8080"
+            "baseUrl": "http://192.168.99.100:8080"
         },
         "contract": {
-            "baseUrl": "http://{docker-ip-address}:8081"
+            "baseUrl": "http://192.168.99.100:8081"
         },
         "appointment": {
-            "baseUrl": "http://{docker-ip-address}:8082"
+            "baseUrl": "http://192.168.99.100:8082"
         }
     }
 }
