@@ -1,13 +1,13 @@
 {
     "service": {
         "auth": {
-            "baseUrl": "http://localhost:8080"
+            "baseUrl": "http://40.76.215.126:8080"
         },
         "contract": {
-            "baseUrl": "http://localhost:8081"
+            "baseUrl": "http://40.76.215.126:8081"
         },
         "appointment": {
-            "baseUrl": "http://localhost:8082"
+            "baseUrl": "http://40.76.215.126:8082"
         }
     }
 }
