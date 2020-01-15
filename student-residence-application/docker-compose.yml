@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  db:
+    build: 
+      context: database/
+    ports:
+      - "3306:3306"
+    networks:
+      - tuntuni
+  contract:
+    build:
+      context: .
+      dockerfile: ./services/contract/Dockerfile
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db
+    networks:
+      - tuntuni
+
+networks:
+
+  tuntuni:
+    driver: bridge
