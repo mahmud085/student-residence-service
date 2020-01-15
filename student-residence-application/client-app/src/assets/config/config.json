@@ -1,13 +1,13 @@
 {
     "service": {
         "auth": {
-            "baseUrl": "http://{docker-ip-address}:8080"
+            "baseUrl": "http://192.168.99.100:8080"
         },
         "contract": {
-            "baseUrl": "http://{docker-ip-address}:8081"
+            "baseUrl": "http://192.168.99.100:8081"
         },
         "appointment": {
-            "baseUrl": "http://{docker-ip-address}:8082"
+            "baseUrl": "http://192.168.99.100:8082"
         }
     }
 }
