@@ -1,0 +1,198 @@
+{
+	"info": {
+		"_postman_id": "0cedbfee-8c45-41fb-8fa7-2e5ce2c7af76",
+		"name": "Contract_Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create_Contracts",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBVTEiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL2F1dGhlbnRpY2F0aW9uL2xvZ2luIiwiaWF0IjoxNTc5MDM3MjQxLCJleHAiOjE1NzkwNDQ0NDF9.D9wSf32oqjqCr9SWVAx3NMmabmjUdUXMI8uG6dj4WDE",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\t{\n\t\n\t\"contractorsName\": \"Resident User 1\",\n\t\"contractorsUserId\": \"RU1\",\n\t\"contractorsEmail\": \"contract@email.com\",\n\t\"contractorsPhone\": \"+4900000000\",\n\t\"roomNumber\": \"Room_0\",\n\t\"startDate\": \"2020-01-20\",\n\t\"endDate\": \"2020-10-31\",\n\t\"status\":\"Confirmed\"\n}\n\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/contracts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"contracts"
+					]
+				},
+				"description": "http://localhost:8081/api/contracts"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Contracts",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBVTEiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL2F1dGhlbnRpY2F0aW9uL2xvZ2luIiwiaWF0IjoxNTc5MDM3MjQxLCJleHAiOjE1NzkwNDQ0NDF9.D9wSf32oqjqCr9SWVAx3NMmabmjUdUXMI8uG6dj4WDE",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/contracts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"contracts"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": ""
+						}
+					]
+				},
+				"description": "http://localhost:8081/api/contracts"
+			},
+			"response": []
+		},
+		{
+			"name": "Terminate or extend contract",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJSVTEiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL2F1dGhlbnRpY2F0aW9uL2xvZ2luIiwiaWF0IjoxNTc5MDQyODQyLCJleHAiOjE1NzkwNTAwNDJ9._kGmrR1uzB3QtW0Ua3vdpPTWX4gvpuudWrMXO4FXKls",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"operation\":\"Terminate\",\n\t\"endDate\":\"2020-04-30\"\n\t\n\t\n\t\n\t\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/contracts/900c3c1a-3412-4104-873e-c24326b7a7a8",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"contracts",
+						"900c3c1a-3412-4104-873e-c24326b7a7a8"
+					]
+				},
+				"description": "http://localhost:8081/api/contracts/900c3c1a-3412-4104-873e-c24326b7a7a8"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Contract by contract iD",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJSVTEiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL2F1dGhlbnRpY2F0aW9uL2xvZ2luIiwiaWF0IjoxNTc5MDQyODQyLCJleHAiOjE1NzkwNTAwNDJ9._kGmrR1uzB3QtW0Ua3vdpPTWX4gvpuudWrMXO4FXKls",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8081/api/contracts/900c3c1a-3412-4104-873e-c24326b7a7a8?A",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"contracts",
+						"900c3c1a-3412-4104-873e-c24326b7a7a8"
+					],
+					"query": [
+						{
+							"key": "A",
+							"value": ""
+						}
+					]
+				},
+				"description": "http://localhost:8081/api/contracts/900c3c1a-3412-4104-873e-c24326b7a7a8?A"
+			},
+			"response": []
+		},
+		{
+			"name": "get contracts for a specific user by contractor ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJSVTEiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL2F1dGhlbnRpY2F0aW9uL2xvZ2luIiwiaWF0IjoxNTc5MDQyODQyLCJleHAiOjE1NzkwNTAwNDJ9._kGmrR1uzB3QtW0Ua3vdpPTWX4gvpuudWrMXO4FXKls",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8081/api/contractors/RU1/contracts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"contractors",
+						"RU1",
+						"contracts"
+					]
+				},
+				"description": "http://localhost:8081/api/contractors/RU1/contracts"
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

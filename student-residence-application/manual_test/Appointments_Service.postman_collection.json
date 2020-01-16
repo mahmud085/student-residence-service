@@ -1,0 +1,221 @@
+{
+	"info": {
+		"_postman_id": "82517bce-9193-4ed3-8f44-85821fe07c99",
+		"name": "Appointments_Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Appoint request misc ",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJSVTEiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL2F1dGhlbnRpY2F0aW9uL2xvZ2luIiwiaWF0IjoxNTc5MjA2NTQyLCJleHAiOjE1NzkyMTM3NDJ9.Kyok4yn6t_iXbaVM1rAI-L7ngxdxpqvude32Ut30Bn4",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\n\"contractId\":\"900c3c1a-3412-4104-873e-c24326b7a7a8\",\n\"contractorsName\":\"Resident User 1\",\n\"roomNumber\":\"Room_0\",\n\"appointmentType\":\"Miscellaneous\",\n\"issue\":\"play\",\n\"desiredDate\":\"2020-04-26\",\n\"priority\":\"High\"\n\n } ",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/api/appointments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"appointments"
+					]
+				},
+				"description": "http://localhost:8082/api/appointments"
+			},
+			"response": []
+		},
+		{
+			"name": "Move in appointment req",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJSVTEiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL2F1dGhlbnRpY2F0aW9uL2xvZ2luIiwiaWF0IjoxNTc5MjA2NTQyLCJleHAiOjE1NzkyMTM3NDJ9.Kyok4yn6t_iXbaVM1rAI-L7ngxdxpqvude32Ut30Bn4",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\n\"contractId\":\"900c3c1a-3412-4104-873e-c24326b7a7a8\",\n\"contractorsName\":\"Resident User 1\",\n\"roomNumber\":\"Room_0\",\n\"appointmentType\":\"MoveIn\",\n\"issue\":\"MoveIn\",\n\"desiredDate\":\"2020-01-17\",\n\"priority\":\"High\"\n\n } ",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/api/appointments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"appointments"
+					]
+				},
+				"description": "http://localhost:8082/api/appointments"
+			},
+			"response": []
+		},
+		{
+			"name": "Get appoinments",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDVTEiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL2F1dGhlbnRpY2F0aW9uL2xvZ2luIiwiaWF0IjoxNTc5MjA3MDYyLCJleHAiOjE1NzkyMTQyNjJ9.XVX8ZMqO3ENSM4MzpGK0JLWaiSiHudi25ZH2Ad1fK3w",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8082/api/appointments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"appointments"
+					]
+				},
+				"description": "http://localhost:8082/api/appointments"
+			},
+			"response": []
+		},
+		{
+			"name": "Get appointment by ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDVTEiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL2F1dGhlbnRpY2F0aW9uL2xvZ2luIiwiaWF0IjoxNTc5MjA3MDYyLCJleHAiOjE1NzkyMTQyNjJ9.XVX8ZMqO3ENSM4MzpGK0JLWaiSiHudi25ZH2Ad1fK3w",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8082/api/appointments/24693fd3-b395-4d15-807d-58e04fb73e6a",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"appointments",
+						"24693fd3-b395-4d15-807d-58e04fb73e6a"
+					]
+				},
+				"description": "http://localhost:8082/api/appointments/24693fd3-b395-4d15-807d-58e04fb73e6a"
+			},
+			"response": []
+		},
+		{
+			"name": "accept appointment",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDVTEiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL2F1dGhlbnRpY2F0aW9uL2xvZ2luIiwiaWF0IjoxNTc5MjA3MDYyLCJleHAiOjE1NzkyMTQyNjJ9.XVX8ZMqO3ENSM4MzpGK0JLWaiSiHudi25ZH2Ad1fK3w",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\n{\n\t\"operation\":\"accept\"\n\t\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/api/appointments/24693fd3-b395-4d15-807d-58e04fb73e6a",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"appointments",
+						"24693fd3-b395-4d15-807d-58e04fb73e6a"
+					]
+				},
+				"description": "http://localhost:8082/api/appointments/24693fd3-b395-4d15-807d-58e04fb73e6a"
+			},
+			"response": []
+		},
+		{
+			"name": "Appointments for specific resident",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDVTEiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL2F1dGhlbnRpY2F0aW9uL2xvZ2luIiwiaWF0IjoxNTc5MjA3MDYyLCJleHAiOjE1NzkyMTQyNjJ9.XVX8ZMqO3ENSM4MzpGK0JLWaiSiHudi25ZH2Ad1fK3w",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8082/api/contractors/RU1/appointments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"contractors",
+						"RU1",
+						"appointments"
+					]
+				},
+				"description": "http://localhost:8082/api/contractors/RU1/appointments"
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
