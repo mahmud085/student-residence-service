@@ -1,13 +1,16 @@
 package org.contract.common.exceptions;
 
 /**
- * throws Pagination Attribute Exceptions
+ * Exception for invalid pagination attribute
  *
- * @author Mahmud
+ * @author Mohammed Mostakim Ornob
  *
  */
-
 public class PaginationAttributeException extends Exception {
+    /**
+     * Constructs PaginationAttributeException.
+     * @param message Exception message.
+     */
     public PaginationAttributeException(String message) {
         super(message);
     }

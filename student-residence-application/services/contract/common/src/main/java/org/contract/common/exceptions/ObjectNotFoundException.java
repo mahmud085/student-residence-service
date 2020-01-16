@@ -1,13 +1,16 @@
 package org.contract.common.exceptions;
 
 /**
- * throws Object Not Found Exceptions
+ * Exception for no object found error
  *
- * @author Mahmud
+ * @author Mohammed Mostakim Ornob
  *
  */
-
 public class ObjectNotFoundException extends Exception {
+    /**
+     * Constructs ObjectNotFoundException.
+     * @param message Exception message.
+     */
     public ObjectNotFoundException(String message) {
         super(message);
     }
