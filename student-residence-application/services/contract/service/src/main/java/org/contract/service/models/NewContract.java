@@ -12,6 +12,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
 
+/**
+ * contract model.
+ *
+ * @author Mahmud
+ *
+ */
+
 @XmlRootElement(name = "contract")
 public class NewContract {
     @HasValue(message = Messages.REQUIRED_CONTRACTORS_NAME)

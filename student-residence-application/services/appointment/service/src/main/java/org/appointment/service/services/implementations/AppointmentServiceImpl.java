@@ -34,6 +34,14 @@ public class AppointmentServiceImpl implements AppointmentService {
 			throw new ValidationException(Messages.INVALID_ROOM_NUMBER);
 		}
 
+		Appointment oldAppointment = findExistingAppointment(contract.getContractorsUserId(), newAppointment);
+		if(oldAppointment != null) {
+			LocalDate today = LocalDate.now();
+			if(oldAppointment.getStatus().equals(AppointmentStatus.Received) && oldAppointment.getDesiredDate().isAfter(today)) {
+				throw new InvalidOperationException(Messages.APPOINTMENT_PENDING);
+			}
+		}
+
 		if (newAppointment.getAppointmentType() == AppointmentType.MoveIn) {
 
 			if (!contract.getStatus().equals("Confirmed")) {
@@ -44,11 +52,11 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 			if (newAppointment.getDesiredDate().isBefore(twoWeeksBefore)) {
 
-				throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
+				throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE_MOVEIN_OUT);
 			}
 			if (newAppointment.getDesiredDate().isAfter(contract.getStartDate())) {
 
-				throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
+				throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE_MOVEIN_OUT);
 			}
 
 		}
@@ -58,14 +66,14 @@ public class AppointmentServiceImpl implements AppointmentService {
 			LocalDate twoWeeksBefore = contract.getEndDate().minusWeeks(2);
 
 			if (newAppointment.getDesiredDate().isBefore(twoWeeksBefore)) {
-				throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
+				throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE_MOVEIN_OUT);
 			}
 			if (newAppointment.getDesiredDate().isAfter(contract.getEndDate())) {
-				throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
+				throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE_MOVEIN_OUT);
 			}
 		}
 
-		if(newAppointment.getDesiredDate().isBefore(LocalDate.now()))
+		if(newAppointment.getDesiredDate().equals(LocalDate.now()) || newAppointment.getDesiredDate().isBefore(LocalDate.now()))
 			throw new InvalidOperationException(Messages.INVALID_DESIRED_DATE);
 
 		Appointment appointment = new Appointment() {
@@ -165,5 +173,16 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Override
 	public List<Appointment> getAppointmentsByContractor(String contractorsUserID) {
 		return appointmentRepository.getAll(contractorsUserID);
+	}
+
+	private Appointment findExistingAppointment(String contractorsUserId, NewAppointment newAppointment) {
+		List<Appointment> appointments = getAppointmentsByContractor(contractorsUserId);
+
+		for(Appointment appointment: appointments) {
+			if(appointment.getRoomNumber().equals(newAppointment.getRoomNumber()) && appointment.getAppointmentType().equals(newAppointment.getAppointmentType())) {
+				return appointment;
+			}
+		}
+		return null;
 	}
 }
