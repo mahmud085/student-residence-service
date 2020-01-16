@@ -74,9 +74,50 @@ types:
   ContractResponse:
     type: object
     properties:    
-      contracts:      
-        - BaseContract
-        - ContractInformation  
+      contractorsUserId:
+        type: string
+        required: true
+        description: A valid resident user id is required.
+      contractorsName:
+        type: string
+        required: true
+      contractorsEmail:
+        type: string
+        required: true
+      contractorsPhone:
+        type: string
+        required: true
+      roomNumber:
+        type: string
+        required: true
+      startDate:
+        type: date-only
+        required: true
+      endDate:
+        type: date-only
+        required: true
+      status:
+        type: array
+        description: contract status
+        items:
+          enum:
+            - confirmed
+            - unconfirmed
+      contractId:
+         type: string
+      createdBy:
+         type: string
+      createdOn:
+         type: date-only    
+      links:
+         type: array
+         items:
+           properties:
+             self:
+               type: object
+               properties:
+                 href:
+                   type: string      
     xml:
       name: ContractResponse
       
@@ -234,7 +275,7 @@ types:
         - bearerAuth
 /contractors/{contractors-user-id}/contracts:
   uriParameters:
-        contract-id: string
+        contractors-user-id: string
   get:
     description: Method to retrieve contracts of a particular contractor. Users only with Admin and Resident roles can invoke this method. Resident users can retreive only their contracts. If a resident user invokes the method to retreive other resident user's contrct then an unaothorized error response (HTTP response code 401) will be thrown.      
     responses:
