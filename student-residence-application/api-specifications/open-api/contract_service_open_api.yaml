@@ -1,0 +1,339 @@
+openapi: 3.0.0
+
+info:
+  title: Contract Service
+  version: 1.0.0 
+
+servers:
+  - url: http://{contract-service-base-uri}/api
+
+tags:
+  - name: contracts
+    description: Methods for contract resources
+  - name: contractors
+    description: Methods for contractor resources
+
+paths:
+  /contracts:
+    post:
+      tags:
+        - contracts
+      summary: Adds a new contract
+      description: Method to add a new contract. Users only with Admin role can invoke this method.
+      requestBody:
+        description: Contract object that needs to be added
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BaseContract'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/BaseContract'
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ContractResponse'
+        400:
+          $ref: '#/components/responses/ValidationFailedError'
+        401:
+          $ref: '#/components/responses/AuthorizationError'
+        412:
+          $ref: '#/components/responses/InvalidOperationError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+      security:
+      - bearerAuth: []
+
+    get:
+      tags:
+        - contracts
+      summary: Retrieves contracts
+      description: Method to retrieve multiple contracts. Use allowed query parameters to filter and pagination. Users only with Admin role can invoke this method.
+      parameters:
+        - in: query
+          name: contractorsName
+          description: Contractors name to filter by
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: pageNum
+          description: Page number for the pagination.
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            default: 1 (only if pageSize is present)
+        - in: query
+          name: pageSize
+          description: Page size for the pagination.
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 50
+            default: 20 (only if pageNum is present)
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedContracts'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/PaginatedContracts'
+        401:
+          $ref: '#/components/responses/AuthorizationError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - bearerAuth: []
+  
+  /contracts/{contract-id}:
+    get:
+      tags:
+        - contracts
+      summary: Retrieves a contract
+      description: Method to retrieve a particular contract. Users only with Admin and Resident roles can invoke this method. Resident users can retreive only their contracts. If a resident user invokes the method to retreive other resident user's contrct then an unaothorized error response (HTTP response code 401) will be thrown.
+      parameters:
+        - in: path
+          name: contract-id
+          description: ID of the contract to be retreived
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ContractResponse'
+        401:
+          $ref: '#/components/responses/AuthorizationError'
+        404:
+          $ref: '#/components/responses/ResourceNotFoundError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - bearerAuth: []
+        
+    patch:
+      tags:
+        - contracts
+      summary: Updates a contract to confirm, extend or terminate
+      description: Method to confirm/extend/terminate a particular contract. Users only with Resident role can invoke this method. Resident users can confirm/extend/confirm only their contracts. A contract can only be confirmed no later than two (2) weeks after it's creation. A cotract can only be extended/terminateed no later than three (3) months before it's current end date. Maximum extention period is six (6) months.
+      parameters:
+        - in: path
+          name: contract-id
+          description: Contract ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateContractRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/UpdateContractRequest'
+      responses:
+        200:
+          description: Successful operation
+        400:
+          $ref: '#/components/responses/ValidationFailedError'
+        401:
+          $ref: '#/components/responses/AuthorizationError'
+        404:
+          $ref: '#/components/responses/ResourceNotFoundError'
+        412:
+          $ref: '#/components/responses/InvalidOperationError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - bearerAuth: []
+        
+  /contractors/{contractors-user-id}/contracts:
+    get:
+      tags:
+        - contractors
+      summary: Retrieves contracts of a contractor
+      description: Method to retrieve contracts of a particular contractor. Users only with Admin and Resident roles can invoke this method. Resident users can retreive only their contracts. If a resident user invokes the method to retreive other resident user's contrct then an unaothorized error response (HTTP response code 401) will be thrown.
+      parameters:
+        - in: path
+          name: contractors-user-id
+          description: ID of the resident user of whom the contracts to be retreived
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractListResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ContractListResponse'
+        400:
+          $ref: '#/components/responses/ValidationFailedError'
+        401:
+          $ref: '#/components/responses/AuthorizationError'
+        404:
+          $ref: '#/components/responses/ResourceNotFoundError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    BaseContract:
+      type: object
+      properties:
+        contractorsUserId:
+          type: string
+          description: A valid resident user id is required
+        contractorsName:
+          type: string
+        contractorsEmail:
+          type: string
+          description: A valid email is required
+        contractorsPhone:
+          type: string
+          description: A valid phome number is required
+        roomNumber:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        status:
+          type: string
+          enum:
+            - Confirmed
+            - Unconfirmed
+      required:
+        - contractorsUserId
+        - contractorsName
+        - contractorsEmail
+        - contractorsPhone
+        - roomNumber
+        - startDate
+        - endDate
+        - status
+      xml:
+        name: contract
+        
+    ContractResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseContract'
+        - type: object
+      type: object
+      properties:
+        contractId:
+          type: string
+        creadtedBy:
+          type: string
+        createdOn:
+          type: string
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              href:
+                type: string
+              rel:
+                type: string
+      xml:
+        name: contract
+        
+    ContractListResponse:
+      type: object
+      properties:
+        contracts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContractResponse'
+          xml:
+            wrapped: true
+      xml:
+        name: response
+        
+    PaginatedContracts:
+      type: object
+      properties:
+        contracts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContractResponse'
+          xml:
+            wrapped: true
+        metadata:
+          type: object
+          properties:
+            previous:
+              type: string
+            next:
+              type: string
+            first:
+              type: string
+            last:
+              type: string
+      xml:
+        name: response
+
+    UpdateContractRequest:
+      type: object
+      properties:
+        operation:
+          type: string
+          enum:
+            - Confirm
+            - Extend
+            - Terminate
+        newEndDate:
+          type: string
+          format: date
+          description: Required only for Extend and Terminate operation.
+      required:
+        - operation
+      xml:
+        name: updateRequest
+
+  responses:
+    ResourceNotFoundError:
+      description: No resource found with the specified ID.
+    ValidationFailedError:
+      description: Validation failed.
+    InvalidOperationError:
+      description: Invalid operation.
+    AuthorizationError:
+      description: Missing/invalid/expired access token or role not valid for the operation.
+    InternalServerError:
+      description: Internal server error.

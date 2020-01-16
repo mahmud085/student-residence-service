@@ -1,0 +1,169 @@
+openapi: 3.0.0
+
+info:
+  title: Authentication Service
+  version: 1.0.0 
+
+servers:
+  - url: http://{authentication-service-base-uri}/api
+
+tags:
+  - name: users
+    description: Methods for user resources
+  - name: authentication
+    description: Methods for authentication
+
+paths:
+  /users/{user-id}:
+    get:
+      tags:
+        - users
+      summary: Retrieves a user
+      description: Method to retrieve a particular user profile. Users with Admin, Caretaker and Resident roles can invoke this method. Resident users can retreive only their profiles. If a resident users invokes the method to retreive other resident user's profile then an unaothorized error response (HTTP response code 401) will be thrown.
+      parameters:
+        - in: path
+          name: user-id
+          description: ID of the user to be retreived
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+        401:
+          $ref: '#/components/responses/AuthorizationError'
+        404:
+          $ref: '#/components/responses/ResourceNotFoundError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - bearerAuth: []
+        
+  /authentication/login:
+    post:
+      tags:
+        - authentication
+      summary: Logs in a user.
+      description: Method for logging in.
+      requestBody:
+        description: Login Credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        400:
+          $ref: '#/components/responses/ValidationFailedError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+          
+  /authentication/accessToken/{access-token}/validation:
+    get:
+      tags:
+      - authentication
+      summary: Validates an access token
+      description: Method to validate an access token.
+      parameters:
+        - in: path
+          name: access-token
+          description: Access token to validate
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          $ref: '#/components/responses/ValidationFailedError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+      
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        userId:
+          type: string
+        userName:
+          type: string
+        userEmail:
+          type: string
+        userType:
+          type: string
+          enum:
+          - Admin
+          - Caretaker
+          - Resident
+      xml:
+        name: user
+  
+    LoginRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+        password:
+          type: string
+      required:
+        - userId
+        - password
+      xml:
+        name: loginRequest
+        
+    LoginResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+      required:
+        - userId
+        - password
+      xml:
+        name: response
+
+  responses:
+    ResourceNotFoundError:
+      description: No resource found with the specified ID.
+    ValidationFailedError:
+      description: Validation failed.
+    InvalidOperationError:
+      description: Invalid operation.
+    AuthorizationError:
+      description: Missing/invalid/expired access token or role not valid for the operation.
+    InternalServerError:
+      description: Internal server error.

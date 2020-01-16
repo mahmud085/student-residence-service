@@ -1,0 +1,13 @@
+{
+    "service": {
+        "auth": {
+            "baseUrl": "http://40.76.215.126:8080"
+        },
+        "contract": {
+            "baseUrl": "http://40.76.215.126:8081"
+        },
+        "appointment": {
+            "baseUrl": "http://40.76.215.126:8082"
+        }
+    }
+}

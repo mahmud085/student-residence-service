@@ -1,0 +1,326 @@
+FORMAT: 1A
+HOST: http://appointment-service-base-uri/api
+
+# Appointment Service
+
+
+# Group appointments
+
+Methods for appointment resources
+
+## Appointments [/appointments]
+
+### Adds a new appointment [POST]
+Method to add a new appointment. Users only with Resident role can invoke this method. Move In appointment can only be created with the desired date not before than two (2) weeks before the contract start date. Move Out appointment can only be created with the desired date not before than two (2) weeks before the contract end date.
+
++ Request (application/json)
+
+    + Attributes (BaseAppointment)
+
+
+
++ Response 200 (application/json)
+
+        Successful operation
+
+    + Attributes (AppointmentResponse)
+
+
+
++ Response 400 
+
+        Validation failed.
+
+
+
+
++ Response 401 
+
+        Missing/invalid/expired access token or role not valid for the operation.
+
+
+
+
++ Response 412 
+
+        Invalid operation.
+
+
+
+
++ Response 500 
+
+        Internal server error.
+
+
+
+
+
+## Appointments [/appointments{?desiredDate,pageNum,pageSize}]
+
+### Retrieves appointments [GET]
+Method to retrieve multiple appointments. Use allowed query parameters to filter and pagination. Users only with Admin and Caretaker roles can invoke this method.
++ Parameters
+    + desiredDate (string, optional)
+
+        Desired Date to filter by
+
+    + pageNum (number, optional) -
+
+        Page number for the pagination.
+
+        + Default: 1 (only if pageSize is present)
+    + pageSize (number, optional) -
+
+        Page size for the pagination.
+        
+        + Default: 20 (only if pageNum is present)
+
++ Response 200 (application/json)
+
+        Successful operation
+
+    + Attributes (PaginatedAppointments)
+
+
+
++ Response 401 
+
+        Missing/invalid/expired access token or role not valid for the operation.
+
+
+
+
++ Response 500 
+
+        Internal server error.
+
+
+
+
+
+## Appointments By Appointment Id [/appointments/{appointment_id}]
+
++ Parameters
+    + appointment_id (string, required)
+
+        ID of the appointment to be retreived
+
+
+### Retrieves a appointment [GET]
+Method to retrieve a particular appointment. Users with Admin, Caretaker and Resident roles can invoke this method. Resident users can retreive only their appointments. If a resident user invokes the method to retreive other resident user's appointments then an unaothorized error response (HTTP response code 401) will be thrown.
+
++ Response 200 (application/json)
+
+        Successful operation
+
+    + Attributes (AppointmentResponse)
+
+
+
++ Response 401 
+
+        Missing/invalid/expired access token or role not valid for the operation.
+
+
+
+
++ Response 404 
+
+        No resource found with the specified ID.
+
+
+
+
++ Response 500 
+
+        Internal server error.
+
+
+
+
+### Updates a appointment to accept or deny [PATCH]
+Method to accept or deny a particular appointment. Users only with Caretaker role can invoke this method. A appointment can only be accepted or denied before the desired date.
+
++ Request (application/json)
+
+    + Attributes (UpdateAppointmentRequest)
+
+
+
++ Response 200 (application/json)
+
+        Successful operation
+
++ Response 401 
+
+        Missing/invalid/expired access token or role not valid for the operation.
+
+
+
+
++ Response 404 
+
+        No resource found with the specified ID.
+
+
+
+
++ Response 412 
+
+        Invalid operation.
+
+
+
+
++ Response 500 
+
+        Internal server error.
+
+
+
+
+
+
+# Group contractors
+
+Methods for contractor resources
+
+## Contractors Appointments [/contractors/{contractors_user_id}/appointments]
+
++ Parameters
+    + contractors_user_id (string, required)
+
+        ID of the resident user of whom the appointments to be retreived
+
+
+### Retrieves appointments of a contractor [GET]
+Method to retrieve appointments of a particular contractor. Users with Admin, Caretaker and Resident roles can invoke this method. Resident users can retreive only their appointments. If a resident users invokes the method to retreive other resident user's appointment then an unaothorized error response (HTTP response code 401) will be thrown.
+
++ Response 200 (application/json)
+
+        Successful operation
+
+    + Attributes (AppointmentListResponse)
+
+
+
++ Response 400 
+
+        Validation failed.
+
+
+
+
++ Response 401 
+
+        Missing/invalid/expired access token or role not valid for the operation.
+
+
+
+
++ Response 404 
+
+        No resource found with the specified ID.
+
+
+
+
++ Response 500 
+
+        Internal server error.
+
+
+
+
+
+
+# Data Structures
+
+## BaseAppointment (object)
+
+
+### Properties
++ `contractId` (string, required) - A valid contract user id is required
++ `contractorsName` (string, required) 
++ `roomNumber` (string, required) 
++ `appointmentType` (enum[string], required) 
+    + `MoveIn`
+    + `MoveOut`
+    + `Miscellaneous`
++ `issue` (string, required) 
++ `desiredDate` (string, required) 
++ `priority` (enum[string], required) 
+    + `Low`
+    + `Normal`
+    + `High`
+
+
+## AppointmentResponse (object)
+
+
+### Properties
++ `appointmentId` (string, required) 
++ `status` (enum[string], required) 
+    + `Received`
+    + `Accepted`
+    + `Denied`
++ `creadtedBy` (string, required) 
++ `createdOn` (string, required) 
++ `links` (array[Link], required) 
++ `contractId` (string, required) - A valid contract user id is required
++ `contractorsName` (string, required) 
++ `roomNumber` (string, required) 
++ `appointmentType` (enum[string], required) 
+    + `MoveIn`
+    + `MoveOut`
+    + `Miscellaneous`
++ `issue` (string, required) 
++ `desiredDate` (string, required) 
++ `priority` (enum[string], required) 
+    + `Low`
+    + `Normal`
+    + `High`
+
+
+## AppointmentListResponse (object)
+
+
+### Properties
++ `appointments` (array[AppointmentResponse], optional) 
+
+
+## PaginatedAppointments (object)
+
+
+### Properties
++ `appointments` (array[AppointmentResponse], optional) 
++ `metadata` (Metadata, optional) 
+
+
+## UpdateAppointmentRequest (object)
+
+
+### Properties
++ `operation` (enum[string], required) 
+    + `Accept`
+    + `Deny`
+
+
+## Link (object)
+
+
+### Properties
++ `href` (string, optional) 
++ `rel` (string, optional) 
+
+
+## Metadata (object)
+
+
+### Properties
++ `previous` (string, optional) 
++ `next` (string, optional) 
++ `first` (string, optional) 
++ `last` (string, optional) 
+

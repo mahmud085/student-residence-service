@@ -1,0 +1,325 @@
+FORMAT: 1A
+HOST: http://contract-service-base-uri/api
+
+# Contract Service
+
+
+# Group contracts
+
+Methods for contract resources
+
+## Contracts [/contracts]
+
+### Adds a new contract [POST]
+Method to add a new contract. Users only with Admin role can invoke this method.
+
++ Request (application/json)
+
+    + Attributes (BaseContract)
+
+
+
++ Response 200 (application/json)
+
+        Successful operation
+
+    + Attributes (ContractResponse)
+
+
+
++ Response 400 
+
+        Validation failed.
+
+
+
+
++ Response 401 
+
+        Missing/invalid/expired access token or role not valid for the operation.
+
+
+
+
++ Response 412 
+
+        Invalid operation.
+
+
+
+
++ Response 500 
+
+        Internal server error.
+
+
+
+
+
+## Contracts [/contracts{?contractorsName,pageNum,pageSize}]
+
+### Retrieves contracts [GET]
+Method to retrieve multiple contracts. Use allowed query parameters to filter and pagination. Users only with Admin role can invoke this method.
++ Parameters
+    + contractorsName (string, optional)
+
+        Contractors name to filter by
+
+    + pageNum (number, optional) -
+
+        Page number for the pagination.
+
+        + Default: 1 (only if pageSize is present)
+    + pageSize (number, optional) -
+
+        Page size for the pagination.
+
+        + Default: 20 (only if pageNum is present)
+
++ Response 200 (application/json)
+
+        Successful operation
+
+    + Attributes (PaginatedContracts)
+
+
+
++ Response 401 
+
+        Missing/invalid/expired access token or role not valid for the operation.
+
+
+
+
++ Response 500 
+
+        Internal server error.
+
+
+
+
+
+## Contracts By Contract Id [/contracts/{contract_id}]
+
++ Parameters
+    + contract_id (string, required)
+
+        ID of the contract to be retreived
+
+
+### Retrieves a contract [GET]
+Method to retrieve a particular contract. Users only with Admin and Resident roles can invoke this method. Resident users can retreive only their contracts. If a resident user invokes the method to retreive other resident user's contrct then an unaothorized error response (HTTP response code 401) will be thrown.
+
++ Response 200 (application/json)
+
+        Successful operation
+
+    + Attributes (ContractResponse)
+
+
+
++ Response 401 
+
+        Missing/invalid/expired access token or role not valid for the operation.
+
+
+
+
++ Response 404 
+
+        No resource found with the specified ID.
+
+
+
+
++ Response 500 
+
+        Internal server error.
+
+
+
+
+### Updates a contract to confirm extend or terminate [PUT]
+Method to confirm/extend/terminate a particular contract. Users only with Resident role can invoke this method. Resident users can confirm/extend/confirm only their contracts. A contract can only be confirmed no later than two (2) weeks after it's creation. A cotract can only be extended/terminateed no later than three (3) months before it's current end date. Maximum extention period is six (6) months.
+
++ Request (application/json)
+
+    + Attributes (UpdateContractRequest)
+
+
+
++ Response 200 
+
+
+
++ Response 400 
+
+        Validation failed.
+
+
+
+
++ Response 401 
+
+        Missing/invalid/expired access token or role not valid for the operation.
+
+
+
+
++ Response 404 
+
+        No resource found with the specified ID.
+
+
+
+
++ Response 412 
+
+        Invalid operation.
+
+
+
+
++ Response 500 
+
+        Internal server error.
+
+
+
+
+
+
+# Group contractors
+
+Methods for contractor resources
+
+## Contractors Contracts [/contractors/{contractors_user_id}/contracts]
+
++ Parameters
+    + contractors_user_id (string, required)
+
+        ID of the resident user of whom the contracts to be retreived
+
+
+### Retrieves contracts of a contractor [GET]
+Method to retrieve contracts of a particular contractor. Users only with Admin and Resident roles can invoke this method. Resident users can retreive only their contracts. If a resident user invokes the method to retreive other resident user's contrct then an unaothorized error response (HTTP response code 401) will be thrown.
+
++ Response 200 (application/json)
+
+        Successful operation
+
+    + Attributes (ContractListResponse)
+
+
+
++ Response 400 
+
+        Validation failed.
+
+
+
+
++ Response 401 
+
+        Missing/invalid/expired access token or role not valid for the operation.
+
+
+
+
++ Response 404 
+
+        No resource found with the specified ID.
+
+
+
+
++ Response 500 
+
+        Internal server error.
+
+
+
+
+
+
+# Data Structures
+
+## BaseContract (object)
+
+
+### Properties
++ `contractorsUserId` (string, required) - A valid resident user id is required
++ `contractorsName` (string, required) 
++ `contractorsEmail` (string, required) - A valid email is required
++ `contractorsPhone` (string, required) - A valid phome number is required
++ `roomNumber` (string, required) 
++ `startDate` (string, required) 
++ `endDate` (string, required) 
++ `status` (enum[string], required) 
+    + `Confirmed`
+    + `Unconfirmed`
+
+
+## ContractResponse (object)
+
+
+### Properties
++ `contractId` (string, required) 
++ `creadtedBy` (string, required) 
++ `createdOn` (string, required) 
++ `links` (array[Link], required) 
++ `contractorsUserId` (string, required) - A valid resident user id is required
++ `contractorsName` (string, required) 
++ `contractorsEmail` (string, required) - A valid email is required
++ `contractorsPhone` (string, required) - A valid phome number is required
++ `roomNumber` (string, required) 
++ `startDate` (string, required) 
++ `endDate` (string, required) 
++ `status` (enum[string], required) 
+    + `Confirmed`
+    + `Unconfirmed`
+
+
+## ContractListResponse (object)
+
+
+### Properties
++ `contracts` (array[ContractResponse], optional) 
+
+
+## PaginatedContracts (object)
+
+
+### Properties
++ `contracts` (array[ContractResponse], optional) 
++ `metadata` (Metadata, optional) 
+
+
+## UpdateContractRequest (object)
+
+
+### Properties
++ `operation` (enum[string], required) 
+    + `Confirm`
+    + `Extend`
+    + `Terminate`
++ `newEndDate` (string, optional) - Required only for Extend and Terminate operation.
+
+
+## Link (object)
+
+
+### Properties
++ `href` (string, optional) 
++ `rel` (string, optional) 
+
+
+## Metadata (object)
+
+
+### Properties
++ `previous` (string, optional) 
++ `next` (string, optional) 
++ `first` (string, optional) 
++ `last` (string, optional) 
+

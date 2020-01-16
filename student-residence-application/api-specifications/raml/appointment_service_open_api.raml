@@ -1,0 +1,322 @@
+#%RAML 1.0
+title: Appointment Service
+version: 1.0.0 
+baseUri: http://{appointment-service-base-uri}/api
+mediaType: [application/json, application/xml]
+
+securitySchemes:
+   bearerAuth:
+     type: x-custom
+     description: JWT authentication
+     describedBy:
+        headers:
+          Authorization:
+            description: X-AuthToken
+            type: string
+            required: true    
+
+types:
+  BaseAppointment:
+    type: object
+    properties:      
+      contractId:
+        type: string
+        required: true
+        description: A valid contract user id is required.
+      contractorsName:
+        type: string
+        required: true
+      roomNumber:
+        type: string
+        required: true
+      appointmentType:
+        type: array
+        required: true
+        items:
+          enum:
+            - moveIn
+            - moveOut
+            - miscellaneous 
+      issue:
+        type: string
+        required: true
+        maxLength: 200
+      desiredDate:
+        type: date-only
+        required: true
+      priority:
+        type: array
+        required: true
+        items:
+          enum:
+            - low
+            - normal
+            - high      
+    xml:
+      name: BaseAppointment
+      
+  AppointmentInformation:
+    type: object
+    properties:
+      appointmentId:
+        type: string
+      status:
+        type: array
+        items:
+          enum:
+            - Received
+            - Accepted
+            - Denied  
+      createdOn:
+        type: date-only  
+      links:
+        type: array
+        items:
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+    xml:
+      name: AppointmentInformation
+      
+  AppointmentResponse:
+    type: object
+    properties:
+      contractId:
+        type: string
+        required: true
+        description: A valid contract user id is required.
+      contractorsName:
+        type: string
+        required: true
+      roomNumber:
+        type: string
+        required: true
+      appointmentType:
+        type: array
+        required: true
+        items:
+          enum:
+            - moveIn
+            - moveOut
+            - miscellaneous 
+      issue:
+        type: string
+        required: true
+        maxLength: 200
+      desiredDate:
+        type: date-only
+        required: true
+      priority:
+        type: array
+        required: true
+        items:
+          enum:
+            - low
+            - normal
+            - high   
+      appointmentId:
+        type: string
+      status:
+        type: array
+        items:
+          enum:
+            - Received
+            - Accepted
+            - Denied  
+      createdOn:
+        type: date-only  
+      links:
+        type: array
+        items:
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+      
+    xml:
+      name: AppointmentResponse
+
+  AppointmentListResponse:
+    type: object
+    properties:
+      appointments:
+        type: array
+        items:
+          - AppointmentResponse
+        xml:
+         wrapped: true     
+    xml:
+      name: response
+  
+  MetaData:
+    type: object
+    properties:
+      previous: 
+        type: string
+      next:
+        type: string
+      first:
+        type: string
+      last:
+        type: string
+    xml:
+      name: MetaData 
+          
+  PaginatedAppointments:
+     type: object
+     properties:
+        appointments:
+          - BaseAppointment
+          - AppointmentInformation  
+        metadata:
+          - MetaData  
+     xml:
+      name: PaginatedAppointments
+                        
+  UpdateAppointmentRequest:
+    type: object
+    properties: 
+      operation: 
+        type: string
+        required: true
+        enum:
+          - Accept
+          - Deny
+    xml:
+      name: UpdateAppointmentRequest          
+
+/appointments:
+  post:
+    description:  Method to add a new appointment. Users only with Resident role can invoke this method. Move In appointment can only be created with the desired date not before than two (2) weeks before the contract start date. Move Out appointment can only be created with the desired date not before than two (2) weeks before the contract end date.
+    body:
+      application/json:
+        type: BaseAppointment        
+      application/xml:
+        type: BaseAppointment
+    responses:
+      200:
+        description: Successful operation
+        body:
+          application/json:
+            type: AppointmentResponse
+          application/xml:
+            type: AppointmentResponse
+      400:
+        description: Validation failed.
+      401:
+        description: Missing/invalid/expired access token or role not valid for the operation.
+      412:
+        description: Invalid operation.
+      500:
+        description: Internal server error.  
+    securedBy:
+      - bearerAuth
+
+  get:
+    description: Method to retrieve multiple appointments. Use allowed query parameters to filter and pagination. Users only with Admin and Caretaker roles can invoke this method.
+    queryParameters:
+      desiredDate:
+        displayName: Desired Date
+        description: Date to filter by
+        required: false
+        type: date-only
+      pageNum:
+        displayName: pageNum
+        description: Page number for the pagination. (default only if pageNum is present)
+        required: false
+        type: integer
+        default: 1 #only if pageNum is present
+      pageSize:
+        displayName: pageSize
+        description: Page size for the pagination. (default only if pageSize is present)
+        required: false
+        type: integer
+        default: 20 #only if pageSize is present
+        minimum: 1
+        maximum: 50
+    responses:
+      200:
+        description: Successful operation
+        body:
+          application/json:
+            type: PaginatedAppointments
+          application/xml:
+            type: PaginatedAppointments
+      401:
+        description: Missing/invalid/expired access token or role not valid for the operation.
+      500:
+        description: Internal server error. 
+    securedBy:
+      - bearerAuth
+
+  /{appointment-id}:
+    uriParameters:
+        appointment-id: string
+    get:
+      description: Method to retrieve a particular appointment. Users with Admin, Caretaker and Resident roles can invoke this method. Resident users can retreive only their appointments. If a resident user invokes the method to retreive other resident user's appointments then an unaothorized error response (HTTP response code 401) will be thrown.
+      responses:
+        200:
+          description: Successful operation
+          body:
+            application/json:
+              type: AppointmentResponse
+            application/xml:
+              type: AppointmentResponse
+        401:
+          description: Missing/invalid/expired access token or role not valid for the operation.
+        404:
+          description: No resource found with the specified ID.
+        500:
+          description: Internal server error.
+      securedBy:
+        - bearerAuth
+
+    patch:
+      description: Method to accept or deny a particular appointment. Users only with Caretaker role can invoke this method. A appointment can only be accepted or denied before the desired date.
+      body:
+        application/json:
+          type: UpdateAppointmentRequest        
+        application/xml:
+          type: UpdateAppointmentRequest
+      responses:
+        200:
+          description: Successful operation
+        401:
+          description: Missing/invalid/expired access token or role not valid for the operation.
+        404:
+          description: No resource found with the specified ID.
+        412:
+          description: Invalid operation..
+        500:
+          description: Internal server error. 
+      securedBy:
+        - bearerAuth
+/contractors/{contractors-user-id}/appointments:
+  uriParameters:
+    contractors-user-id: string
+  get:
+    description: Method to retrieve appointments of a particular contractor. Users with Admin, Caretaker and Resident roles can invoke this method. Resident users can retreive only their appointments. If a resident users invokes the method to retreive other resident user's appointment then an unaothorized error response (HTTP response code 401) will be thrown.
+    responses:
+        200:
+          description: Successful operation
+          body:
+            application/json:
+              type: AppointmentListResponse
+            application/xml:
+              type: AppointmentListResponse
+        400:
+          description: Validation failed.      
+        401:
+          description: Missing/invalid/expired access token or role not valid for the operation.
+        404:
+          description: No resource found with the specified ID.
+        500:
+          description: Internal server error.
+    securedBy:
+        - bearerAuth  
+        
