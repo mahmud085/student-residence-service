@@ -20,13 +20,15 @@ public class Messages {
     public static final String APPOINTMENT_NOT_FOUND="Appointment Not Found With this ID.";
     public static final String APPOINTMENT_ALREADY_ACCEPTED="Appointment is already accepted.";
     public static final String APPOINTMENT_ALREADY_DENIED="Appointment is already denied.";
+    public static final String APPOINTMENT_PENDING="An Appointment is already pending for this room.";
     public static final String APPOINTMENT_DATE_EXPIRED="You need to accept appointment before desired date.";
 
     public static final String INVALID_PAGE_NUM = "Invalid 'pageNum' value.";
     public static final String INVALID_PAGE_SIZE = "Invalid 'pageSize' value.";
     public static final String INVALID_ROOM_NUMBER = "Valid Room Number is required.";
     public static final String INVALID_CONTRACT = "Contract is not confirmed yet.";
-    public static final String INVALID_DESIRED_DATE = "Appointment desired date should be between two weeks before start or end date.";
+    public static final String INVALID_DESIRED_DATE = "Invalid Desired Date! Date must be one day after today";
+    public static final String INVALID_DESIRED_DATE_MOVEIN_OUT = "Appointment desired date should be between two weeks before start or end date.";
     public static final String INVALID_DESIRED_DATE_STRING = "Desired Date is not valid.";
     public static final String INVALID_EXPIRED_ACCESS_TOKEN = "Access Token is invalid/expired. Please login again to refresh the access token.";
     public static final String INVALID_ISSUE_LENGTH = "Issue can be maximum 200 characters long.";

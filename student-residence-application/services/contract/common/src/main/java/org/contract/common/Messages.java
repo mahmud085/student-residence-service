@@ -1,5 +1,10 @@
 package org.contract.common;
 
+/**
+ * Messages to show in response.
+ *
+ */
+
 public class Messages {
     public static final String INTERNAL_ERROR = "An internal error occurred.";
     public static final String CONTRACT_ID_REQUIRED = "Contract ID is required.";
