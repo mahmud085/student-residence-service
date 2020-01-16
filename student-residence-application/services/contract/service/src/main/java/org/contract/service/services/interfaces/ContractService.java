@@ -10,97 +10,95 @@ import org.contract.service.models.NewContract;
 
 import java.time.LocalDate;
 import java.util.List;
+
 /**
- * class manages all the end points of contract service.
+ * ContractService is the service interface for contract.
+ *
+ * @author Mohammed Mostakim Ornob
  *
  */
 public interface ContractService {
     /**
-     *  Method to create a new contract.
-     *  Users only with Admin role can invoke this method.
-     *
-     *  @param  newContract  a contract object giving the information needed to create a contract
-     *  @param  contextUserId
-     *  @return      a newly created Contract
+     * Creates a contract.
+     * @param newContract Object containing data for the contract to be created.
+     * @param contextUserId User Id of the user who is creating the contract.
+     * @throws ValidationException Thrown if the given data for creating the contract is invalid.
+     * @throws InvalidOperationException Thrown if the creation operation is invalid.
+     * @return Created contract.
      */
     Contract createContract(NewContract newContract, String contextUserId) throws ValidationException, InvalidOperationException;
 
     /**
-     *  Method to retrieve a particular contract.
-     *  Users only with Admin and Resident roles can invoke this method.
-     *  Resident users can retreive only their contracts.
-     *
-     *  @param  contractId  ID of the contract to be retreived
-     *  @return   specific Contract with the given contractId
+     * Retrieves a specific contract.
+     * @param contractId Id of the contract to be retrieved.
+     * @return Contract with the specified id.
+     * @throws ObjectNotFoundException Thrown if no contract is found with the specific id.
      */
     Contract getContract(String contractId) throws ObjectNotFoundException;
 
     /**
-     *  Method to retrieve multiple contracts.
-     *  Use allowed query parameters to filter and pagination.
-     *  Users only with Admin role can invoke this method.
-     *
-     *  @return   list of contracts
+     * Retrieves all contracts.
+     * @return List of all contracts. Returns empty list if no contract is found.
      */
     List<Contract> getContracts();
 
     /**
-     *  Method to retrieve contracts of a particular contractor.
-     *
-     *  @param  contractorsUserID  ID of the resident user of whom the contracts to be retreived
-     *  @return   list of contracts of a particular contractor.
+     * Retrieves contracts of a specific contractor.
+     * @param contractorsUserID User Id of the contractor of whose the contracts are to be retrieved.
+     * @return List of contracts of the specified contractor. Returns empty list if no contract is found for the specified contractor.
      */
-
     List<Contract> getContractsByContractor(String contractorsUserID);
 
     /**
-     *  Method to retrieve Paginated multiple contracts.
-     *  Use allowed query parameters to filter and pagination.
-     *  Users only with Admin role can invoke this method.
-     *
-     *  @return   list of contracts
+     * Retrieves contracts with pagination.
+     * @param pageNum Number of the page.
+     * @param pageSize Size of the page.
+     * @return Paginated Data List of contract.
      */
     PaginatedDataList<Contract> getContracts(int pageNum, int pageSize);
 
     /**
-     *  Method to retrieve filtered contracts using contractors name filter.
-     *  Users only with Admin role can invoke this method.
-     *
-     *  @return   list of filtered contracts
+     * Retrieves contracts filtered by the given Contractor's name.
+     * @param contractorsNameFilter Name of Contractor to be applied as filter.
+     * @return List of filtered contracts. Returns empty list if no contract is found for the specified filter.
      */
     List<Contract> getContracts(String contractorsNameFilter);
 
     /**
-     *  Method to retrieve Paginated multiple contracts with filter.
-     *  Users only with Admin role can invoke this method.
-     *
-     *  @return   list of contracts
+     * Retrieves contracts filtered by the given Contractor's name with pagination.
+     * @param contractorsNameFilter Name of Contractor to be applied as filter.
+     * @param pageNum Number of the page.
+     * @param pageSize Size of the page.
+     * @return Paginated Data List of contract.
      */
     PaginatedDataList<Contract> getContracts(String contractorsNameFilter, int pageNum, int pageSize);
 
     /**
-     *  Method to confirm a particular contract.
-     *  Users only with Resident role can invoke this method.
-     *
-     *  @param  contractId  ID of the contract to be retreived and confirmed.
+     * Confirms a specific contract.
+     * @param contractId Id of the contract to be confirmed.
+     * @throws ObjectNotFoundException Thrown if no contract is found with the specific id.
+     * @throws InvalidOperationException Thrown if the confirm operation is invalid.
+     * @throws OperationAlreadyExecutedException Thrown if the contract is already confirmed.
      */
     void confirmContract(String contractId) throws ObjectNotFoundException, InvalidOperationException, OperationAlreadyExecutedException;
 
     /**
-     *  Method to extend a particular contract.
-     *  Users only with Resident role can invoke this method.
-     *
-     *  @param  contractId  ID of the contract to be retreived and extend.
-     *  @param  newEndDate  new extension date.
+     * Extends a specific contract.
+     * @param contractId Id of the contract to be extended.
+     * @param newEndDate New End Date after the extension.
+     * @throws ObjectNotFoundException Thrown if no contract is found with the specific id.
+     * @throws ValidationException Thrown if the newEndDate parameter value if invalid for extension.
+     * @throws InvalidOperationException Thrown if the extension operation is invalid.
      */
     void extendContract(String contractId, LocalDate newEndDate) throws ObjectNotFoundException, ValidationException,  InvalidOperationException;
 
     /**
-     *  Method to terminate a particular contract.
-     *  Users only with Resident role can invoke this method.
-     *
-     *  @param  contractId  ID of the contract to be retreived and terminate.
-     *  @param  newEndDate  new termination date.
+     * Terminates a specific contract.
+     * @param contractId Id of the contract to be terminated.
+     * @param newEndDate New End Date after the termination.
+     * @throws ObjectNotFoundException Thrown if no contract is found with the specific id.
+     * @throws ValidationException Thrown if the newEndDate parameter value if invalid for termination.
+     * @throws InvalidOperationException Thrown if the termination operation is invalid.
      */
     void terminateContract(String contractId, LocalDate newEndDate) throws ObjectNotFoundException, ValidationException, InvalidOperationException;
 }
