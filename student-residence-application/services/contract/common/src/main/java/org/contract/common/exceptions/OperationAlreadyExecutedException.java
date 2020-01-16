@@ -1,13 +1,16 @@
 package org.contract.common.exceptions;
 
 /**
- * throws Operation Already Executed Exceptions
+ * Exception for redundant operation
  *
- * @author Mahmud
+ * @author Mohammed Mostakim Ornob
  *
  */
-
 public class OperationAlreadyExecutedException extends Exception {
+    /**
+     * Constructs OperationAlreadyExecutedException.
+     * @param message Exception message.
+     */
     public OperationAlreadyExecutedException(String message) {
         super(message);
     }
