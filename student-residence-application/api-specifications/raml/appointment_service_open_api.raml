@@ -67,8 +67,6 @@ types:
             - Received
             - Accepted
             - Denied  
-      creadtedBy:
-        type: string
       createdOn:
         type: date-only  
       links:
@@ -86,11 +84,59 @@ types:
   AppointmentResponse:
     type: object
     properties:
-      appointments: 
+      contractId:
+        type: string
+        required: true
+        description: A valid contract user id is required.
+      contractorsName:
+        type: string
+        required: true
+      roomNumber:
+        type: string
+        required: true
+      appointmentType:
+        type: array
+        required: true
+        items:
+          enum:
+            - moveIn
+            - moveOut
+            - miscellaneous 
+      issue:
+        type: string
+        required: true
+        maxLength: 200
+      desiredDate:
+        type: date-only
+        required: true
+      priority:
+        type: array
+        required: true
+        items:
+          enum:
+            - low
+            - normal
+            - high   
+      appointmentId:
+        type: string
+      status:
         type: array
         items:
-          - BaseAppointment
-          - AppointmentInformation
+          enum:
+            - Received
+            - Accepted
+            - Denied  
+      createdOn:
+        type: date-only  
+      links:
+        type: array
+        items:
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
       
     xml:
       name: AppointmentResponse
